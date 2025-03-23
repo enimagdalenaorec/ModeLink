@@ -1,1 +1,158 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'primeng/resources/themes/lara-light-indigo/theme.css';
+
+/* Import PrimeNG core styles */
+@import 'primeng/resources/primeng.min.css';
+
+/* Import PrimeIcons for icon support */
+@import 'primeicons/primeicons.css';
+
+/* Import PrimeFlex for layout utilities */
+@import 'primeflex/primeflex.css';
+
+/* Custom colors */
+:root {
+    --primary-color: #7da78d; /* Main green color */
+    --secondary-color: #00695c; /* Darker shade for secondary */
+    --accent-color: #a0b8ac; /* Lighter teal for accents */
+    --hover-color: #2f7456; /* Darker shade for hover effects */
+    --background-color: #f9f9f9; /* Light background color */
+    --text-color: #333333; /* Text color */
+}
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* General body and text colors */
+body {
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+/* Link color */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--hover-color);
+}
+
+/* Buttons */
+.p-button {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.p-button:hover {
+    background-color: var(--hover-color); /* Hover effect */
+}
+
+.p-button-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: white;
+}
+
+.p-button-secondary:hover {
+    background-color: darken(var(--secondary-color), 10%);
+}
+
+/* Input text fields */
+.p-inputtext {
+    border-radius: 8px;
+    border: 1px solid var(--secondary-color);
+    padding: 0.75rem;
+}
+
+.p-inputtext:focus {
+    border-color: var(--primary-color);
+}
+
+/* Cards */
+.p-card {
+    background-color: var(--background-color); /* Light background */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown */
+.p-dropdown {
+    border-radius: 8px;
+    border-color: var(--secondary-color);
+}
+
+.p-dropdown-item {
+    background-color: var(--background-color);
+}
+
+.p-dropdown-item:hover {
+    background-color: var(--accent-color); /* Accent on hover */
+}
+
+/* Spinner */
+.p-progress-spinner .p-progress-circle {
+    stroke: var(--primary-color);
+}
+
+/* Dialog Header */
+.p-dialog .p-dialog-header {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Sidebar */
+.p-sidebar {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+/* Custom button style */
+.p-button-custom {
+    background-color: var(--accent-color);
+    border-radius: 12px;
+    color: white;
+}
+
+.p-button-custom:hover {
+    background-color: darken(var(--accent-color), 10%);
+}
+
+/* Table Header */
+.p-table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Table row hover effect */
+.p-table tbody tr:hover {
+    background-color: var(--accent-color);
+}
+
+/* Calendar popup */
+.p-calendar .p-datepicker {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.p-calendar .p-datepicker td.p-highlight {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Breadcrumb */
+.p-breadcrumb {
+    background-color: var(--background-color);
+    color: var(--secondary-color);
+}
+
+/* Chip component */
+.p-chip {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 16px;
+    padding: 0.5rem;
+}

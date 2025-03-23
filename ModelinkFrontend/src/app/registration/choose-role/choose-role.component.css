@@ -1,0 +1,22 @@
+.background {
+  background-image: url('../../../../public/assets/images/backstage-faded.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.register-container {
+  background-color: #d3d9d6;
+}
+
+.divider {
+  color: var(--text-color);
+}
+
+.roles {
+  background-color: #bfd0c7;
+}
