@@ -13,7 +13,11 @@ export const routes: Routes = [
     component: ChooseRoleComponent
   },
   {
-    path: 'registration',
+    path: 'registration/:role',
     component: RegistrationComponent
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];

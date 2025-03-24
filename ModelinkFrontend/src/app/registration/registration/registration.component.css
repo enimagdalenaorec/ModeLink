@@ -1,5 +1,5 @@
 .background {
-  background-image: url('../../../../public/assets/images/backstage-faded.png');
+  background-image: url('../../../../public/assets/images/gradient_background_small_opacity.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -7,4 +7,45 @@
   height: 100vh;
   margin: 0;
   overflow-x: hidden;
+}
+
+.register-container {
+  background-color: #e8ebea;
+}
+
+.agency-basic-info {
+  flex: 50%;
+}
+
+.agency-description-image {
+  flex: 50%;
+}
+
+.no-resize {
+  resize: none !important;
+  overflow: auto !important;
+}
+
+:host ::ng-deep .back-button {
+  background-color: #b0b5b2;
+}
+
+:host ::ng-deep .p-divider.p-divider-horizontal:before {
+  border-top: 1px solid rgb(158, 161, 158) !important;
+}
+
+@media screen and (max-width: 938px) {
+  .agency {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .agency-basic-info {
+    flex: 100%;
+  }
+
+  .agency-description-image {
+    flex: 100%;
+  }
+
 }

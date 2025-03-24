@@ -1,1 +1,46 @@
-<div class="background h-screen"></div>
+<div class="background h-screen flex align-items-center justify-content-center">
+  <div class="register-container w-7 p-5 shadow-3 flex flex-column">
+    <div class="flex align-items-center justify-content-between w-full mb-0">
+      <h2 class="m-0 text-xl font-bold">Registaring as {{ role === 'agency' ? 'an agency' : 'a model' }}</h2>
+      <img src="assets/images/logo_final.png" alt="Logo" class="w-auto h-2rem">
+    </div>
+    <p-divider class="p-0 m-0" />
+    <div class="agency flex mt-0" *ngIf="role === 'agency'">
+      <div class="agency-basic-info pr-5">
+        <div class="flex flex-column mb-3">
+          <label class="text-xs mb-1" for="agencyName">NAME</label>
+          <input type="text" pInputText [(ngModel)]="agencyName" />
+        </div>
+        <div class="flex flex-column mb-3">
+          <label class="text-xs mb-1" for="agencyEmail">MAIL</label>
+          <input type="text" pInputText [(ngModel)]="agencyEmail" />
+        </div>
+        <div class="flex flex-column mb-3">
+          <label class="text-xs mb-1" for="agencyAddress">ADDRESS</label>
+          <input type="text" pInputText [(ngModel)]="agencyAddress" />
+        </div>
+        <div class="flex flex-column mb-3">
+          <label class="text-xs mb-1" for="agencyPassword">PASSWORD</label>
+          <input type="text" pInputText [(ngModel)]="agencyPassword" />
+        </div>
+      </div>
+      <div class="agency-description-image">
+        <div class="flex flex-column mb-3">
+          <label class="text-xs mb-1" for="agencyDescription">DESCRIPTION</label>
+          <textarea rows="5" class="no-resize" pInputTextarea [(ngModel)]="agencyDescription"></textarea>
+        </div>
+        <div class="flex flex-column mb-3">
+          <label class="text-xs mb-1" for="agencyName">PROFILE PICTURE</label>
+          <p-fileUpload #fileUpload mode="basic"   [chooseLabel]="agencyProfilePicture ? profilePictureName : 'Choose'"
+          chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
+            (onSelect)="onImageSelect($event, fileUpload)" ></p-fileUpload>
+            <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
+        </div>
+      </div>
+    </div>
+    <div class="buttons flex justify-content-end mt-0">
+      <p-button label="Back" styleClass="back-button" class="mr-3" (click)="back()" />
+      <p-button label="Register" (click)="register('agency')" />
+    </div>
+  </div>
+</div>

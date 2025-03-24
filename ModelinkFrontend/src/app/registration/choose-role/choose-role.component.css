@@ -1,5 +1,5 @@
 .background {
-  background-image: url('../../../../public/assets/images/backstage-faded.png');
+  background-image: url('../../../../public/assets/images/gradient_background_small_opacity.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -10,13 +10,13 @@
 }
 
 .register-container {
-  background-color: #d3d9d6;
-}
-
-.divider {
-  color: var(--text-color);
+  background-color: #e6ebe8;
 }
 
 .roles {
   background-color: #bfd0c7;
+}
+
+:host ::ng-deep .p-divider.p-divider-horizontal:before {
+  border-top: 1px solid rgb(158, 161, 158) !important;
 }
