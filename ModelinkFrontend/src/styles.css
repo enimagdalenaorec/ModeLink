@@ -37,6 +37,17 @@ body {
   background-color: var(--background-color);
 }
 
+/* Radio button */
+.p-radiobutton .p-radiobutton-box.p-highlight, .p-radiobutton .p-radiobutton-box.p-focus {
+  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  box-shadow: none;
+}
+
+.p-radiobutton .p-radiobutton-box:not(.p-disabled):hover{
+  border-color: var(--primary-color);
+}
+
 /* Link color */
 a {
   color: var(--primary-color);

@@ -1,5 +1,5 @@
 <div class="background h-screen flex align-items-center justify-content-center">
-  <div class="register-container w-7 p-5 shadow-3 flex flex-column">
+  <div class="register-container w-7 p-5 m-7 shadow-3 flex flex-column">
     <div class="flex align-items-center justify-content-between w-full mb-0">
       <h2 class="m-0 text-xl font-bold">Registaring as {{ role === 'agency' ? 'an agency' : 'a model' }}</h2>
       <img src="assets/images/logo_final.png" alt="Logo" class="w-auto h-2rem">
@@ -30,17 +30,91 @@
           <textarea rows="5" class="no-resize" pInputTextarea [(ngModel)]="agencyDescription"></textarea>
         </div>
         <div class="flex flex-column mb-3">
-          <label class="text-xs mb-1" for="agencyName">PROFILE PICTURE</label>
-          <p-fileUpload #fileUpload mode="basic"   [chooseLabel]="agencyProfilePicture ? profilePictureName : 'Choose'"
-          chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
-            (onSelect)="onImageSelect($event, fileUpload)" ></p-fileUpload>
-            <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
+          <label class="text-xs mb-1" for="agencyProfilePicture">PROFILE PICTURE</label>
+          <p-fileUpload #fileUpload mode="basic" [chooseLabel]="agencyProfilePicture ? profilePictureName : 'Choose'"
+            chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
+            (onSelect)="onImageSelect($event, fileUpload)"></p-fileUpload>
+          <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
         </div>
+      </div>
+    </div>
+    <div class="model mt-0" *ngIf="role === 'model'">
+      <div class="basic-info grid p-1 gap-0">
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelFirstName">FIRST NAME</label>
+          <input type="text" pInputText [(ngModel)]="modelFirstName" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4  flex flex-column">
+          <label class="text-xs mb-1" for="modelLastName">LAST NAME</label>
+          <input type="text" pInputText [(ngModel)]="modelLastName" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelEmail">MAIL</label>
+          <input type="text" pInputText [(ngModel)]="modelEmail" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelCity">CITY</label>
+          <input type="text" pInputText [(ngModel)]="modelCity" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelHeight">HEIGHT</label>
+          <input type="number" pInputText [(ngModel)]="modelHeight" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelWeight">WEIGHT</label>
+          <input type="number" pInputText [(ngModel)]="modelWeight" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelEyeColor">EYE COLOR</label>
+          <input type="text" pInputText [(ngModel)]="modelEyeColor" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelHairColor">HAIR COLOR</label>
+          <input type="text" pInputText [(ngModel)]="modelHairColor" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelSkinColor">SKIN COLOR</label>
+          <input type="text" pInputText [(ngModel)]="modelSkinColor" />
+        </div>
+      </div>
+      <!-- gender -->
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-3">
+        <label class="text-xs mb-2" for="modelGender">GENDER</label>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex align-items-center">
+            <p-radioButton name="modelGender" value="Male" [(ngModel)]="modelGender" inputId="male" />
+            <label for="male" class="ml-2">
+              Male
+            </label>
+          </div>
+          <div class="flex align-items-center">
+            <p-radioButton name="modelGender" value="Female" [(ngModel)]="modelGender" inputId="female" />
+            <label for="female" class="ml-2">
+              Female
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- profile picture -->
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-2">
+        <label class="text-xs mb-1" for="modelProfilePicture">PROFILE PICTURE</label>
+        <p-fileUpload #fileUpload mode="basic" [chooseLabel]="modelProfilePicture ? profilePictureName : 'Choose'"
+          chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
+          (onSelect)="onImageSelect($event, fileUpload)"></p-fileUpload>
+        <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
+      </div>
+      <!-- password -->
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelPassword">PASSWORD</label>
+        <input type="text" pInputText [(ngModel)]="modelPassword" />
       </div>
     </div>
     <div class="buttons flex justify-content-end mt-0">
       <p-button label="Back" styleClass="back-button" class="mr-3" (click)="back()" />
-      <p-button label="Register" (click)="register('agency')" />
+      <p-button label="Register" (click)="register()" />
+    </div>
+    <div class="form-invalid-message flex justify-content-end">
+      <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
     </div>
   </div>
 </div>

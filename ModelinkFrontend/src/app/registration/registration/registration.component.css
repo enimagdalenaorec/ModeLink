@@ -47,5 +47,8 @@
   .agency-description-image {
     flex: 100%;
   }
+}
 
+.form-invalid-message {
+  color: rgb(136, 29, 29);
 }
