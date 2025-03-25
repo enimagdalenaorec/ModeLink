@@ -119,9 +119,17 @@ a:hover {
   background-color: var(--background-color);
 }
 
+.p-dropdown .p-dropdown-label .p-inputtext .p-placeholder {
+  border-color: none;
+}
+
 .p-dropdown-item:hover {
   background-color: var(--accent-color);
   /* Accent on hover */
+}
+
+ .p-dropdown.p-focus {
+  box-shadow:  0 0 0 0.1rem rgba(125, 167, 141, 0.5);
 }
 
 /* Spinner */

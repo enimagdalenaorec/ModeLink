@@ -52,3 +52,11 @@
 .form-invalid-message {
   color: rgb(136, 29, 29);
 }
+
+:host ::ng-deep .dropdown .p-inputtext{
+  border: none
+}
+
+:host ::ng-deep .dropdown {
+  border-color: var(--secondary-color);
+}

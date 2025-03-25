@@ -5,18 +5,22 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { FormsModule } from '@angular/forms';
 import { AgencyRegistrationRequest } from '../../Models/agency';
-import { ModelRegistrationRequest } from '../../Models/model';
+import { ModelRegistrationRequest, EyeColors, SkinColors, HairColors } from '../../Models/model';
 import { FileUploadModule } from 'primeng/fileupload';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [NgIf, CommonModule, InputTextModule, InputTextareaModule, FormsModule, FileUploadModule, HttpClientModule, DividerModule, ButtonModule, RadioButtonModule],
+  imports: [NgIf, CommonModule, InputTextModule, InputTextareaModule, FormsModule, FileUploadModule, HttpClientModule, DividerModule, ButtonModule, RadioButtonModule, ToastModule, DropdownModule],
+  providers: [MessageService],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'
 })
@@ -45,14 +49,28 @@ export class RegistrationComponent implements OnInit {
   modelHairColor: string = '';
   modelEyeColor: string = '';
   modelSkinColor: string = '';
+
+  eyeColors: string[] = EyeColors;
+  skinColors: string[] = SkinColors;
+  hairColors: string[] = HairColors
   //both
   profilePictureName: string = '';
   formInvalidMessageVisible: boolean = false;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) { }
+  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
   ngOnInit() {
     this.role = this.route.snapshot.paramMap.get('role') ?? '';
+    this.getSkinEyeHairColors();
+  }
+
+  getSkinEyeHairColors() {
+    // call be api
+    // for now they are read from models
+  }
+
+  showToast(severity: string, summary: string, detail: string) {
+    this.messageService.add({ severity: severity, summary: summary, detail: detail });
   }
 
   onImageSelect(event: any, fileUpload: any) {
@@ -87,8 +105,10 @@ export class RegistrationComponent implements OnInit {
       this.formInvalidMessageVisible = true;
       return;
     }
+    this.formInvalidMessageVisible = false;
+    let regisrationRequest = null;
     if (this.role === 'agency') {
-      const agency = new AgencyRegistrationRequest(
+      regisrationRequest = new AgencyRegistrationRequest(
         this.agencyName,
         this.agencyEmail,
         this.agencyPassword,
@@ -99,7 +119,7 @@ export class RegistrationComponent implements OnInit {
         this.agencyProfilePicture
       );
     } else if (this.role === 'model') {
-      const model = new ModelRegistrationRequest(
+      const regisrationRequest = new ModelRegistrationRequest(
         this.modelFirstName,
         this.modelLastName,
         this.modelEmail,
@@ -115,9 +135,16 @@ export class RegistrationComponent implements OnInit {
         this.modelGender
       );
     }
-    //reset
-    this.resetForm();
-    this.formInvalidMessageVisible = false;
+    //call be api
+    //  if (this.tempRegistrationSucceded) {
+      this.showToast('success', 'Success', 'Registration successful!');
+      setTimeout(() => {
+        this.resetForm();
+        this.router.navigate(['/home']);
+      }, 1000);
+    // } else {
+    //   this.showToast('error', 'Error', 'Registration failed!');
+    // }
   }
 
   resetForm() {

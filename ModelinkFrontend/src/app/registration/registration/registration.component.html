@@ -21,7 +21,7 @@
         </div>
         <div class="flex flex-column mb-3">
           <label class="text-xs mb-1" for="agencyPassword">PASSWORD</label>
-          <input type="text" pInputText [(ngModel)]="agencyPassword" />
+          <input type="password" pInputText [(ngModel)]="agencyPassword" />
         </div>
       </div>
       <div class="agency-description-image">
@@ -66,15 +66,18 @@
         </div>
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelEyeColor">EYE COLOR</label>
-          <input type="text" pInputText [(ngModel)]="modelEyeColor" />
+          <!-- <input type="text" pInputText [(ngModel)]="modelEyeColor" /> -->
+          <p-dropdown [options]="eyeColors" styleClass="w-full dropdown" [(ngModel)]="modelEyeColor" placeholder="Select an eye color" />
         </div>
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelHairColor">HAIR COLOR</label>
-          <input type="text" pInputText [(ngModel)]="modelHairColor" />
+          <!-- <input type="text" pInputText [(ngModel)]="modelHairColor" /> -->
+          <p-dropdown [options]="hairColors" styleClass="w-full dropdown" [(ngModel)]="modelHairColor" placeholder="Select a hair color" />
         </div>
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelSkinColor">SKIN COLOR</label>
-          <input type="text" pInputText [(ngModel)]="modelSkinColor" />
+          <!-- <input type="text" pInputText [(ngModel)]="modelSkinColor" /> -->
+          <p-dropdown [options]="skinColors" styleClass="w-full dropdown" [(ngModel)]="modelSkinColor" placeholder="Select a skin color" />
         </div>
       </div>
       <!-- gender -->
@@ -106,7 +109,7 @@
       <!-- password -->
       <div class="col-12 md:col-6 lg:col-4 flex flex-column">
         <label class="text-xs mb-1" for="modelPassword">PASSWORD</label>
-        <input type="text" pInputText [(ngModel)]="modelPassword" />
+        <input type="password" pInputText [(ngModel)]="modelPassword" />
       </div>
     </div>
     <div class="buttons flex justify-content-end mt-0">
@@ -118,3 +121,5 @@
     </div>
   </div>
 </div>
+
+<p-toast></p-toast>

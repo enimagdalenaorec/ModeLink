@@ -43,3 +43,36 @@ export class ModelRegistrationRequest {
     this.gender = gender;
   }
 }
+
+export const EyeColors = [
+  'Blue',
+  'Brown',
+  'Green',
+  'Gray',
+  'Hazel',
+  'Red',
+  'Violet',
+  'Black'
+];
+
+export const HairColors = [
+  'Black',
+  'Brown',
+  'Blonde',
+  'Red',
+  'Ginger',
+  'White',
+  'Gray',
+  'Vibrant color'
+];
+
+export const SkinColors = [
+  'White',
+  'Black',
+  'Fair',
+  'Beige',
+  'Light brown',
+  'Dark brown',
+  'Medium brown',
+  'Dark'
+];

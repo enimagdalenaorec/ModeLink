@@ -16,4 +16,8 @@ export class ChooseRoleComponent {
   navigateToRegistration(role: string) {
     this.router.navigate(['/registration', role]);
   }
+
+  navigateToLogin() {
+    this.router.navigate(['/login']);
+  }
 }

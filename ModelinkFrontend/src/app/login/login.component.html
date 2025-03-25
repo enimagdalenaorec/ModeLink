@@ -1,0 +1,29 @@
+<div class="background h-screen flex align-items-center justify-content-center">
+  <div class="register-container w-5 p-5 shadow-3 flex flex-column">
+    <div class="flex align-items-center justify-content-between w-full">
+      <h2 class="m-0 text-xl font-bold">Login to ModeLink</h2>
+      <img src="assets/images/logo_final.png" alt="Logo" class="w-auto h-2rem">
+    </div>
+    <p-divider class="p-0 m-0" />
+    <div class="login-info">
+      <div class="flex flex-column mb-3">
+        <label class="text-xs mb-1" for="email">MAIL</label>
+        <input type="text" pInputText [(ngModel)]="email" />
+      </div>
+      <div class="flex flex-column mb-3">
+        <label class="text-xs mb-1" for="password">PASSWORD</label>
+        <input type="password" pInputText [(ngModel)]="password" />
+      </div>
+    </div>
+    <div class="p-2 pt-1 flex justify-content-end">
+      <p-button (onClick)="login()">Login</p-button>
+    </div>
+    <div class="form-invalid-message flex justify-content-end">
+      <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
+    </div>
+    <p class="mb-1 mt-2 text-xs">Don't have an account?</p>
+    <p class="mt-0 mb-0 cursor-pointer text-xs underline" (click)="navigateToRegistration()">Go to Registration</p>
+  </div>
+</div>
+
+<p-toast></p-toast>

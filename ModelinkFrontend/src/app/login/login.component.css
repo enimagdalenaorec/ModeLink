@@ -1,0 +1,22 @@
+.background {
+  background-image: url('../../../public/assets/images/gradient_background_small_opacity.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.register-container {
+  background-color: #e6ebe8;
+}
+
+:host ::ng-deep .p-divider.p-divider-horizontal:before {
+  border-top: 1px solid rgb(158, 161, 158) !important;
+}
+
+.form-invalid-message {
+  color: rgb(136, 29, 29);
+}
