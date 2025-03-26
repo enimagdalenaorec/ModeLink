@@ -1,6 +1,11 @@
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ModelinkBackend.Data;
+using ModelinkBackend.Repositories;
+using ModelinkBackend.Services;
+using System.Text;
 
 // Load environment variables from the .env file
 Env.Load();
@@ -21,6 +26,34 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add JWT authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// Register Services
+builder.Services.AddSingleton<JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>(); // Ensure this is added!
+
+// Register Repositories
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +65,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Enable authentication and authorization middleware
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

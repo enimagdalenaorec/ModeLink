@@ -1,0 +1,11 @@
+﻿using System.Threading.Tasks;
+using ModelinkBackend.Models.DTOs;
+
+namespace ModelinkBackend.Services
+{
+    public interface IAuthService
+    {
+        Task<string> RegisterModelAsync(RegisterModelDto modelDto);
+        Task<string> RegisterAgencyAsync(RegisterAgencyDto agencyDto);
+    }
+}
