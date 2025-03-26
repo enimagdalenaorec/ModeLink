@@ -2,6 +2,7 @@
 using ModelinkBackend.Models.Entities;
 using ModelinkBackend.Repositories;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ModelinkBackend.Services
@@ -9,10 +10,31 @@ namespace ModelinkBackend.Services
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
+        private readonly JwtService _jwtService;
 
-        public AuthService(IAuthRepository authRepository)
+        public AuthService(IAuthRepository authRepository, JwtService jwtService)
         {
             _authRepository = authRepository;
+            _jwtService = jwtService;
+        }
+
+        public async Task<string> LoginAsync(LoginDto loginDto)
+        {
+            var user = await _authRepository.GetUserByEmailAsync(loginDto.Email);
+            if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash))
+            {
+                throw new Exception("Invalid email or password.");
+            }
+
+            // generate JWT token
+            return _jwtService.GenerateToken(user.Id, user.Role);
+        }
+
+        private bool VerifyPassword(string enteredPassword, string storedHash)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var enteredHash = Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(enteredPassword)));
+            return enteredHash == storedHash;
         }
 
         public async Task<string> RegisterModelAsync(RegisterModelDto modelDto)
@@ -61,7 +83,8 @@ namespace ModelinkBackend.Services
 
             // Save Model
             await _authRepository.CreateModelAsync(newModel);
-            return "Model registered successfully!";
+            // generate JWT token --> automatically logs in the user
+            return _jwtService.GenerateToken(newUser.Id, newUser.Role);
         }
 
         public async Task<string> RegisterAgencyAsync(RegisterAgencyDto agencyDto)
@@ -105,7 +128,8 @@ namespace ModelinkBackend.Services
 
             // Save Agency
             await _authRepository.CreateAgencyAsync(newAgency);
-            return "Agency registered successfully!";
+            // generate JWT token --> automatically logs in the user
+            return _jwtService.GenerateToken(newUser.Id, newUser.Role);
         }
 
         private string HashPassword(string password)

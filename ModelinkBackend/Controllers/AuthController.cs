@@ -15,13 +15,28 @@ namespace ModelinkBackend.Controllers
             _authService = authService;
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            try
+            {
+                var token = await _authService.LoginAsync(loginDto);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpPost("register/model")]
         public async Task<IActionResult> RegisterModel([FromBody] RegisterModelDto modelDto)
         {
             try
             {
-                var result = await _authService.RegisterModelAsync(modelDto);
-                return Ok(result);
+                var token = await _authService.RegisterModelAsync(modelDto);
+                return Ok(new {Token = token});
             }
             catch (Exception ex)
             {
@@ -34,8 +49,8 @@ namespace ModelinkBackend.Controllers
         {
             try
             {
-                var result = await _authService.RegisterAgencyAsync(agencyDto);
-                return Ok(result);
+                var token = await _authService.RegisterAgencyAsync(agencyDto);
+                return Ok(new { Token = token });
             }
             catch (Exception ex)
             {

@@ -65,6 +65,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Enable CORS
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")  // allow frontend
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+app.UseCors(MyAllowSpecificOrigins);
 // Enable authentication and authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
