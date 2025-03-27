@@ -109,7 +109,8 @@ namespace ModelinkBackend.Services
             await _authRepository.CreateUserAsync(newUser); // ✅ Save User to get UserId
 
             // Get City and Country
-            var city = await _authRepository.GetCityByNameAsync(agencyDto.City);
+            var city = !string.IsNullOrEmpty(agencyDto.City)
+                    ? await _authRepository.GetCityByNameAsync(agencyDto.City) : null;
             var country = !string.IsNullOrEmpty(agencyDto.CountryName)
                 ? await _authRepository.GetCountryByNameAsync(agencyDto.CountryName)
                 : null;
@@ -123,7 +124,7 @@ namespace ModelinkBackend.Services
                 Description = agencyDto.Description,
                 Address = agencyDto.Address,
                 ProfilePictureBase64 = agencyDto.ProfilePicture,
-                CityId = (int)(city?.Id)
+                CityId = city == null ? null : city.Id
             };
 
             // Save Agency

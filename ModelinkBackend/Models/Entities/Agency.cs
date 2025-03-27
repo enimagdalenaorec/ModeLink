@@ -16,10 +16,9 @@ namespace ModelinkBackend.Models.Entities
 
         public string? Description { get; set; }
 
-        [Required]
         [ForeignKey("City")]
-        public required int CityId { get; set; }
-        public City City { get; set; } = null!;
+        public int? CityId { get; set; }
+        public City? City { get; set; }
 
         [Required]
         public required string Address { get; set; }

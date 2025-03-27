@@ -4,8 +4,8 @@ import { NgIf, CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { FormsModule } from '@angular/forms';
-import { AgencyRegistrationRequest } from '../../Models/agency';
-import { ModelRegistrationRequest, EyeColors, SkinColors, HairColors } from '../../Models/model';
+import { RegisterAgencyDto } from '../../_Models/agency';
+import { RegisterModelDto, EyeColors, SkinColors, HairColors } from '../../_Models/model';
 import { FileUploadModule } from 'primeng/fileupload';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DividerModule } from 'primeng/divider';
@@ -15,6 +15,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../../_Services/auth.service';
+import e from 'express';
 
 @Component({
   selector: 'app-registration',
@@ -25,6 +28,7 @@ import { DropdownModule } from 'primeng/dropdown';
   styleUrl: './registration.component.css'
 })
 export class RegistrationComponent implements OnInit {
+  backendUrl: string = environment.apiUrl;
   role: string = '';
   // agency
   agencyName: string = '';
@@ -42,7 +46,7 @@ export class RegistrationComponent implements OnInit {
   modelPassword: string = '';
   modelGender: string = '';
   modelCity: string = '';
-  modelCountry: string = '';
+  modelCountryName: string = '';
   modelProfilePicture: string = '';
   modelHeight: number = 0;
   modelWeight: number = 0;
@@ -57,7 +61,7 @@ export class RegistrationComponent implements OnInit {
   profilePictureName: string = '';
   formInvalidMessageVisible: boolean = false;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router, private messageService: MessageService) { }
+  constructor(private authService: AuthService, private route: ActivatedRoute, private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
   ngOnInit() {
     this.role = this.route.snapshot.paramMap.get('role') ?? '';
@@ -106,45 +110,52 @@ export class RegistrationComponent implements OnInit {
       return;
     }
     this.formInvalidMessageVisible = false;
-    let regisrationRequest = null;
+    let registrationRequest = null;
     if (this.role === 'agency') {
-      regisrationRequest = new AgencyRegistrationRequest(
-        this.agencyName,
-        this.agencyEmail,
-        this.agencyPassword,
-        this.agencyAddress,
-        this.agencyCity,
-        this.agencyCountry,
-        this.agencyDescription,
-        this.agencyProfilePicture
-      );
+      registrationRequest = {
+        email: this.agencyEmail,
+        password: this.agencyPassword,
+        role: this.role,
+        name: this.agencyName,
+        description: this.agencyDescription,
+        address: this.agencyAddress,
+        city: this.agencyCity,
+        countryName: this.agencyCountry,
+        countryCode: '',
+        profilePicture: this.agencyProfilePicture
+      } as RegisterAgencyDto;
     } else if (this.role === 'model') {
-      const regisrationRequest = new ModelRegistrationRequest(
-        this.modelFirstName,
-        this.modelLastName,
-        this.modelEmail,
-        this.modelPassword,
-        this.modelCity,
-        this.modelCountry,
-        this.modelProfilePicture,
-        this.modelHeight,
-        this.modelWeight,
-        this.modelHairColor,
-        this.modelEyeColor,
-        this.modelSkinColor,
-        this.modelGender
-      );
+     registrationRequest = {
+      email: this.modelEmail,
+      password: this.modelPassword,
+      role: this.role,
+      firstName: this.modelFirstName,
+      lastName: this.modelLastName,
+      city: this.modelCity,
+      countryName: this.modelCountryName,
+      countryCode: '',
+      height: this.modelHeight,
+      weight: this.modelWeight,
+      eyeColor: this.modelEyeColor,
+      skinColor: this.modelSkinColor,
+      hairColor: this.modelHairColor,
+      sex: this.modelGender,
+      profilePicture: this.modelProfilePicture
+     } as RegisterModelDto;
     }
-    //call be api
-    //  if (this.tempRegistrationSucceded) {
+
+     //call be api
+     this.http.post(this.backendUrl + 'Auth/register/' + this.role, registrationRequest).subscribe(
+      (response: any) => {
       this.showToast('success', 'Success', 'Registration successful!');
+      this.authService.saveToken(response.token);
       setTimeout(() => {
         this.resetForm();
         this.router.navigate(['/home']);
       }, 1000);
-    // } else {
-    //   this.showToast('error', 'Error', 'Registration failed!');
-    // }
+    }, (error) => {
+      this.showToast('error', 'Error', 'Registration failed!');
+    });
   }
 
   resetForm() {
@@ -162,7 +173,7 @@ export class RegistrationComponent implements OnInit {
     this.modelPassword = '';
     this.modelGender = '';
     this.modelCity = '';
-    this.modelCountry = '';
+    this.modelCountryName = '';
     this.modelProfilePicture = '';
     this.modelHeight = 0;
     this.modelWeight = 0;

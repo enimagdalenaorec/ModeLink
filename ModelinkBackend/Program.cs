@@ -53,18 +53,6 @@ builder.Services.AddScoped<IAuthService, AuthService>(); // Ensure this is added
 // Register Repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
 // Enable CORS
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -78,6 +66,17 @@ builder.Services.AddCors(options =>
                   .AllowAnyMethod();
         });
 });
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
 
 
 app.UseCors(MyAllowSpecificOrigins);
