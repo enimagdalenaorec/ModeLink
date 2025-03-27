@@ -3,11 +3,12 @@ import { AppComponent } from './app.component';
 import { ChooseRoleComponent } from './registration/choose-role/choose-role.component';
 import { RegistrationComponent } from './registration/registration/registration.component';
 import { LoginComponent } from './login/login.component';
+import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: AppComponent,
+    component: HomeComponent,
   },
   {
     path: 'registration-choose-role',
