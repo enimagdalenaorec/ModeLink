@@ -1,10 +1,20 @@
-<div *ngIf="shouldShowMenu()" class="menubar-container pr-2 pl-2 h-5rem flex justify-content-between align-items-center flex-wrap text-black-alpha-90">
+<div *ngIf="shouldShowMenu()"
+  class="menubar-container relative pr-2 pl-2 h-5rem flex justify-content-between align-items-center flex-wrap text-black-alpha-90">
   <div class="title-logo-menubar flex align-items-center">
     <img src="assets/images/logo_final.png" alt="Logo" class="w-auto h-4rem" />
-    <h1 class="ml-2">ModeLink</h1>
+    <h1 class="ml-2 mr-2">ModeLink</h1>
+    <p-menubar [model]="items" />
   </div>
-  <div class="user-icon-auth-buttons flex align-end">
-
+  <div class="absolute ml-4 searchbar-container flex">
+    <input type="text" placeholder="Search models or agencies" class="searchbar" pInputText [(ngModel)]="searchQuery" />
+    <p-button icon="pi pi-search" class="searchbar-button" (onClick)="search()"></p-button>
+    <p-button icon="pi pi-times" class="searchbar-clear-button ml-2" *ngIf="searchQuery != '' " (onClick)="clearSearch()"></p-button>
+  </div>
+  <div class="user-icon-auth-buttons flex align-end mr-3">
+    <p-button class="mr-2 menubar-button" *ngIf="!isLoggedIn()" (onClick)="navigateTo('login')">Login</p-button>
+    <p-button class="menubar-button" *ngIf="!isLoggedIn()"
+      (onClick)="navigateTo('registration-choose-role')">Register</p-button>
+    <p-button class="menubar-button" *ngIf="isLoggedIn()" (onClick)="logout()">Logout</p-button>
   </div>
 </div>
 

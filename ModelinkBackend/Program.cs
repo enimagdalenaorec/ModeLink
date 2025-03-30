@@ -48,7 +48,12 @@ builder.Services.AddAuthorization();
 
 // Register Services
 builder.Services.AddSingleton<JwtService>();
-builder.Services.AddScoped<IAuthService, AuthService>(); // Ensure this is added!
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IModelService, ModelService>();
+builder.Services.AddScoped<IModelRepository, ModelRepository>();
+builder.Services.AddScoped<IAgencyService, AgencyService>();
+builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
+
 
 // Register Repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();

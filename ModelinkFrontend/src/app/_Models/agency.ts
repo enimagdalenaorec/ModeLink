@@ -11,3 +11,10 @@ export interface RegisterAgencyDto {
   profilePicture: string;  // base64 string
 }
 
+export interface AgencySearchResultDto {
+  userId: number;
+  name: string;
+  cityName?: string | null; // null if no city
+  countryName?: string | null; // null if no country
+  profilePictureBase64: string;
+}

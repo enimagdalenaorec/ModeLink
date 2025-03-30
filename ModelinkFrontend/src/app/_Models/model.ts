@@ -48,3 +48,14 @@ export const SkinColors = [
   'Medium brown',
   'Dark'
 ];
+
+export interface ModelSearchResultDto {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  agencyId?: number | null; // null if not in an agency
+  cityName?: string | null; // null if no city
+  countryName?: string | null; // null if no country
+  profilePictureBase64: string;
+}
+

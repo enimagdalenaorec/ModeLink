@@ -58,7 +58,7 @@ export class LoginComponent {
         setTimeout(() => {
           this.resetForm();
           this.router.navigate(['/home']);
-        }, 1000);
+        }, 500);
       }, (error) => {
         this.showToast('error', 'Error', 'Login failed!');
       });

@@ -37,6 +37,37 @@ body {
   background-color: var(--background-color);
 }
 
+.p-menubar {
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text {
+  color: white;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon {
+  color: white;
+}
+/* nz */
+.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content {
+  background: none;
+  color: white;
+  border: none;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover {
+  border:none;
+  background-color: var(--primary-color);
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover  .p-menuitem-link .p-menuitem-text , .p-menubar .p-menubar-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover  .p-menuitem-link .p-menuitem-icon {
+  border:none;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
 /* Radio button */
 .p-radiobutton .p-radiobutton-box.p-highlight, .p-radiobutton .p-radiobutton-box.p-focus {
   border-color: var(--primary-color);
