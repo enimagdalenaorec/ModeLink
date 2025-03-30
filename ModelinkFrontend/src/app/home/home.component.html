@@ -1,0 +1,30 @@
+<div *ngIf="searchQuery != ''" class="search-results flex flex-column p-4 pr-6 pl-6">
+  <h3>Search Results for "{{ searchQuery }}"</h3>
+  <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
+    <p style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px;">Models that matched your search</p>
+    <div class="models-list flex gap-4">
+      <div *ngFor="let model of models" class="item flex flex-column w-3 h-16rem" (click)="selectSearched(model.userId)">
+        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture" (error)="onImageError($event)"/>
+          <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
+          <p *ngIf="model.agencyName != null" class="mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
+          <p *ngIf="model.cityName != null" class="mb-0 mt-1 pr-2 pl-2">{{ model.cityName }}, {{  model.countryName }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!agenciesNotFound" class="agency-list-container">
+    <p style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px;">Agencies that matched your search</p>
+    <div class="agencies-list flex gap-4">
+      <div *ngFor="let agency of agencies" class="item flex flex-column w-3 h-16rem" (click)="selectSearched(agency.userId)">
+        <img [src]="agency.profilePictureBase64" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
+          <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
+          <p *ngIf="agency.cityName != null" class="mb-0 mt-1 pr-2 pl-2">{{ agency.cityName }}, {{  agency.countryName }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="modelsNotFound && agenciesNotFound" class="mt-4 align-self-center justify-self-center flex flex-column align-items-center">
+    <img src="assets/images/not-found.png" alt="No results found" class="no-results-image h-24rem" />
+    <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No results found</h3>
+  </div>
+</div>

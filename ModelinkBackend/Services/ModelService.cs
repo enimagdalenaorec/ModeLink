@@ -24,7 +24,7 @@ namespace ModelinkBackend.Services
                 UserId = m.UserId,
                 FirstName = m.FirstName,
                 LastName = m.LastName,
-                AgencyId = m.Agency?.UserId, // if null, return null
+                AgencyName = m.Agency?.Name, // if null, return null
                 CityName = m.City?.Name, // if null, return null
                 CountryName = m.City?.Country?.Name, // if null, return null
                 ProfilePicture = m.ProfilePictureBase64
