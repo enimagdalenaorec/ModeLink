@@ -8,11 +8,12 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../_Services/auth.service';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, NgFor, HttpClientModule],
+  imports: [NgIf, NgFor, HttpClientModule, DividerModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -29,9 +30,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   // for suggested models & agencies (for a guest)
   suggestedModels: SuggestedModelDto[] = [];
   suggestedAgencies: SuggestedAgencyDto[] = [];
-  // all models by one agency and models from other agencies (for agency profile)
+  // all models by one agency and models from other agencies, signed and freelancers (for agency profile)
   modelsByAgency: SuggestedModelDto[] = [];
-  modelsByOtherAgencies: SuggestedModelDto[] = [];
+  outsideSignedModels: SuggestedModelDto[] = [];
+  outsideFreelancerModels: SuggestedModelDto[] = [];
 
   private subscriptions: Subscription[] = []; // destroy on OnDestroy
 
@@ -71,7 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // fetch suggested models & agencies
     this.getSuggestedModels();
     this.getSuggestedAgencies();
-    // fetch models by agency and outside the agency (if user is agency)
+    // fetch models by agency and outside the agency, both signed and freelancers (if user is agency)
     if (this.role === 'agency') {
       this.getModelsByAgency();
       this.getModelsOutsideAgency();
@@ -127,11 +129,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getModelsOutsideAgency() {
-    this.http.get<SuggestedModelDto[]>(`${this.apiUrl}Agency/outside-models/${this.userId}`)
+    this.http.get<SuggestedModelDto[]>(`${this.apiUrl}Agency/outsideSignedModels/${this.userId}`)
       .subscribe((data: SuggestedModelDto[]) => {
-        this.modelsByOtherAgencies = data;
+        this.outsideSignedModels = data;
       }, (error: any) => {
         console.error('Error fetching models outside agency:', error);
+      }
+    );
+
+    this.http.get<SuggestedModelDto[]>(`${this.apiUrl}Agency/outsideFreelanceModels/${this.userId}`)
+      .subscribe((data: SuggestedModelDto[]) => {
+        this.outsideFreelancerModels = data;
+      }, (error: any) => {
+        console.error('Error fetching outside freelancer models:', error);
       }
     );
   }

@@ -2,8 +2,12 @@
 <div *ngIf="searchQuery != ''" class="search-results flex flex-column p-4 pr-6 pl-6">
   <h3>Search Results for "{{ searchQuery }}"</h3>
   <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
-    <p style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px;">Models
-      that matched your search</p>
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Models that matched your search</p>
+      <p-divider class="text-200 divider-79"></p-divider>
+    </div>
     <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId)">
         <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
@@ -21,8 +25,12 @@
   </div>
 
   <div *ngIf="!agenciesNotFound" class="agency-list-container">
-    <p style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px;">
-      Agencies that matched your search</p>
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Agencies that matched your search</p>
+      <p-divider class="text-200 divider-78"></p-divider>
+    </div>
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem" (click)="select(agency.userId)">
         <img [src]="agency.profilePictureBase64" alt="Model Image" class="profile-picture"
@@ -44,11 +52,13 @@
 <!-- suggestions for a guest -->
 <div *ngIf="!isLoggedIn() && searchQuery == ''" class="suggestions flex flex-column p-4 pr-6 pl-6">
   <div *ngIf="suggestedModels != []" class="models-list-container mb-5">
-    <p
-      style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
-      Suggested models</p>
-    <hr>
-    <div class="models-list flex flex-wrap gap-4 mt-1">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Suggested models</p>
+      <p-divider class="text-200 suggested-divider"></p-divider>
+    </div>
+    <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId)">
         <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
@@ -65,11 +75,15 @@
   </div>
 
   <div *ngIf="suggestedAgencies != []" class="agency-list-container">
-    <p style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px;">
-      Suggested agencies</p>
-    <hr>
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Suggested agencies</p>
+      <p-divider class="text-200 suggested-agency-divider"></p-divider>
+    </div>
     <div class="agencies-list flex flex-wrap gap-4">
-      <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem" (click)="select(agency.userId)">
+      <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
+        (click)="select(agency.userId)">
         <img [src]="agency.profilePictureBase64" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
@@ -88,14 +102,16 @@
 </div>
 
 <!-- suggestions for an agency -->
-<div *ngIf="role == 'agency'" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
+<div *ngIf="role == 'agency' && searchQuery == ''" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
 
   <div *ngIf="modelsByAgency != []" class="models-list-container mb-5">
-    <p
-      style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
-      Your models</p>
-    <hr>
-    <div class="models-list flex flex-wrap gap-4 mt-1">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Your models</p>
+      <p-divider class="text-200 w-11"></p-divider>
+    </div>
+    <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId)">
         <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
@@ -109,6 +125,60 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="outsideFreelancerModels != []" class="models-list-container mb-5">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Freelancers</p>
+      <p-divider class="text-200 w-11"></p-divider>
+    </div>
+    <div class="models-list flex flex-wrap gap-4">
+      <div *ngFor="let model of outsideFreelancerModels" class="item flex flex-column h-15rem"
+        (click)="select(model.userId)">
+        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+          (error)="onImageError($event)" />
+        <div class="flex justify-content-between">
+          <div class="info">
+            <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
+            <p *ngIf="model.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
+          </div>
+          <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
+            model.countryName }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="outsideSignedModels != []" class="models-list-container mb-5">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Signed</p>
+      <p-divider class="text-200 signed-divider"></p-divider>
+    </div>
+    <div class="models-list flex flex-wrap gap-4">
+      <div *ngFor="let model of outsideSignedModels" class="item flex flex-column h-15rem"
+        (click)="select(model.userId)">
+        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+          (error)="onImageError($event)" />
+        <div class="flex justify-content-between">
+          <div class="info">
+            <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
+            <p *ngIf="model.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
+          </div>
+          <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
+            model.countryName }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="modelsByAgency == [] && outsideFreelancerModels == [] && outsideSignedModels == []"
+    class="mt-4 align-self-center justify-self-center flex flex-column align-items-center">
+    <img src="assets/images/not-found.png" alt="No results found" class="no-results-image h-24rem" />
+    <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No models suggestions.</h3>
   </div>
 
 </div>

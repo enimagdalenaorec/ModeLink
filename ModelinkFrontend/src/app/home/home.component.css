@@ -23,3 +23,23 @@
   max-width: 38%;
   text-align: right;
 }
+
+.suggested-divider {
+  width: 88%;
+}
+
+.suggested-agency-divider {
+  width: 86%;
+}
+
+.signed-divider {
+  width: 96%;
+}
+
+.divider-79 {
+  width: 79%;
+}
+
+.divider-78 {
+  width: 78%;
+}
