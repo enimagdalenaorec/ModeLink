@@ -18,3 +18,11 @@ export interface AgencySearchResultDto {
   countryName?: string | null; // null if no country
   profilePictureBase64: string;
 }
+
+export interface SuggestedAgencyDto {
+  userId: number;
+  name: string;
+  cityName?: string | null; // null if no city
+  countryName?: string | null; // null if no country
+  profilePictureBase64: string;
+}

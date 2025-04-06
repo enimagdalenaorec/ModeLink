@@ -70,4 +70,8 @@ export class LoginComponent {
     this.password = '';
     this.formInvalidMessageVisible = false;
   }
+
+  navigateToHome() {
+    this.router.navigate(['/home']);
+  }
 }

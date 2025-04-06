@@ -15,7 +15,6 @@ import { environment } from '../environments/environment';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, MenubarModule, NgIf, ButtonModule, InputTextModule, FormsModule, HttpClientModule],
-  providers: [SearchService, AuthService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -42,6 +41,11 @@ export class AppComponent implements OnInit {
         command: () => this.navigateTo('/profile')
       }
     ];
+
+    // if user clicks on one of search results, the query should go "", so subscribe to changes
+    this.searchService.searchQuery$.subscribe(query => {
+      this.searchQuery = query;
+    })
   }
 
   shouldShowMenu(): boolean {

@@ -68,10 +68,28 @@ body {
   color: var(--text-color);
 }
 
+.p-icon-wrapper {
+  color: white !important;
+}
+
+.p-menubar.p-menubar-mobile-active .p-menubar-root-list {
+  padding: 0px;
+  background: #c0c5c2;
+  min-width: 150px;
+}
+
+.p-menubar .p-menubar-root-list > .p-menuitem > .p-menuitem-content {
+  border-radius: 0px;
+}
+
 /* Radio button */
 .p-radiobutton .p-radiobutton-box.p-highlight, .p-radiobutton .p-radiobutton-box.p-focus {
   border-color: var(--primary-color);
   background-color: var(--primary-color);
+  box-shadow: none;
+}
+
+.p-menubar .p-menubar-button:focus {
   box-shadow: none;
 }
 

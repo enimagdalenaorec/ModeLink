@@ -7,11 +7,17 @@
     <p class="mb-0 mt-4 text-lg">Welcome to ModeLink, where opportunities meet ambition. Let's get started!</p>
     <p-divider class="p-0 m-0" />
     <p class="mb-3 mt-0">Continue as...</p>
-    <div class="roles p-2 pt-1 pb-1 border-round-lg flex align-self-center align-items-center justify-content-between w-6">
-      <p-button (onClick)="navigateToRegistration('model')">Model</p-button>
+    <div
+      class="roles p-2 pt-1 pb-1 border-round-lg flex align-self-center align-items-center justify-content-between w-6">
+      <p-button class="mr-1" (onClick)="navigateToRegistration('model')">Model</p-button>
       <p-button (onClick)="navigateToRegistration('agency')">Agency</p-button>
     </div>
-    <p class="mb-1 mt-4 text-xs">Already have an account?</p>
-    <p class="mt-0 mb-0 cursor-pointer text-xs underline" (click)="navigateToLogin()">Return to Login</p>
+    <div class="flex mt-2 align-items-center justify-content-between">
+      <div>
+        <p class="mb-1 mt-4 text-xs">Already have an account?</p>
+        <p class="mt-0 mb-0 cursor-pointer text-xs underline" (click)="navigateToLogin()">Return to Login</p>
+      </div>
+      <p class="mt-2 mb-0 cursor-pointer text-xs underline" (click)="navigateToHome()">Continue as guest</p>
+    </div>
   </div>
 </div>

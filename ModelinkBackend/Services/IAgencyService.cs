@@ -8,5 +8,6 @@ namespace ModelinkBackend.Services
     public interface IAgencyService
     {
         Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string query);
+        Task<IEnumerable<AgencySuggestionDto>> GetAgencySuggestionsAsync();
     }
 }

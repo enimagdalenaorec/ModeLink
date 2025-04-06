@@ -21,5 +21,12 @@ namespace ModelinkBackend.Controllers
             var models = await _modelService.SearchModelsAsync(query);
             return Ok(models);
         }
+
+        [HttpGet("suggestions")]
+        public async Task<IActionResult> GetModelSuggestions()
+        {
+            var modelSuggestions = await _modelService.GetModelSuggestionsAsync();
+            return Ok(modelSuggestions);
+        }
     }
 }

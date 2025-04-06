@@ -21,5 +21,12 @@ namespace ModelinkBackend.Controllers
             var agencies = await _agencyService.SearchAgenciesAsync(query);
             return Ok(agencies);
         }
+
+        [HttpGet("suggestions")]
+        public async Task<IActionResult> GetAgencySuggestions()
+        {
+            var agencySuggestions = await _agencyService.GetAgencySuggestionsAsync();
+            return Ok(agencySuggestions);
+        }
     }
 }

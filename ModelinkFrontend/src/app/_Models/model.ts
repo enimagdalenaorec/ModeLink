@@ -29,7 +29,7 @@ export const EyeColors = [
 
 export const HairColors = [
   'Black',
-  'Brown',
+  'Brunette',
   'Blonde',
   'Red',
   'Ginger',
@@ -59,3 +59,12 @@ export interface ModelSearchResultDto {
   profilePictureBase64: string;
 }
 
+export interface SuggestedModelDto {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  agencyName?: string | null; // null if not in an agency
+  cityName?: string | null; // null if no city
+  countryName?: string | null; // null if no country
+  profilePictureBase64: string;
+}

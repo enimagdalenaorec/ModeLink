@@ -32,3 +32,13 @@
   border: none;
   width: 25%;
 }
+
+@media screen and (max-width: 969px) {
+  .searchbar-container {
+    display: none !important;
+  }
+
+  .menubar-container {
+    min-width: 550px;
+  }
+}

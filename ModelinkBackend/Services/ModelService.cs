@@ -30,5 +30,21 @@ namespace ModelinkBackend.Services
                 ProfilePicture = m.ProfilePictureBase64
             });
         }
+
+        public async Task<IEnumerable<ModelSuggestionDto>> GetModelSuggestionsAsync()
+        {
+            var models = await _modelRepository.GetModelSuggestionsAsync();
+
+            return models.Select(m => new ModelSuggestionDto
+            {
+                UserId = m.UserId,
+                FirstName = m.FirstName,
+                LastName = m.LastName,
+                ProfilePicture = m.ProfilePictureBase64,
+                AgencyName = m.Agency?.Name, // if null, return null
+                CityName = m.City?.Name, // if null, return null
+                CountryName = m.City?.Country?.Name // if null, return null
+            });
+        }
     }
 }

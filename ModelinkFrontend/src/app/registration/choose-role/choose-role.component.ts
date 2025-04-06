@@ -20,4 +20,8 @@ export class ChooseRoleComponent {
   navigateToLogin() {
     this.router.navigate(['/login']);
   }
+
+  navigateToHome() {
+    this.router.navigate(['/home']);
+  }
 }

@@ -25,5 +25,13 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Agency>> GetAgencySuggestionsAsync()
+        {
+            return await _context.Agencies
+                .Include(a => a.City).ThenInclude(c => c.Country)
+                .Take(7) // limit to 7
+                .ToListAsync();
+        }
+
     }
 }

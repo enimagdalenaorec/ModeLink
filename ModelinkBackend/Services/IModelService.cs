@@ -8,5 +8,6 @@ namespace ModelinkBackend.Services
     public interface IModelService
     {
         Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string query);
+        Task<IEnumerable<ModelSuggestionDto>> GetModelSuggestionsAsync();
     }
 }

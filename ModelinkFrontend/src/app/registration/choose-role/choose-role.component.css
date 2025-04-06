@@ -15,6 +15,7 @@
 
 .roles {
   background-color: #bfd0c7;
+  min-width: 192px;
 }
 
 :host ::ng-deep .p-divider.p-divider-horizontal:before {

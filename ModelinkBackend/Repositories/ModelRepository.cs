@@ -26,5 +26,14 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Model>> GetModelSuggestionsAsync()
+        {
+            return await _context.Models
+                .Include(m => m.City).ThenInclude(c => c.Country)
+                .Include(m => m.Agency)
+                .Take(7) // limit to 7
+                .ToListAsync();
+        }
+
     }
 }

@@ -29,5 +29,19 @@ namespace ModelinkBackend.Services
             });
         }
 
+        public async  Task<IEnumerable<AgencySuggestionDto>> GetAgencySuggestionsAsync()
+        {
+            var agencies = await _agencyRepository.GetAgencySuggestionsAsync();
+
+            return agencies.Select(a => new AgencySuggestionDto
+            {
+                UserId = a.UserId,
+                Name = a.Name,
+                ProfilePicture = a.ProfilePictureBase64,
+                CityName = a.City?.Name, // If null, return null
+                CountryName = a.City?.Country?.Name // If null, return null
+            });
+        }
+
     }
 }
