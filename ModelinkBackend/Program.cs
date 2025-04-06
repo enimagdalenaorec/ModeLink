@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using ModelinkBackend.Data;
 using ModelinkBackend.Repositories;
 using ModelinkBackend.Services;
+using System.Security.Claims;
 using System.Text;
 
 // Load environment variables from the .env file
@@ -40,8 +41,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtSettings["Issuer"],
             ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!)),
+            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" 
         };
+
     });
 
 builder.Services.AddAuthorization();
@@ -85,6 +88,7 @@ app.UseHttpsRedirection();
 
 
 app.UseCors(MyAllowSpecificOrigins);
+
 // Enable authentication and authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();

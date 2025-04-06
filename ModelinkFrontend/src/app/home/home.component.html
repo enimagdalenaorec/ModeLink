@@ -1,3 +1,4 @@
+<!-- search results -->
 <div *ngIf="searchQuery != ''" class="search-results flex flex-column p-4 pr-6 pl-6">
   <h3>Search Results for "{{ searchQuery }}"</h3>
   <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
@@ -40,6 +41,7 @@
   </div>
 </div>
 
+<!-- suggestions for a guest -->
 <div *ngIf="!isLoggedIn() && searchQuery == ''" class="suggestions flex flex-column p-4 pr-6 pl-6">
   <div *ngIf="suggestedModels != []" class="models-list-container mb-5">
     <p
@@ -83,4 +85,30 @@
     <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No model or agency
       suggestions.</h3>
   </div>
+</div>
+
+<!-- suggestions for an agency -->
+<div *ngIf="role == 'agency'" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
+
+  <div *ngIf="modelsByAgency != []" class="models-list-container mb-5">
+    <p
+      style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+      Your models</p>
+    <hr>
+    <div class="models-list flex flex-wrap gap-4 mt-1">
+      <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId)">
+        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+          (error)="onImageError($event)" />
+        <div class="flex justify-content-between">
+          <div class="info">
+            <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
+            <p *ngIf="model.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
+          </div>
+          <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
+            model.countryName }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

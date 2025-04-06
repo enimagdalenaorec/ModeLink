@@ -9,5 +9,7 @@ namespace ModelinkBackend.Services
     {
         Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string query);
         Task<IEnumerable<AgencySuggestionDto>> GetAgencySuggestionsAsync();
+        Task<IEnumerable<ModelSuggestionDto>> GetModelsByAgencyIdAsync(int agencyId);
+        Task<IEnumerable<ModelSuggestionDto>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId);
     }
 }

@@ -43,5 +43,37 @@ namespace ModelinkBackend.Services
             });
         }
 
+        public async Task<IEnumerable<ModelSuggestionDto>> GetModelsByAgencyIdAsync(int agencyId)
+        {
+            var models = await _agencyRepository.GetModelsByAgencyIdAsync(agencyId);
+
+            return models.Select(m => new ModelSuggestionDto
+            {
+                UserId = m.UserId,
+                FirstName = m.FirstName,
+                LastName = m.LastName,
+                ProfilePicture = m.ProfilePictureBase64,
+                CityName = m.City?.Name, // If null, return null
+                CountryName = m.City?.Country?.Name, // If null, return null
+                AgencyName = m.Agency?.Name, 
+            });
+        }
+
+        public async Task<IEnumerable<ModelSuggestionDto>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId)
+        {
+            var models = await _agencyRepository.GetOutsideSignedModelsByAgencyIdAsync(agencyId);
+
+            return models.Select(m => new ModelSuggestionDto
+            {
+                UserId = m.UserId,
+                FirstName = m.FirstName,
+                LastName = m.LastName,
+                ProfilePicture = m.ProfilePictureBase64,
+                CityName = m.City?.Name, // If null, return null
+                CountryName = m.City?.Country?.Name, // If null, return null
+                AgencyName = m.Agency?.Name,
+            });
+        }
+
     }
 }

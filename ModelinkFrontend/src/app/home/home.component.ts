@@ -18,13 +18,20 @@ import { AuthService } from '../_Services/auth.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   apiUrl = environment.apiUrl;
+  role: string | null = null; // user role
+  userId: number | null = null; // user id
+  // for search results
   models: ModelSearchResultDto[] = [];
   agencies: AgencySearchResultDto[] = [];
   modelsNotFound = false;
   agenciesNotFound = false;
   searchQuery = '';
-  suggestedModels: SuggestedModelDto[] = []; // for suggested models
-  suggestedAgencies: SuggestedAgencyDto[] = []; // for suggested agencies
+  // for suggested models & agencies (for a guest)
+  suggestedModels: SuggestedModelDto[] = [];
+  suggestedAgencies: SuggestedAgencyDto[] = [];
+  // all models by one agency and models from other agencies (for agency profile)
+  modelsByAgency: SuggestedModelDto[] = [];
+  modelsByOtherAgencies: SuggestedModelDto[] = [];
 
   private subscriptions: Subscription[] = []; // destroy on OnDestroy
 
@@ -57,10 +64,18 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.searchQuery = query;
       })
     );
-
+    // get user role
+    this.role = this.authService.getUserRole();
+    // get user id
+    this.userId = this.authService.getUserId();
     // fetch suggested models & agencies
     this.getSuggestedModels();
     this.getSuggestedAgencies();
+    // fetch models by agency and outside the agency (if user is agency)
+    if (this.role === 'agency') {
+      this.getModelsByAgency();
+      this.getModelsOutsideAgency();
+    }
   }
 
   ngOnDestroy() {
@@ -97,6 +112,26 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.suggestedAgencies = data;
       }, (error: any) => {
         console.error('Error fetching suggested agencies:', error);
+      }
+    );
+  }
+
+  getModelsByAgency() {
+    this.http.get<SuggestedModelDto[]>(`${this.apiUrl}Agency/models/${this.userId}`)
+      .subscribe((data: SuggestedModelDto[]) => {
+        this.modelsByAgency = data;
+      }, (error: any) => {
+        console.error('Error fetching models by agency:', error);
+      }
+    );
+  }
+
+  getModelsOutsideAgency() {
+    this.http.get<SuggestedModelDto[]>(`${this.apiUrl}Agency/outside-models/${this.userId}`)
+      .subscribe((data: SuggestedModelDto[]) => {
+        this.modelsByOtherAgencies = data;
+      }, (error: any) => {
+        console.error('Error fetching models outside agency:', error);
       }
     );
   }

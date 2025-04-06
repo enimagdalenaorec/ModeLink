@@ -54,6 +54,6 @@ export class AuthService {
     if (!token) return null;
 
     const decodedToken: any = jwtDecode(token);
-    return decodedToken.role || null; // Extract the role
+    return decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null; // Extract the role
   }
 }

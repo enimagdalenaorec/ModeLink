@@ -33,5 +33,24 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyId)
+        {
+            return await _context.Models
+                .Where(m => m.AgencyId == agencyId)
+                .Include(m => m.City).ThenInclude(c => c.Country)
+                .Include(m => m.Agency)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId)
+        {
+            return await _context.Models
+                .Where(m => ( m.AgencyId != agencyId && m.AgencyId != null) )
+                .Include(m => m.City).ThenInclude(c => c.Country)
+                .Include(m => m.Agency)
+                .Take(7) // limit to 7
+                .ToListAsync();
+        }
+
     }
 }
