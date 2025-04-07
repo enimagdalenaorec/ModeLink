@@ -16,7 +16,7 @@ export interface AgencySearchResultDto {
   name: string;
   cityName?: string | null; // null if no city
   countryName?: string | null; // null if no country
-  profilePictureBase64: string;
+  profilePicture: string;
 }
 
 export interface SuggestedAgencyDto {
@@ -24,5 +24,5 @@ export interface SuggestedAgencyDto {
   name: string;
   cityName?: string | null; // null if no city
   countryName?: string | null; // null if no country
-  profilePictureBase64: string;
+  profilePicture: string;
 }

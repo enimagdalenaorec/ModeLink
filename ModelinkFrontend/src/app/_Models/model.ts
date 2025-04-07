@@ -56,7 +56,7 @@ export interface ModelSearchResultDto {
   agencyName?: string | null; // null if not in an agency
   cityName?: string | null; // null if no city
   countryName?: string | null; // null if no country
-  profilePictureBase64: string;
+  profilePicture: string;
 }
 
 export interface SuggestedModelDto {
@@ -66,5 +66,5 @@ export interface SuggestedModelDto {
   agencyName?: string | null; // null if not in an agency
   cityName?: string | null; // null if no city
   countryName?: string | null; // null if no country
-  profilePictureBase64: string;
+  profilePicture: string;
 }

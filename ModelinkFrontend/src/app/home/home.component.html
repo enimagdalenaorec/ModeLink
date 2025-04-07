@@ -10,7 +10,7 @@
     </div>
     <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId)">
-        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -33,7 +33,7 @@
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem" (click)="select(agency.userId)">
-        <img [src]="agency.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
@@ -60,7 +60,7 @@
     </div>
     <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId)">
-        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -84,7 +84,7 @@
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
         (click)="select(agency.userId)">
-        <img [src]="agency.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
@@ -104,16 +104,16 @@
 <!-- suggestions for an agency -->
 <div *ngIf="role == 'agency' && searchQuery == ''" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
 
-  <div *ngIf="modelsByAgency != []" class="models-list-container mb-5">
+  <div class="models-list-container mb-5">
     <div class="flex justify-content-between">
       <p
         style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
         Your models</p>
       <p-divider class="text-200 w-11"></p-divider>
     </div>
-    <div class="models-list flex flex-wrap gap-4">
+    <div *ngIf="modelsByAgency.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId)">
-        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -125,19 +125,20 @@
         </div>
       </div>
     </div>
+    <div *ngIf="modelsByAgency.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No signed models yet. Check them out! </div>
   </div>
 
-  <div *ngIf="outsideFreelancerModels != []" class="models-list-container mb-5">
+  <div class="models-list-container mb-5">
     <div class="flex justify-content-between">
       <p
         style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
         Freelancers</p>
       <p-divider class="text-200 w-11"></p-divider>
     </div>
-    <div class="models-list flex flex-wrap gap-4">
+    <div *ngIf="outsideFreelancerModels.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of outsideFreelancerModels" class="item flex flex-column h-15rem"
         (click)="select(model.userId)">
-        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -149,19 +150,21 @@
         </div>
       </div>
     </div>
+    <div *ngIf="outsideFreelancerModels.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">There are no unsigned models currently. Keep an eye on any changes!</div>
+
   </div>
 
-  <div *ngIf="outsideSignedModels != []" class="models-list-container mb-5">
+  <div class="models-list-container mb-5">
     <div class="flex justify-content-between">
       <p
         style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
         Signed</p>
       <p-divider class="text-200 signed-divider"></p-divider>
     </div>
-    <div class="models-list flex flex-wrap gap-4">
+    <div *ngIf="outsideSignedModels.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of outsideSignedModels" class="item flex flex-column h-15rem"
         (click)="select(model.userId)">
-        <img [src]="model.profilePictureBase64" alt="Model Image" class="profile-picture"
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
           (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -173,6 +176,7 @@
         </div>
       </div>
     </div>
+    <div *ngIf="outsideSignedModels.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No other signed models yet. </div>
   </div>
 
   <div *ngIf="modelsByAgency == [] && outsideFreelancerModels == [] && outsideSignedModels == []"
