@@ -22,19 +22,19 @@ namespace ModelinkBackend.Repositories
         public async Task CreateUserAsync(User user)
         {
             _context.Users.Add(user);
-            await _context.SaveChangesAsync(); // ✅ Save the user to the database
+            await _context.SaveChangesAsync(); 
         }
 
         public async Task CreateModelAsync(Model model)
         {
             _context.Models.Add(model);
-            await _context.SaveChangesAsync(); // ✅ Save the model
+            await _context.SaveChangesAsync(); 
         }
 
         public async Task CreateAgencyAsync(Agency agency)
         {
             _context.Agencies.Add(agency);
-            await _context.SaveChangesAsync(); // ✅ Save the agency
+            await _context.SaveChangesAsync(); 
         }
 
         public async Task<City> GetCityByNameAsync(string cityName)

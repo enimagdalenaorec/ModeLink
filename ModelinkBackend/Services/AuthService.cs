@@ -39,15 +39,14 @@ namespace ModelinkBackend.Services
 
         public async Task<string> RegisterModelAsync(RegisterModelDto modelDto)
         {
-            // Check if user already exists
+            // check if user already exists
             var existingUser = await _authRepository.GetUserByEmailAsync(modelDto.Email);
             if (existingUser != null)
                 throw new Exception("User with this email already exists.");
 
-            // Hash password
+            // hash password
             var hashedPassword = HashPassword(modelDto.Password);
 
-            // Create and SAVE User FIRST
             var newUser = new User
             {
                 Email = modelDto.Email,
@@ -56,18 +55,16 @@ namespace ModelinkBackend.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _authRepository.CreateUserAsync(newUser); // ✅ Save User to get UserId
+            await _authRepository.CreateUserAsync(newUser); //  save User to get UserId
 
-            // Get City and Country
             var city = await _authRepository.GetCityByNameAsync(modelDto.City);
             var country = !string.IsNullOrEmpty(modelDto.CountryName)
                 ? await _authRepository.GetCountryByNameAsync(modelDto.CountryName)
                 : null;
 
-            // Create Model entity
             var newModel = new Model
             {
-                UserId = newUser.Id,  // ✅ Now UserId is available
+                UserId = newUser.Id, 
                 User = newUser,
                 FirstName = modelDto.FirstName,
                 LastName = modelDto.LastName,
@@ -81,7 +78,7 @@ namespace ModelinkBackend.Services
                 City = city
             };
 
-            // Save Model
+            // save Model
             await _authRepository.CreateModelAsync(newModel);
             // generate JWT token --> automatically logs in the user
             return _jwtService.GenerateToken(newUser.Id, newUser.Role);
@@ -89,15 +86,14 @@ namespace ModelinkBackend.Services
 
         public async Task<string> RegisterAgencyAsync(RegisterAgencyDto agencyDto)
         {
-            // Check if user already exists
+            // check if user already exists
             var existingUser = await _authRepository.GetUserByEmailAsync(agencyDto.Email);
             if (existingUser != null)
                 throw new Exception("User with this email already exists.");
 
-            // Hash password
+            // hash password
             var hashedPassword = HashPassword(agencyDto.Password);
 
-            // Create and SAVE User FIRST
             var newUser = new User
             {
                 Email = agencyDto.Email,
@@ -106,19 +102,18 @@ namespace ModelinkBackend.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _authRepository.CreateUserAsync(newUser); // ✅ Save User to get UserId
+            await _authRepository.CreateUserAsync(newUser); 
 
-            // Get City and Country
             var city = !string.IsNullOrEmpty(agencyDto.City)
                     ? await _authRepository.GetCityByNameAsync(agencyDto.City) : null;
             var country = !string.IsNullOrEmpty(agencyDto.CountryName)
                 ? await _authRepository.GetCountryByNameAsync(agencyDto.CountryName)
                 : null;
 
-            // Create Agency entity
+            // create Agency entity
             var newAgency = new Agency
             {
-                UserId = newUser.Id,  // Now UserId is available
+                UserId = newUser.Id,  
                 User = newUser,
                 Name = agencyDto.Name,
                 Description = agencyDto.Description,
@@ -127,7 +122,7 @@ namespace ModelinkBackend.Services
                 CityId = city == null ? null : city.Id
             };
 
-            // Save Agency
+            // save Agency
             await _authRepository.CreateAgencyAsync(newAgency);
             // generate JWT token --> automatically logs in the user
             return _jwtService.GenerateToken(newUser.Id, newUser.Role);
