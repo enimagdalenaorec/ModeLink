@@ -91,5 +91,21 @@ namespace ModelinkBackend.Services
             });
         }
 
+        public async Task<IEnumerable<EventCardDTO>> GetActiveEventsByAgencyIdAsync(int agencyId)
+        {
+            var events = await _agencyRepository.GetActiveEventsByAgencyIdAsync(agencyId);
+
+            return events.Select(e => new EventCardDTO
+            {
+                Id = e.Id,
+                Title = e.Title,
+                AgencyName = e.Agency?.Name,
+                CityName = e.City?.Name, // If null, return null
+                CountryName = e.City?.Country?.Name, // If null, return null
+                StartDate = e.EventStart.ToString("dd-MM"),
+                ProfilePicture = e.ProfilePictureBase64
+            });
+        }
+
     }
 }

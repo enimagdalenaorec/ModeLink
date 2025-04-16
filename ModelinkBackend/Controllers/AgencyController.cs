@@ -59,5 +59,12 @@ namespace ModelinkBackend.Controllers
             var models = await _agencyService.GetOutsideFreelanceModelsByAgencyIdAsync(agencyId);
             return Ok(models);
         }
+
+        [HttpGet("activeEvents/{agencyId}")]
+        public async Task<IActionResult> GetActiveEventsByAgencyId(int agencyId)
+        {
+            var events = await _agencyService.GetActiveEventsByAgencyIdAsync(agencyId);
+            return Ok(events);
+        }
     }
 }

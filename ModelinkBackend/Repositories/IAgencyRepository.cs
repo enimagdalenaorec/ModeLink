@@ -11,5 +11,6 @@ namespace ModelinkBackend.Repositories
         Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyId);
         Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId);
         Task<IEnumerable<Model>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyId);
+        Task<IEnumerable<Event>> GetActiveEventsByAgencyIdAsync(int agencyId);
     }
 }

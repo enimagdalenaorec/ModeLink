@@ -28,6 +28,8 @@ namespace ModelinkBackend.Models.Entities
 
         public DateTime? EventFinish { get; set; }
 
+        public string? ProfilePictureBase64 { get; set; }
+
         [Required]
         public required string Status { get; set; } // 'active', 'inactive'
 

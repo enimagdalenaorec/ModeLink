@@ -62,5 +62,14 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Event>> GetActiveEventsByAgencyIdAsync(int agencyId)
+        {
+            return await _context.Events
+                .Where(e => e.AgencyId == agencyId && e.EventStart > DateTime.UtcNow)
+                .Include(e => e.City).ThenInclude(c => c.Country)
+                .Include(e => e.Agency)
+                .ToListAsync();
+        }
+
     }
 }
