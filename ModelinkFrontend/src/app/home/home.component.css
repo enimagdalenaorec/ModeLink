@@ -43,3 +43,10 @@
 .divider-78 {
   width: 78%;
 }
+
+.truncate {
+  white-space: nowrap; /* Prevents the text from wrapping to the next line */
+  overflow: hidden; /* Hides the overflowing text */
+  text-overflow: ellipsis; /* Adds "..." at the end of the truncated text */
+  display: block; /* Ensures the element behaves like a block for proper truncation */
+}

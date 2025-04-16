@@ -28,5 +28,16 @@ namespace ModelinkBackend.Controllers
             var modelSuggestions = await _modelService.GetModelSuggestionsAsync();
             return Ok(modelSuggestions);
         }
+
+        [HttpGet("getStatusAndAgencyId/{modelId}")]
+        public async Task<IActionResult> GetModelStatusAndAgencyId(int modelId)
+        {
+            var modelStatusAndAgencyId = await _modelService.GetModelStatusAndAgencyIdAsync(modelId);
+            if (modelStatusAndAgencyId == null)
+            {
+                return NotFound();
+            }
+            return Ok(modelStatusAndAgencyId);
+        }
     }
 }

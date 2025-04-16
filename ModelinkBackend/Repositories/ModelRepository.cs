@@ -35,5 +35,21 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Model> GetModelByIdAsync(int modelId)
+        {
+            return await _context.Models
+                .Include(m => m.City).ThenInclude(c => c.Country)
+                .Include(m => m.Agency)
+                .FirstOrDefaultAsync(m => m.UserId == modelId);
+        }
+
+        public async Task<ModelStatusHistory> GetLatestModelStatus(int modelId)
+        {
+            return await _context.ModelStatusHistories
+                .Where(m => m.ModelId == modelId)
+                .OrderByDescending(m => m.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }

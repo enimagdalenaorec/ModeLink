@@ -46,5 +46,24 @@ namespace ModelinkBackend.Services
                 CountryName = m.City?.Country?.Name // if null, return null
             });
         }
+
+        public async Task<ModelStatusAndAgencyIdDTO> GetModelStatusAndAgencyIdAsync(int modelId)
+        {   
+            // get model by id (does not contain status property)
+            var model = await _modelRepository.GetModelByIdAsync(modelId);
+            if (model == null)
+            {
+                return null;
+            }
+
+            // get latest row for model id in the ModelStatusHistories table
+            var modelStatus = await _modelRepository.GetLatestModelStatus(modelId);
+
+            return new ModelStatusAndAgencyIdDTO
+            {
+                Status = modelStatus.Status,
+                AgencyId = model.Agency?.Id // Nullable if the model is freelance
+            };
+        }
     }
 }

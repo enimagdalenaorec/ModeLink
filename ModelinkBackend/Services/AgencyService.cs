@@ -102,7 +102,7 @@ namespace ModelinkBackend.Services
                 AgencyName = e.Agency?.Name,
                 CityName = e.City?.Name, // If null, return null
                 CountryName = e.City?.Country?.Name, // If null, return null
-                StartDate = e.EventStart.ToString("dd-MM"),
+                StartDate = e.EventStart.ToString("dd-MM-yyyy"),
                 ProfilePicture = e.ProfilePictureBase64
             });
         }

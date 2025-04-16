@@ -9,17 +9,23 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../_Services/auth.service';
 import { DividerModule } from 'primeng/divider';
+import { EventCardDto } from '../_Models/event';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, NgFor, HttpClientModule, DividerModule],
+  imports: [NgIf, NgFor, HttpClientModule, DividerModule, CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit, OnDestroy {
   apiUrl = environment.apiUrl;
   role: string | null = null; // user role
+  modelInfo = {
+    status: '', // model status (signed, freelancer, agency)
+    agencyId: null, // agency id (if model is signed)
+  } // only if logged in user is model
   userId: number | null = null; // user id
   // for search results
   models: ModelSearchResultDto[] = [];
@@ -34,10 +40,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   modelsByAgency: SuggestedModelDto[] = [];
   outsideSignedModels: SuggestedModelDto[] = [];
   outsideFreelancerModels: SuggestedModelDto[] = [];
+  eventsByMotherAgency: EventCardDto[] = []; // events by mother agency (for signed logged in model)
 
   private subscriptions: Subscription[] = []; // destroy on OnDestroy
 
-  constructor(private searchService: SearchService, private authService: AuthService, private router: Router, private http: HttpClient) {}
+  constructor(private searchService: SearchService, private authService: AuthService, private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
     // subscribe to the observables from the SearchService
@@ -78,6 +85,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.getModelsByAgency();
       this.getModelsOutsideAgency();
     }
+    if (this.role === 'model') {
+      this.getModelStatusAnAgencyId();
+    }
   }
 
   ngOnDestroy() {
@@ -85,12 +95,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  // for agency and models profiles
   select(id: number) {
     this.searchService.setSearchQuery(''); // clear search query
     // navigate to model's profile
     this.router.navigate(['/profile', id]);
-    console.log('Selected model id: ', id);
-    console.log(this.models);
+  }
+
+  // for event details page
+  selectEvent(id: number) {
+    this.searchService.setSearchQuery(''); // clear search query
+    this.router.navigate(['/event-details', id]);
   }
 
   onImageError(event: Event): void {
@@ -105,7 +120,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }, (error: any) => {
         console.error('Error fetching suggested models:', error);
       }
-    );
+      );
   }
 
   getSuggestedAgencies() {
@@ -115,7 +130,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }, (error: any) => {
         console.error('Error fetching suggested agencies:', error);
       }
-    );
+      );
   }
 
   getModelsByAgency() {
@@ -125,7 +140,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }, (error: any) => {
         console.error('Error fetching models by agency:', error);
       }
-    );
+      );
   }
 
   getModelsOutsideAgency() {
@@ -135,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }, (error: any) => {
         console.error('Error fetching models outside agency:', error);
       }
-    );
+      );
 
     this.http.get<SuggestedModelDto[]>(`${this.apiUrl}Agency/outsideFreelanceModels/${this.userId}`)
       .subscribe((data: SuggestedModelDto[]) => {
@@ -143,7 +158,43 @@ export class HomeComponent implements OnInit, OnDestroy {
       }, (error: any) => {
         console.error('Error fetching outside freelancer models:', error);
       }
+      );
+  }
+
+  getModelStatusAnAgencyId() {
+    this.http.get<{ status: string, agencyId: number }>(`${this.apiUrl}Model/getStatusAndAgencyId/${this.userId}`).subscribe(
+      (data: any) => {
+        this.modelInfo.status = data.status;
+        this.modelInfo.agencyId = data.agencyId;
+        if (this.modelInfo.status == 'signed') {
+          this.getEventsByMotherAgency(this.modelInfo.agencyId);
+        }
+        if (this.modelInfo.status == 'freelancer') {
+          this.getSuggestedAgencies();
+        }
+      }, (error: any) => {
+        console.error('Error fetching model status:', error);
+      }
     );
+  }
+
+  getEventsByMotherAgency(agencyId: number | null) {
+      this.http.get<EventCardDto[]>(`${this.apiUrl}Agency/activeEvents/${agencyId}`)
+        .subscribe((data: EventCardDto[]) => {
+          this.eventsByMotherAgency = data;
+          this.eventsByMotherAgency = this.eventsByMotherAgency.map(event => ({
+            ...event,
+            startDate: this.parseCustomDateString(event.startDate).toISOString() // Convert Date back to string
+          }));
+        }, (error: any) => {
+            console.error('Error fetching events by mother agency:', error);
+          }
+        );
+  }
+
+  parseCustomDateString(dateStr: string): Date {
+    const [day, month, year] = dateStr.split('-');
+    return new Date(Number(year), Number(month) - 1, Number(day)); // months are 0-indexed
   }
 
   isLoggedIn(): boolean {

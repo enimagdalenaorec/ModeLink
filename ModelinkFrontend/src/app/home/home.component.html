@@ -10,8 +10,7 @@
     </div>
     <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId)">
-        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
             <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
@@ -33,8 +32,7 @@
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem" (click)="select(agency.userId)">
-        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
           agency.countryName }}</p>
@@ -60,8 +58,7 @@
     </div>
     <div class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId)">
-        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
             <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
@@ -84,8 +81,7 @@
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
         (click)="select(agency.userId)">
-        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
           agency.countryName }}</p>
@@ -113,8 +109,7 @@
     </div>
     <div *ngIf="modelsByAgency.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId)">
-        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
             <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
@@ -125,7 +120,8 @@
         </div>
       </div>
     </div>
-    <div *ngIf="modelsByAgency.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No signed models yet. Check them out! </div>
+    <div *ngIf="modelsByAgency.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No
+      signed models yet. Check them out! </div>
   </div>
 
   <div class="models-list-container mb-5">
@@ -138,8 +134,7 @@
     <div *ngIf="outsideFreelancerModels.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of outsideFreelancerModels" class="item flex flex-column h-15rem"
         (click)="select(model.userId)">
-        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
             <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
@@ -150,7 +145,9 @@
         </div>
       </div>
     </div>
-    <div *ngIf="outsideFreelancerModels.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">There are no unsigned models currently. Keep an eye on any changes!</div>
+    <div *ngIf="outsideFreelancerModels.length == 0"
+      style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">There are no unsigned models currently.
+      Keep an eye on any changes!</div>
 
   </div>
 
@@ -164,8 +161,7 @@
     <div *ngIf="outsideSignedModels.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of outsideSignedModels" class="item flex flex-column h-15rem"
         (click)="select(model.userId)">
-        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
-          (error)="onImageError($event)" />
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
             <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
@@ -176,13 +172,99 @@
         </div>
       </div>
     </div>
-    <div *ngIf="outsideSignedModels.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No other signed models yet. </div>
+    <div *ngIf="outsideSignedModels.length == 0"
+      style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No other signed models yet. </div>
   </div>
 
   <div *ngIf="modelsByAgency == [] && outsideFreelancerModels == [] && outsideSignedModels == []"
     class="mt-4 align-self-center justify-self-center flex flex-column align-items-center">
     <img src="assets/images/not-found.png" alt="No results found" class="no-results-image h-24rem" />
-    <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No models suggestions.</h3>
+    <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No models suggestions.
+    </h3>
+  </div>
+
+</div>
+
+<!-- suggestions for a model -->
+<div *ngIf="role != 'agency' && searchQuery == '' && isLoggedIn()"
+  class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
+
+  <!-- if the model is signed -> show events from mother agency -->
+  <div *ngIf="modelInfo.status == 'signed'" class="event-list-container mb-5">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Active events posted by your agency</p>
+      <p-divider class="text-200 w-9"></p-divider>
+    </div>
+    <div *ngIf="eventsByMotherAgency.length != 0" class="models-list flex flex-wrap gap-4">
+      <div *ngFor="let event of eventsByMotherAgency" class="item flex flex-column h-15rem"
+        (click)="selectEvent(event.id)">
+        <img [src]="event.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
+        <div class="flex justify-content-between">
+          <div class="info">
+            <h4 class="mb-0 pr-2 pl-2 truncate" style="margin-top: 0.8rem;">{{ event.title }}</h4>
+            <p *ngIf="event.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ event.agencyName }}</p>
+          </div>
+          <div class="">
+            <p *ngIf="event.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ event.cityName }}</p>
+            <p *ngIf="event.startDate != null" class="location text-sm mb-0  pr-3">{{ event.startDate | date: 'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="eventsByMotherAgency.length == 0"
+      style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">Your agency hasn't posted any active
+      events. Keep updated!</div>
+  </div>
+
+  <!-- if the model is a freelancer -> show suggested agemcies -->
+  <div *ngIf="suggestedAgencies != [] && modelInfo.status == 'freelancer'" class="agency-list-container mb-5">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Suggested agencies</p>
+      <p-divider class="text-200 suggested-agency-divider"></p-divider>
+    </div>
+    <div class="agencies-list flex flex-wrap gap-4">
+      <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
+        (click)="select(agency.userId)">
+        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
+        <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
+        <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
+          agency.countryName }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- regardles of its status, and let them see some other suggested models -->
+  <div *ngIf="suggestedModels != []" class="models-list-container mb-5">
+    <div class="flex justify-content-between">
+      <p
+        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+        Check out other models</p>
+      <p-divider class="text-200 w-10"></p-divider>
+    </div>
+    <div class="models-list flex flex-wrap gap-4">
+      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId)">
+        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
+        <div class="flex justify-content-between">
+          <div class="info">
+            <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
+            <p *ngIf="model.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
+          </div>
+          <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
+            model.countryName }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="suggestedModels == [] && suggestedAgencies == [] && eventsByMotherAgency == []"
+    class="mt-4 align-self-center justify-self-center flex flex-column align-items-center">
+    <img src="assets/images/not-found.png" alt="No results found" class="no-results-image h-24rem" />
+    <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No model or agency
+      suggestions.</h3>
   </div>
 
 </div>
