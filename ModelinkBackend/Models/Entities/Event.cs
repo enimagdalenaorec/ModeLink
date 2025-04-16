@@ -23,6 +23,12 @@ namespace ModelinkBackend.Models.Entities
         public required int CityId { get; set; }
         public City City { get; set; } = null!;
 
+        [Column(TypeName = "decimal(9,6)")]
+        public decimal? Latitude { get; set; }
+
+        [Column(TypeName = "decimal(9,6)")]
+        public decimal? Longitude { get; set; }
+
         [Required]
         public required DateTime EventStart { get; set; }
 

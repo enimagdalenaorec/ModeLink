@@ -206,9 +206,9 @@
             <h4 class="mb-0 pr-2 pl-2 truncate" style="margin-top: 0.8rem;">{{ event.title }}</h4>
             <p *ngIf="event.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ event.agencyName }}</p>
           </div>
-          <div class="">
-            <p *ngIf="event.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ event.cityName }}</p>
-            <p *ngIf="event.startDate != null" class="location text-sm mb-0  pr-3">{{ event.startDate | date: 'dd/MM/yyyy' }}</p>
+          <div class="location">
+            <p *ngIf="event.cityName != null" class="text-sm mb-0 mt-3 pr-3">{{ event.cityName }}</p>
+            <p *ngIf="event.startDate != null" class="text-sm mb-0 mt-1 pr-3">{{ event.startDate | date: 'dd/MM/yyyy' }}</p>
           </div>
         </div>
       </div>
