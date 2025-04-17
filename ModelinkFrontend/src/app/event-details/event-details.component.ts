@@ -12,11 +12,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { EventDetailsDto } from '../_Models/event';
 import { AuthService } from '../_Services/auth.service';
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [HttpClientModule],
+  imports: [HttpClientModule, CommonModule, ButtonModule],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css'
 })
@@ -73,32 +75,30 @@ export class EventDetailsComponent implements OnInit {
   }
 
   async initMap() {
-    if (!this.mapContainer?.nativeElement) return;
-    if (this.mapInitialized) return;
+    if (!this.mapContainer?.nativeElement || this.mapInitialized) return;
 
     const L = await this.loadLeaflet();
 
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'assets/images/marker-icon-2x.png',
-      iconUrl: 'assets/images/marker-icon.png',
-      shadowUrl: 'assets/images/marker-shadow.png',
-    });
-
-    // Default location (centered somewhere initially)
     this.map = L.map(this.mapContainer.nativeElement).setView(
-      [51.505, -0.09],
-      15
+      [this.latitude, this.longitude],
+      13
     );
 
-    // Load OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
-    // Initialize marker
-    this.marker = L.marker([51.505, -0.09], { draggable: true }).addTo(
-      this.map
-    );
+    // Create icon manually
+    const icon = L.icon({
+      iconUrl: 'assets/images/marker-icon.png',
+      shadowUrl: 'assets/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    this.marker = L.marker([this.latitude, this.longitude], { icon }).addTo(this.map);
 
     this.mapInitialized = true;
   }

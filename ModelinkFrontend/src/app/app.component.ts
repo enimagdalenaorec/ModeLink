@@ -129,4 +129,8 @@ export class AppComponent implements OnInit {
     this.searchService.setAgencies([]);
     this.searchService.setSearchQuery('');
   }
+
+  isHomeRoute(): boolean {
+    return this.router.url === '/home' || this.router.url === '/home/' || this.router.url === '' || this.router.url === '/';
+  }
 }

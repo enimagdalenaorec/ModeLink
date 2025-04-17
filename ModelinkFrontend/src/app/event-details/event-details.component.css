@@ -21,6 +21,3 @@
   position: relative;
 }
 
-.leaflet-container:not(:first-child) {
-  display: none !important;
-}

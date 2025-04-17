@@ -5,7 +5,7 @@
     <h1 class="ml-2 mr-2">ModeLink</h1>
     <p-menubar [model]="items" />
   </div>
-  <div class="absolute ml-4 searchbar-container flex">
+  <div *ngIf="isHomeRoute()" class="absolute ml-4 searchbar-container flex">
     <input type="text" placeholder="Search models or agencies" class="searchbar" pInputText [(ngModel)]="searchQuery" />
     <p-button icon="pi pi-search" class="searchbar-button" (onClick)="search()"></p-button>
     <p-button icon="pi pi-times" class="searchbar-clear-button ml-2" *ngIf="searchQuery != '' " (onClick)="clearSearch()"></p-button>
