@@ -9,6 +9,9 @@
 /* Import PrimeFlex for layout utilities */
 @import 'primeflex/primeflex.css';
 
+@import url('leaflet/dist/leaflet.css');
+
+
 /* Custom colors */
 :root {
   --primary-color: #7da78d;

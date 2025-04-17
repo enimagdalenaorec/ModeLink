@@ -18,7 +18,7 @@ namespace ModelinkBackend.Controllers
             _eventService = eventService;
         }
 
-        [HttpGet("GetEventDetails/{eventId}/{userId}")]
+        [HttpGet("getEventDetails/{eventId}/{userId}")]
         public async Task<IActionResult> GetEventDetails(int eventId, int userId)
         {
             var eventDetails = await _eventService.GetEventDetails(eventId, userId);
