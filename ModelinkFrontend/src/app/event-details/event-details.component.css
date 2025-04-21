@@ -2,7 +2,7 @@
   flex: 0 0 44%;
   max-width: 44%;
   box-sizing: border-box;
-  height: 100%;
+  height: 88%;
   /* background-color: antiquewhite; */
 }
 
@@ -10,14 +10,25 @@
   flex: 0 0 56%;
   max-width: 56%;
   box-sizing: border-box;
-  height: 100%;
+  height: 88%;
   /* background-color: lightblue; */
 }
 
 #map {
   width: 100%;
-  height: 100%;
+  height: 88%;
   min-height: 300px;
   position: relative;
+}
+
+::ng-deep .p-button:disabled {
+  color: black !important;
+  cursor: not-allowed;
+}
+
+.profile-picture {
+  height: 70%;
+  width: auto;
+  object-fit: cover;
 }
 

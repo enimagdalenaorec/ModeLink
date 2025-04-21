@@ -1,6 +1,18 @@
-<div class="pl-4 pr-6 map-and-details flex flex-row flex-wrap h-24rem mt-6">
+<div class="pl-4 pr-6 map-and-details flex flex-row flex-wrap h-26rem mt-6">
   <div class="map h-full">
     <div #mapContainer id="map"></div>
+    <p class="text-xl font-medium	mb-0">
+      {{ eventDetails?.address }}
+    </p>
+    <p class="mt-1">
+      <span *ngIf="eventDetails?.cityName">
+        {{ eventDetails!.cityName}}
+        <span *ngIf="eventDetails?.countryName">,</span>
+      </span>
+      <span *ngIf="eventDetails?.countryName">
+        {{ eventDetails!.countryName }}
+      </span>
+    </p>
   </div>
   <div class="pl-5 details h-full flex flex-column justify-content-between">
     <div class="mb-3 title-and-agency">
@@ -10,12 +22,42 @@
       <p class="text-gray-600 text-base mt-1">{{eventDetails?.description}}</p>
     </div>
     <div class="time-and-buttons align-self-end flex flex-column">
-      <p class="mb-0 text-gray text-xl flex flex-row justify-content-end"><span class="text-base mt-1 mr-2">Start: </span> {{eventDetails?.eventStart | date: 'dd.MM.yyyy, HH:mm'}}</p>
-      <p class="mt-1 text-gray text-xl flex flex-row justify-content-end"><span class="text-base mt-1 mr-2">Finish: </span> {{eventDetails?.eventFinish | date: 'dd.MM.yyyy, HH:mm'}}</p>
+      <p class="mb-0 text-gray text-xl flex flex-row justify-content-end"><span class="text-base mt-1 mr-2">Start:
+        </span> {{eventDetails?.eventStart | date: 'dd.MM.yyyy, HH:mm'}}</p>
+      <p class="mt-1 text-gray text-xl flex flex-row justify-content-end"><span class="text-base mt-1 mr-2">Finish:
+        </span> {{eventDetails?.eventFinish | date: 'dd.MM.yyyy, HH:mm'}}</p>
       <div class="buttons flex flex-row justify-content-end">
-        <p-button class="mr-2">Unattend</p-button>
-        <p-button>Attend</p-button>
+        <p-button class="mr-2" (onClick)="toggleAttendance()" [disabled]="!isAttending">Unattend</p-button>
+        <p-button (onClick)="toggleAttendance()" [disabled]="isAttending">Attend</p-button>
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="eventDetails?.modelApplications != null" class="pl-4 mt-7 pr-6 model-applications">
+  <h2 class="text-base font-semibold text-gray-400 mb-1">Check out other applicants</h2>
+  <!-- <p-carousel
+  [value]="eventDetails!.modelApplications"
+  [numVisible]="3"
+  [numScroll]="1"
+  [circular]="false"
+  [responsiveOptions]="responsiveOptions">
+
+  <ng-template let-application #item>
+    <div (click)="goToModelProfile(application.id)" class="application-card flex flex-column gap-2 w-10rem h-10rem cursor-pointer">
+      <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
+      <p class="text-gray-600 text-sm align-self-center mt-0 font-semibold">
+        {{ application.firstName }} {{ application.lastName }}
+      </p>
+    </div>
+  </ng-template>
+</p-carousel> -->
+<div class="flex flex-row flex-wrap gap-3">
+  <ng-container *ngFor="let application of eventDetails?.modelApplications">
+    <div (click)="goToModelProfile(application.id)" class="application-card flex flex-column gap-2 w-10rem h-10rem">
+      <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
+      <p class="text-gray-600 text-sm align-self-center mt-0 font-semibold">{{ application.firstName }} {{application.lastName}}</p>
+    </div>
+  </ng-container>
+</div>
 </div>

@@ -14,11 +14,13 @@ import { EventDetailsDto } from '../_Models/event';
 import { AuthService } from '../_Services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { Router } from '@angular/router';
+import { CarouselModule } from 'primeng/carousel';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, ButtonModule],
+  imports: [HttpClientModule, CommonModule, ButtonModule, CarouselModule],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css'
 })
@@ -29,6 +31,9 @@ export class EventDetailsComponent implements OnInit {
   userId: number | null = null;
   apiUrl = environment.apiUrl;
   eventDetails: EventDetailsDto | null = null;
+  isAttending = false;
+  responsiveOptions: any[] = [];
+
 
   map!: L.Map | undefined;
   marker!: L.Marker;
@@ -40,6 +45,7 @@ export class EventDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private authService: AuthService,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -47,6 +53,24 @@ export class EventDetailsComponent implements OnInit {
     this.eventId = this.route.snapshot.paramMap.get('id');
     this.userId = this.authService.getUserId();
     this.getEventDetails(this.eventId, this.userId);
+
+    this.responsiveOptions = [
+      {
+        breakpoint: '1024px',
+        numVisible: 3,
+        numScroll: 1
+      },
+      {
+        breakpoint: '768px',
+        numVisible: 2,
+        numScroll: 1
+      },
+      {
+        breakpoint: '560px',
+        numVisible: 1,
+        numScroll: 1
+      }
+    ];
   }
 
   getEventDetails(eventId: string | null, userId: number | null) {
@@ -59,6 +83,7 @@ export class EventDetailsComponent implements OnInit {
           this.eventDetails = response;
           this.latitude = response.latitude || 0;
           this.longitude = response.longitude || 0;
+          this.isAttending = response.isAttending || false;
 
           if (isPlatformBrowser(this.platformId) && !this.mapInitialized) {
             this.initMap();
@@ -101,5 +126,11 @@ export class EventDetailsComponent implements OnInit {
     this.marker = L.marker([this.latitude, this.longitude], { icon }).addTo(this.map);
 
     this.mapInitialized = true;
+  }
+
+  toggleAttendance() {}
+
+  goToModelProfile(modelId: number) {
+    this.router.navigate(['/profile', modelId]);
   }
 }
