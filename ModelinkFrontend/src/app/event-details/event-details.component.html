@@ -14,12 +14,12 @@
       </span>
     </p>
   </div>
-  <div class="pl-5 details h-full flex flex-column justify-content-between">
+  <div class="details h-full flex flex-column justify-content-between">
     <div class="mb-3 title-and-agency">
       <h1 class="text-3xl mt-0 font-bold text-gray-800">{{ eventDetails?.title }}</h1>
       <p class="text-gray-600 text-xl mt-1">{{ eventDetails?.agencyName }}</p>
       <p class="text-gray-600 font-bold text-sm mt-6 mb-0">Description:</p>
-      <p class="text-gray-600 text-base mt-1">{{eventDetails?.description}}</p>
+      <p class="text-gray-600 text-base mt-1 description">{{eventDetails?.description}}</p>
     </div>
     <div class="time-and-buttons align-self-end flex flex-column">
       <p class="mb-0 text-gray text-xl flex flex-row justify-content-end"><span class="text-base mt-1 mr-2">Start:
@@ -35,15 +35,15 @@
 </div>
 
 <div *ngIf="eventDetails?.modelApplications != null" class="pl-4 mt-7 pr-6 model-applications">
-  <h2 class="text-base font-semibold text-gray-400 mb-1">Check out other applicants</h2>
-  <!-- <p-carousel
+  <h2 class="text-base font-semibold text-gray-400 mb-2">Check out other applicants</h2>
+  <p-carousel
   [value]="eventDetails!.modelApplications"
-  [numVisible]="3"
+  [numVisible]="4"
   [numScroll]="1"
-  [circular]="false"
-  [responsiveOptions]="responsiveOptions">
-
-  <ng-template let-application #item>
+  [circular]="true"
+  [responsiveOptions]="responsiveOptions"
+  >
+  <ng-template let-application pTemplate="item">
     <div (click)="goToModelProfile(application.id)" class="application-card flex flex-column gap-2 w-10rem h-10rem cursor-pointer">
       <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
       <p class="text-gray-600 text-sm align-self-center mt-0 font-semibold">
@@ -51,13 +51,13 @@
       </p>
     </div>
   </ng-template>
-</p-carousel> -->
-<div class="flex flex-row flex-wrap gap-3">
+</p-carousel>
+<!-- <div class="flex flex-row flex-wrap gap-3">
   <ng-container *ngFor="let application of eventDetails?.modelApplications">
     <div (click)="goToModelProfile(application.id)" class="application-card flex flex-column gap-2 w-10rem h-10rem">
       <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
       <p class="text-gray-600 text-sm align-self-center mt-0 font-semibold">{{ application.firstName }} {{application.lastName}}</p>
     </div>
   </ng-container>
-</div>
+</div> -->
 </div>
