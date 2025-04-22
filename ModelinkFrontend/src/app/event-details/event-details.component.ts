@@ -16,11 +16,19 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { CarouselModule } from 'primeng/carousel';
+import { ToastModule } from 'primeng/toast';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { CalendarModule } from 'primeng/calendar';
+import { FileUploadModule } from 'primeng/fileupload';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, ButtonModule, CarouselModule],
+  imports: [HttpClientModule, CommonModule, ButtonModule, CarouselModule, ToastModule, DialogModule, InputTextModule, CalendarModule, FileUploadModule, ConfirmDialogModule],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css'
 })
@@ -34,7 +42,8 @@ export class EventDetailsComponent implements OnInit {
   eventDetails: EventDetailsDto | null = null;
   isAttending = false;
   responsiveOptions: any[] = [];
-
+  editDialogVisible = false;
+  deleteDialogVisible = false;
 
   map!: L.Map | undefined;
   marker!: L.Marker;
@@ -47,6 +56,8 @@ export class EventDetailsComponent implements OnInit {
     private http: HttpClient,
     private authService: AuthService,
     private router: Router,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -137,6 +148,11 @@ export class EventDetailsComponent implements OnInit {
       .subscribe(
         () => {
           this.isAttending = !this.isAttending;
+          this.showToast(
+            'success',
+            this.isAttending ? 'Success' : 'Cancelled',
+            this.isAttending ? 'You are now attending the event!' : 'You have cancelled your attendance.'
+          );
           this.getEventDetails(this.eventId, this.userId); // refresh event details
         },
         (error) => {
@@ -148,4 +164,62 @@ export class EventDetailsComponent implements OnInit {
   goToModelProfile(modelId: number) {
     this.router.navigate(['/profile', modelId]);
   }
+
+  showToast(severity: string, summary: string, detail: string) {
+    this.messageService.add({ severity: severity, summary: summary, detail: detail });
+  }
+
+  cancelEditEventChanges() {
+    this.editDialogVisible = false;
+    this.getEventDetails(this.eventId, this.userId); // refresh event details
+  }
+
+  saveEditEventChanges() {
+    this.editDialogVisible = false;
+    this.http
+      .put(`${this.apiUrl}Event/editEvent/${this.eventId}`, this.eventDetails)
+      .subscribe(
+        () => {
+          this.showToast('success', 'Success', 'Event details updated successfully!');
+          this.getEventDetails(this.eventId, this.userId); // refresh event details
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to update event details.');
+          this.editDialogVisible = false; // close the dialog
+          console.error('Error updating event details:', error);
+        }
+      );
+  }
+
+  deleteEvent() {
+    this.deleteDialogVisible = false;
+    this.http
+      .delete(`${this.apiUrl}Event/deleteEvent/${this.eventId}`)
+      .subscribe(
+        () => {
+          this.showToast('success', 'Success', 'Event deleted successfully!');
+          this.router.navigate(['/profile', this.userId]); // redirect to agency profile page
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to delete the event.');
+          this.deleteDialogVisible = false; // close the dialog
+          console.error('Error deleting event:', error);
+        }
+      );
+    }
+
+    confirmDelete(event: any) {
+      this.confirmationService.confirm({
+        target: event.target,
+        message: 'Are you sure you want to delete this event?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.deleteEvent();
+        },
+        reject: () => {
+          this.deleteDialogVisible = false; // close the dialog
+        }
+      });
+    }
+
 }

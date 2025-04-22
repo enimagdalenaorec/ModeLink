@@ -94,3 +94,15 @@
 :host ::ng-deep .p-carousel .p-carousel-indicators {
   padding-top: 0% !important;
 }
+
+:host ::ng-deep .p-button.delete-button {
+  background-color: #e94c4c !important;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}
