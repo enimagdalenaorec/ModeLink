@@ -39,5 +39,16 @@ namespace ModelinkBackend.Controllers
             }
             return Ok(modelStatusAndAgencyId);
         }
+
+        [HttpPost("toggleEventAttendance/{eventId}/{modelId}")]
+        public async Task<IActionResult> ToggleEventAttendance(int eventId, int modelId)
+        {
+            var result = await _modelService.ToggleEventAttendanceAsync(eventId, modelId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to toggle attendance.");
+        }
     }
 }

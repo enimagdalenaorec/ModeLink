@@ -51,5 +51,39 @@ namespace ModelinkBackend.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<bool> IsModelAttendingEventAsync(int eventId, int modelId)
+        {
+            return await _context.ModelApplications
+                .AnyAsync(em => em.EventId == eventId && em.ModelId == modelId);
+        }
+
+        public async Task<bool> RemoveModelFromEventAsync(int eventId, int modelId)
+        {
+            var modelApplication = await _context.ModelApplications
+                .FirstOrDefaultAsync(em => em.EventId == eventId && em.ModelId == modelId);
+
+            if (modelApplication != null)
+            {
+                _context.ModelApplications.Remove(modelApplication);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> AddModelToEventAsync(int eventId, int modelId)
+        {
+            var modelApplication = new ModelApplication
+            {
+                EventId = eventId,
+                ModelId = modelId,
+                Status = "Attending"
+            };
+
+            await _context.ModelApplications.AddAsync(modelApplication);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

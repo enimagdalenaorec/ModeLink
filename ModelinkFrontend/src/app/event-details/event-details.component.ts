@@ -29,6 +29,7 @@ export class EventDetailsComponent implements OnInit {
 
   eventId: string | null = null;
   userId: number | null = null;
+  role: string | null = null;
   apiUrl = environment.apiUrl;
   eventDetails: EventDetailsDto | null = null;
   isAttending = false;
@@ -52,6 +53,7 @@ export class EventDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id');
     this.userId = this.authService.getUserId();
+    this.role = this.authService.getUserRole();
     this.getEventDetails(this.eventId, this.userId);
 
     this.responsiveOptions = [
@@ -128,7 +130,20 @@ export class EventDetailsComponent implements OnInit {
     this.mapInitialized = true;
   }
 
-  toggleAttendance() {}
+  toggleAttendance() {
+    if (this.role != 'model') return; // only models can toggle attendance
+    this.http
+      .post(`${this.apiUrl}Model/toggleEventAttendance/${this.eventId}/${this.userId}`, {})
+      .subscribe(
+        () => {
+          this.isAttending = !this.isAttending;
+          this.getEventDetails(this.eventId, this.userId); // refresh event details
+        },
+        (error) => {
+          console.error(`Error toggeling the event attendance:`, error);
+        }
+      );
+  }
 
   goToModelProfile(modelId: number) {
     this.router.navigate(['/profile', modelId]);

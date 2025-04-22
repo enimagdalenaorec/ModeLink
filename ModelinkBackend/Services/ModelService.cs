@@ -62,8 +62,25 @@ namespace ModelinkBackend.Services
             return new ModelStatusAndAgencyIdDTO
             {
                 Status = modelStatus.Status,
-                AgencyId = model.Agency?.Id // Nullable if the model is freelance
+                AgencyId = model.Agency?.Id // nullable if the model is freelance
             };
+        }
+
+        public async Task<bool> ToggleEventAttendanceAsync(int eventId, int modelId)
+        {
+            // is model already attending the event
+            var isAttending = await _modelRepository.IsModelAttendingEventAsync(eventId, modelId);
+
+            if (isAttending)
+            {
+                // if attending, remove the attendance
+                return await _modelRepository.RemoveModelFromEventAsync(eventId, modelId);
+            }
+            else
+            {
+                // ff not, add the attendance
+                return await _modelRepository.AddModelToEventAsync(eventId, modelId);
+            }
         }
     }
 }
