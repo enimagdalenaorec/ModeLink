@@ -14,7 +14,7 @@
       </span>
     </p>
   </div>
-  <div class="details h-full flex flex-column justify-content-between">
+  <div class="details flex flex-column justify-content-between">
     <div class="mb-3 title-and-agency">
       <h1 class="text-3xl mt-0 font-bold text-gray-800">{{ eventDetails?.title }}</h1>
       <p class="text-gray-600 text-xl mt-1">{{ eventDetails?.agencyName }}</p>
@@ -27,10 +27,12 @@
       <p class="mt-1 text-gray text-xl flex flex-row justify-content-end"><span class="text-base mt-1 mr-2">Finish:
         </span> {{eventDetails?.eventFinish | date: 'dd.MM.yyyy, HH:mm'}}</p>
       <div class="buttons flex flex-row justify-content-end">
-        <p-button *ngIf="role == 'model'" class="mr-2" (onClick)="toggleAttendance()" [disabled]="!isAttending">Unattend</p-button>
+        <p-button *ngIf="role == 'model'" class="mr-2" (onClick)="toggleAttendance()"
+          [disabled]="!isAttending">Unattend</p-button>
         <p-button *ngIf="role == 'model'" (onClick)="toggleAttendance()" [disabled]="isAttending">Attend</p-button>
         <p-button *ngIf="role == 'agency'" class="mr-2" (onClick)="editDialogVisible = true;">Edit</p-button>
-        <p-button *ngIf="role == 'agency'" styleClass="delete-button" (onClick)="deleteDialogVisible = true; confirmDelete($event)">Delete</p-button>
+        <p-button *ngIf="role == 'agency'" styleClass="delete-button"
+          (onClick)="deleteDialogVisible = true; confirmDelete($event)">Delete</p-button>
       </div>
     </div>
   </div>
@@ -38,23 +40,19 @@
 
 <div *ngIf="eventDetails?.modelApplications != null" class="pl-4 mt-7 pr-6 model-applications">
   <h2 class="text-base font-semibold text-gray-400 mb-2">Check out other applicants</h2>
-  <p-carousel
-  [value]="eventDetails!.modelApplications"
-  [numVisible]="4"
-  [numScroll]="1"
-  [circular]="true"
-  [responsiveOptions]="responsiveOptions"
-  >
-  <ng-template let-application pTemplate="item">
-    <div (click)="goToModelProfile(application.id)" class="application-card flex flex-column gap-2 w-10rem h-10rem cursor-pointer">
-      <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
-      <p class="text-gray-600 text-sm align-self-center mt-0 font-semibold">
-        {{ application.firstName }} {{ application.lastName }}
-      </p>
-    </div>
-  </ng-template>
-</p-carousel>
-<!-- <div class="flex flex-row flex-wrap gap-3">
+  <p-carousel [value]="eventDetails!.modelApplications" [numVisible]="4" [numScroll]="1" [circular]="true"
+    [responsiveOptions]="responsiveOptions">
+    <ng-template let-application pTemplate="item">
+      <div (click)="goToModelProfile(application.id)"
+        class="application-card flex flex-column gap-2 w-10rem h-10rem cursor-pointer">
+        <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
+        <p class="text-gray-600 text-sm align-self-center mt-0 font-semibold">
+          {{ application.firstName }} {{ application.lastName }}
+        </p>
+      </div>
+    </ng-template>
+  </p-carousel>
+  <!-- <div class="flex flex-row flex-wrap gap-3">
   <ng-container *ngFor="let application of eventDetails?.modelApplications">
     <div (click)="goToModelProfile(application.id)" class="application-card flex flex-column gap-2 w-10rem h-10rem">
       <img class="profile-picture border-round-lg" [src]="application.profilePicture" alt="Application Image" />
@@ -64,14 +62,47 @@
 </div> -->
 </div>
 
-<p-dialog header="Edit event" [modal]="true" [(visible)]="editDialogVisible" [style]="{ width: '40rem' }">
-  <div class="flex items-center gap-4 mb-4">
-      <label for="username" class="font-semibold w-24">Username</label>
-      <input pInputText id="username" class="flex-auto" autocomplete="off" />
+<p-dialog header="Edit event" [modal]="true" [(visible)]="editDialogVisible"
+  [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
+  <div class="attributes-container mb-4">
+    <div class="flex flex-column mb-2">
+      <label for="username" class="font-semibold w-24 mb-1">Title</label>
+      <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="updatedEventDetails.title" />
+    </div>
+    <div class="flex flex-column mb-2">
+      <label for="description" class="font-semibold w-24 mb-1">Description</label>
+      <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="updatedEventDetails.description"></textarea>
+    </div>
+    <div class="flex flex-column mb-2">
+      <label for="address" class="font-semibold w-24 mb-1">Address</label>
+      <input pInputText id="address" class="flex-auto" autocomplete="off" [(ngModel)]="updatedEventDetails.address" />
+    </div>
+    <div class="calendars flex mb-3">
+      <div class="flex flex-column mb-2 mr-4">
+        <label for="startDate" class="font-semibold w-24 mb-1">Start date</label>
+        <p-calendar inputId="calendar-24h" [(ngModel)]="updatedEventDetails.eventStart" [minDate]="minDate"
+          [showTime]="true" [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+      <div class="flex flex-column mb-2">
+        <label for="finishDate" class="font-semibold w-24 mb-1">Finish date</label>
+        <p-calendar [(ngModel)]="updatedEventDetails.eventFinish" [minDate]="minDate" [showTime]="true"
+          [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+    </div>
+    <div class="thumbnail flex gap-3 align-items-end mb-4">
+      <div class="flex flex-column">
+        <label for="profilePicture" class="font-semibold w-24 mb-1">Thumbnail picture</label>
+        <img *ngIf="updatedEventDetails.profilePicture" [src]="updatedEventDetails.profilePicture" alt="Event Image"
+          class="w-max h-10rem border-round-lg mb-2" />
+      </div>
+      <p-fileUpload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false" [customUpload]="true"
+        [maxFileSize]="1000000" (onSelect)="onFileSelected($event)" chooseLabel="Change Image">
+      </p-fileUpload>
+    </div>
   </div>
-  <div class="flex justify-end gap-2">
-      <p-button label="Cancel" severity="secondary" (onClick)="cancelEditEventChanges()" />
-      <p-button label="Save" (onClick)="saveEditEventChanges()" />
+  <div class="flex justify-end gap-2 mt-3">
+    <p-button label="Cancel" severity="secondary" (onClick)="cancelEditEventChanges()" />
+    <p-button label="Save" (onClick)="saveEditEventChanges()" />
   </div>
 </p-dialog>
 

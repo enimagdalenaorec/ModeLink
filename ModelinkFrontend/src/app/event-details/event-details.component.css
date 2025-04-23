@@ -106,3 +106,34 @@
 :host ::ng-deep .p-dialog .p-dialog-content {
   padding:  1.5rem 2rem 1.5rem !important;
 }
+
+/* :host ::ng-deep .p-dialog .p-calendar {
+  overflow: visible !important;
+  position: relative;
+}
+
+:host ::ng-deep .p-dialog-content {
+  overflow: visible !important;
+}
+
+:host ::ng-deep .p-calendar .p-datepicker {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+:host ::ng-deep .p-datepicker:not(.p-datepicker-inline) .p-datepicker-header {
+  background-color: var(--primary-color);
+}
+
+:host ::ng-deep .p-datepicker .p-datepicker-header .p-datepicker-title .p-datepicker-month {
+  color: white;
+}
+
+:host ::ng-deep .p-datepicker .p-datepicker-header .p-datepicker-title .p-datepicker-year {
+  color: white;
+} */
+
+:host ::ng-deep .p-button-secondary:hover {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+}

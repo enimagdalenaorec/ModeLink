@@ -33,3 +33,16 @@ export interface EventDetailsDto {
   isAttending: boolean;
 }
 
+export interface UpdateEventDto {
+  id: number;
+  title: string;
+  description: string;
+  address: string;
+  cityName?: string;
+  countryName?: string;
+  latitude?: number;
+  longitude?: number;
+  eventStart: Date; // ISO date string
+  eventFinish?: Date; // ISO date string
+  profilePicture?: string; // Base64 encoded string or URL
+}

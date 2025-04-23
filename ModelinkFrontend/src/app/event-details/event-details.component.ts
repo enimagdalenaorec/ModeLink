@@ -10,7 +10,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { EventDetailsDto } from '../_Models/event';
+import { EventDetailsDto, UpdateEventDto } from '../_Models/event';
 import { AuthService } from '../_Services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -23,11 +23,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CalendarModule } from 'primeng/calendar';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { FormsModule } from '@angular/forms';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, ButtonModule, CarouselModule, ToastModule, DialogModule, InputTextModule, CalendarModule, FileUploadModule, ConfirmDialogModule],
+  imports: [HttpClientModule, CommonModule, ButtonModule, CarouselModule, ToastModule, DialogModule, InputTextModule, CalendarModule, FileUploadModule, ConfirmDialogModule, FormsModule, InputTextareaModule],
   providers: [MessageService, ConfirmationService],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css'
@@ -44,6 +45,23 @@ export class EventDetailsComponent implements OnInit {
   responsiveOptions: any[] = [];
   editDialogVisible = false;
   deleteDialogVisible = false;
+  minDate: Date = new Date(new Date().setHours(0, 0, 0, 0)); // today's date, set to midnight
+
+  // for updating event details, populate in getEventDetails
+  updatedEventDetails: UpdateEventDto = {
+    id: 0,
+    title: '',
+    description: '',
+    address: '',
+    cityName: '',
+    countryName: '',
+    latitude: 0,
+    longitude: 0,
+    eventStart: new Date(),   // rmemember to transfor to string later
+    eventFinish: new Date(),
+    profilePicture: ''
+  };
+  pictureForUpdate: File | null = null;
 
   map!: L.Map | undefined;
   marker!: L.Marker;
@@ -101,6 +119,23 @@ export class EventDetailsComponent implements OnInit {
           if (isPlatformBrowser(this.platformId) && !this.mapInitialized) {
             this.initMap();
           }
+
+          // populate updateEventDetails with the current event details
+          this.updatedEventDetails.id = this.eventDetails?.id || 0;
+          this.updatedEventDetails.title = this.eventDetails?.title || '';
+          this.updatedEventDetails.description = this.eventDetails?.description || '';
+          this.updatedEventDetails.address = this.eventDetails?.address || '';
+          this.updatedEventDetails.cityName = this.eventDetails?.cityName || '';
+          this.updatedEventDetails.countryName = this.eventDetails?.countryName || '';
+          this.updatedEventDetails.latitude = this.eventDetails?.latitude || 0;
+          this.updatedEventDetails.longitude = this.eventDetails?.longitude || 0;
+          this.updatedEventDetails.eventStart = this.eventDetails?.eventStart
+            ? new Date(this.eventDetails.eventStart)
+            : new Date();
+          this.updatedEventDetails.eventFinish = this.eventDetails?.eventFinish
+            ? new Date(this.eventDetails.eventFinish)
+            : new Date();
+          this.updatedEventDetails.profilePicture = this.eventDetails?.profilePicture || '';
         },
         (error) => {
           console.error('Error fetching event details:', error);
@@ -174,10 +209,14 @@ export class EventDetailsComponent implements OnInit {
     this.getEventDetails(this.eventId, this.userId); // refresh event details
   }
 
-  saveEditEventChanges() {
+  async saveEditEventChanges() {
     this.editDialogVisible = false;
+    if (this.pictureForUpdate) {
+      const base64 = await this.convertFileToBase64(this.pictureForUpdate);
+      this.updatedEventDetails.profilePicture = base64;
+    }
     this.http
-      .put(`${this.apiUrl}Event/editEvent/${this.eventId}`, this.eventDetails)
+      .put(`${this.apiUrl}Event/editEvent/${this.eventId}`, this.updatedEventDetails)
       .subscribe(
         () => {
           this.showToast('success', 'Success', 'Event details updated successfully!');
@@ -206,20 +245,38 @@ export class EventDetailsComponent implements OnInit {
           console.error('Error deleting event:', error);
         }
       );
-    }
+  }
 
-    confirmDelete(event: any) {
-      this.confirmationService.confirm({
-        target: event.target,
-        message: 'Are you sure you want to delete this event?',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-          this.deleteEvent();
-        },
-        reject: () => {
-          this.deleteDialogVisible = false; // close the dialog
-        }
-      });
+  confirmDelete(event: any) {
+    this.confirmationService.confirm({
+      target: event.target,
+      message: 'Are you sure you want to delete this event?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteEvent();
+      },
+      reject: () => {
+        this.deleteDialogVisible = false; // close the dialog
+      }
+    });
+  }
+
+  async onFileSelected(event: any) {
+    const file = event.files[0];
+    if (file) {
+      this.pictureForUpdate = file;
+      const base64 = await this.convertFileToBase64(this.pictureForUpdate!);
+      this.updatedEventDetails.profilePicture = base64;
     }
+  }
+
+  convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  }
 
 }
