@@ -1,4 +1,5 @@
-﻿using ModelinkBackend.Models.Entities;
+﻿using ModelinkBackend.Models.DTOs;
+using ModelinkBackend.Models.Entities;
 
 public interface IAuthRepository
 {
@@ -8,4 +9,5 @@ public interface IAuthRepository
     Task CreateAgencyAsync(Agency agency);
     Task<City> GetCityByNameAsync(string cityName);
     Task<Country> GetCountryByNameAsync(string countryName);
+    Task CreateModelStatusHistoryAsync(CreateModelStatusHistoryDTO createModelStatusHistoryDto);
 }

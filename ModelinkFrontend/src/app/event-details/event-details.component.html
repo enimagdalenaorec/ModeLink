@@ -73,9 +73,15 @@
       <label for="description" class="font-semibold w-24 mb-1">Description</label>
       <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="updatedEventDetails.description"></textarea>
     </div>
-    <div class="flex flex-column mb-2">
-      <label for="address" class="font-semibold w-24 mb-1">Address</label>
-      <input pInputText id="address" class="flex-auto" autocomplete="off" [(ngModel)]="updatedEventDetails.address" />
+    <div class="flex flex-column mb-2 relative">
+      <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
+      <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+        (input)="onAddressSearch($event)" [(ngModel)]="selectedAddress" autocomplete="off" />
+      <ul *ngIf="addressSuggestions.length > 0" class="autocomplete-suggestions">
+        <li *ngFor="let suggestion of addressSuggestions" (click)="selectSuggestion(suggestion)">
+          {{ suggestion.display_name }}
+        </li>
+      </ul>
     </div>
     <div class="calendars flex mb-3">
       <div class="flex flex-column mb-2 mr-4">
@@ -100,9 +106,12 @@
       </p-fileUpload>
     </div>
   </div>
-  <div class="flex justify-end gap-2 mt-3">
-    <p-button label="Cancel" severity="secondary" (onClick)="cancelEditEventChanges()" />
-    <p-button label="Save" (onClick)="saveEditEventChanges()" />
+  <div class="form-invalid-message flex">
+    <p *ngIf="errorMessage != ''" class="justify-content-end mb-0 pb-0 mt-0">{{errorMessage}}</p>
+  </div>
+  <div class="flex justify-content-end gap-2 mt-3">
+    <p-button label="Cancel" (onClick)="cancelEditEventChanges()" />
+    <p-button label="Save" severity="secondary" (onClick)="saveEditEventChanges()" />
   </div>
 </p-dialog>
 

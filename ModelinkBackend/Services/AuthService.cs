@@ -80,6 +80,15 @@ namespace ModelinkBackend.Services
 
             // save Model
             await _authRepository.CreateModelAsync(newModel);
+            // add row in ModelStatusHistories table
+            CreateModelStatusHistoryDTO createModelStatusHistoryDTO = new CreateModelStatusHistoryDTO
+            {
+                ModelId = newModel.Id,
+                Status = "freelancer",
+                AgencyId = null, // nullable since model is after registration automatically freelancer
+                CreatedAt = DateTime.UtcNow
+            };
+            await _authRepository.CreateModelStatusHistoryAsync(createModelStatusHistoryDTO);
             // generate JWT token --> automatically logs in the user
             return _jwtService.GenerateToken(newUser.Id, newUser.Role);
         }

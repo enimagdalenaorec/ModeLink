@@ -47,17 +47,17 @@ namespace ModelinkBackend.Services
             });
         }
 
-        public async Task<ModelStatusAndAgencyIdDTO> GetModelStatusAndAgencyIdAsync(int modelId)
+        public async Task<ModelStatusAndAgencyIdDTO> GetModelStatusAndAgencyIdAsync(int userId)
         {   
-            // get model by id (does not contain status property)
-            var model = await _modelRepository.GetModelByIdAsync(modelId);
+            // get model by user id (does not contain status property)
+            var model = await _modelRepository.GetModelByIdAsync(userId);
             if (model == null)
             {
                 return null;
             }
 
             // get latest row for model id in the ModelStatusHistories table
-            var modelStatus = await _modelRepository.GetLatestModelStatus(modelId);
+            var modelStatus = await _modelRepository.GetLatestModelStatus(userId);
 
             return new ModelStatusAndAgencyIdDTO
             {

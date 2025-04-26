@@ -62,6 +62,9 @@ export class EventDetailsComponent implements OnInit {
     profilePicture: ''
   };
   pictureForUpdate: File | null = null;
+  addressSuggestions: any[] = [];
+  selectedAddress: string = '';
+  errorMessage: string = '';
 
   map!: L.Map | undefined;
   marker!: L.Marker;
@@ -136,6 +139,8 @@ export class EventDetailsComponent implements OnInit {
             ? new Date(this.eventDetails.eventFinish)
             : new Date();
           this.updatedEventDetails.profilePicture = this.eventDetails?.profilePicture || '';
+          // set selectedAddress for the address input field
+          this.selectedAddress = this.eventDetails?.address || '';
         },
         (error) => {
           console.error('Error fetching event details:', error);
@@ -210,11 +215,23 @@ export class EventDetailsComponent implements OnInit {
   }
 
   async saveEditEventChanges() {
-    this.editDialogVisible = false;
     if (this.pictureForUpdate) {
       const base64 = await this.convertFileToBase64(this.pictureForUpdate);
       this.updatedEventDetails.profilePicture = base64;
     }
+    // check all required fields are filled and if finish date is later then start date
+    if (this.formNotValid()) {
+      this.errorMessage = 'Please fill all required fields.';
+      return;
+    } else if ((this.updatedEventDetails.eventFinish ?? new Date()) < (this.updatedEventDetails.eventStart ?? new Date())) {
+      this.errorMessage = 'Finish date must be later than start date.';
+      return;
+    }
+    // in case address is not selected from autocomplete, set it to the selected address
+    if (this.updatedEventDetails.address === '') {
+      this.updatedEventDetails.address = this.selectedAddress;
+    }
+    this.errorMessage = '';
     this.http
       .put(`${this.apiUrl}Event/editEvent/${this.eventId}`, this.updatedEventDetails)
       .subscribe(
@@ -228,6 +245,7 @@ export class EventDetailsComponent implements OnInit {
           console.error('Error updating event details:', error);
         }
       );
+      this.editDialogVisible = false;
   }
 
   deleteEvent() {
@@ -277,6 +295,65 @@ export class EventDetailsComponent implements OnInit {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = error => reject(error);
     });
+  }
+
+  onAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 4) {         // minimum 4 characters
+      this.addressSuggestions = [];
+      return;
+    }
+
+    this.http
+      .get(`https://nominatim.openstreetmap.org/search`, {
+        params: {
+          q: query,
+          format: 'json',
+          addressdetails: '1',
+          limit: '6'
+        }
+      })
+      .subscribe((results: any) => {
+        // make sure the sugegstions always contain address
+        this.addressSuggestions = results.filter((result: any) => {
+          const address = result.address;
+          return (
+            address.road ||
+            address.neighbourhood ||
+            address.suburb
+          );
+        });
+      });
+  }
+
+  selectSuggestion(suggestion: any) {
+    this.selectedAddress = suggestion.display_name;
+    const road =
+      suggestion.address.road ||
+      suggestion.address.neighbourhood ||
+      suggestion.address.suburb ||
+      suggestion.address.city_district ||
+      '';
+    const houseNumber = suggestion.address?.house_number || '';
+    this.updatedEventDetails.address = `${road} ${houseNumber}`.trim();
+    this.updatedEventDetails.latitude = parseFloat(suggestion.lat);
+    this.updatedEventDetails.longitude = parseFloat(suggestion.lon);
+    this.updatedEventDetails.cityName = suggestion.address?.city || suggestion.address?.town || '';
+    this.updatedEventDetails.countryName = suggestion.address?.country || '';
+    this.addressSuggestions = [];
+  }
+
+  formNotValid() {
+    return this.updatedEventDetails.title === '' ||
+      this.updatedEventDetails.description === '' ||
+      this.updatedEventDetails.address === '' ||
+      this.updatedEventDetails.cityName === '' ||
+      this.updatedEventDetails.countryName === '' ||
+      this.updatedEventDetails.latitude === 0 ||
+      this.updatedEventDetails.longitude === 0 ||
+      this.updatedEventDetails.eventStart === null ||
+      this.updatedEventDetails.eventFinish === null ||
+      this.updatedEventDetails.profilePicture === ''
   }
 
 }

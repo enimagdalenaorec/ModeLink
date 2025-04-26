@@ -15,9 +15,16 @@
           <label class="text-xs mb-1" for="agencyEmail">MAIL</label>
           <input type="text" pInputText [(ngModel)]="agencyEmail" />
         </div>
-        <div class="flex flex-column mb-3">
+        <div class="flex flex-column mb-3 relative">
           <label class="text-xs mb-1" for="agencyAddress">ADDRESS</label>
-          <input type="text" pInputText [(ngModel)]="agencyAddress" />
+          <!-- <input type="text" pInputText [(ngModel)]="agencyAddress" /> -->
+          <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+          (input)="onAddressSearch($event)" [(ngModel)]="selectedAddress" autocomplete="off" />
+        <ul *ngIf="addressSuggestions.length > 0" class="autocomplete-suggestions">
+          <li *ngFor="let suggestion of addressSuggestions" (click)="selectAddressSuggestion(suggestion)">
+            {{ suggestion.display_name }}
+          </li>
+        </ul>
         </div>
         <div class="flex flex-column mb-3">
           <label class="text-xs mb-1" for="agencyPassword">PASSWORD</label>
@@ -52,9 +59,16 @@
           <label class="text-xs mb-1" for="modelEmail">MAIL</label>
           <input type="text" pInputText [(ngModel)]="modelEmail" />
         </div>
-        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column relative">
           <label class="text-xs mb-1" for="modelCity">CITY</label>
-          <input type="text" pInputText [(ngModel)]="modelCity" />
+          <input id="city-autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for city"
+            (input)="onCitySearch($event)" [(ngModel)]="selectedCity" autocomplete="off" />
+
+          <ul *ngIf="citySuggestions.length > 0" class="autocomplete-suggestions">
+            <li *ngFor="let suggestion of citySuggestions" (click)="selectCitySuggestion(suggestion)">
+              {{ suggestion.display_name }}
+            </li>
+          </ul>
         </div>
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelHeight">HEIGHT</label>
@@ -67,17 +81,20 @@
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelEyeColor">EYE COLOR</label>
           <!-- <input type="text" pInputText [(ngModel)]="modelEyeColor" /> -->
-          <p-dropdown [options]="eyeColors" styleClass="w-full dropdown" [(ngModel)]="modelEyeColor" placeholder="Select an eye color" />
+          <p-dropdown [options]="eyeColors" styleClass="w-full dropdown" [(ngModel)]="modelEyeColor"
+            placeholder="Select an eye color" />
         </div>
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelHairColor">HAIR COLOR</label>
           <!-- <input type="text" pInputText [(ngModel)]="modelHairColor" /> -->
-          <p-dropdown [options]="hairColors" styleClass="w-full dropdown" [(ngModel)]="modelHairColor" placeholder="Select a hair color" />
+          <p-dropdown [options]="hairColors" styleClass="w-full dropdown" [(ngModel)]="modelHairColor"
+            placeholder="Select a hair color" />
         </div>
         <div class="col-12 md:col-6 lg:col-4 flex flex-column">
           <label class="text-xs mb-1" for="modelSkinColor">SKIN COLOR</label>
           <!-- <input type="text" pInputText [(ngModel)]="modelSkinColor" /> -->
-          <p-dropdown [options]="skinColors" styleClass="w-full dropdown" [(ngModel)]="modelSkinColor" placeholder="Select a skin color" />
+          <p-dropdown [options]="skinColors" styleClass="w-full dropdown" [(ngModel)]="modelSkinColor"
+            placeholder="Select a skin color" />
         </div>
       </div>
       <!-- gender -->

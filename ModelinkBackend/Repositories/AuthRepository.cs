@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ModelinkBackend.Data;
 using ModelinkBackend.Models.Entities;
+using ModelinkBackend.Models.DTOs;
 using System.Threading.Tasks;
 
 namespace ModelinkBackend.Repositories
@@ -45,6 +46,20 @@ namespace ModelinkBackend.Repositories
         public async Task<Country> GetCountryByNameAsync(string countryName)
         {
             return await _context.Countries.FirstOrDefaultAsync(c => c.Name == countryName);
+        }
+
+        public async Task CreateModelStatusHistoryAsync(CreateModelStatusHistoryDTO createModelStatusHistoryDto)
+        {
+            var modelStatusHistory = new ModelStatusHistory
+            {
+                ModelId = createModelStatusHistoryDto.ModelId,
+                AgencyId = createModelStatusHistoryDto.AgencyId,
+                Status = createModelStatusHistoryDto.Status,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.ModelStatusHistories.Add(modelStatusHistory);
+            await _context.SaveChangesAsync();
         }
     }
 }
