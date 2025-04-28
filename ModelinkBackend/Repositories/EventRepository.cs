@@ -70,5 +70,11 @@ namespace ModelinkBackend.Repositories
             await _context.Cities.AddAsync(city);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteEventAsync(Event eventToDelete)
+        {
+            _context.Events.Remove(eventToDelete);
+            await _context.SaveChangesAsync();
+        }
     }
 }

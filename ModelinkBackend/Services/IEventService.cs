@@ -4,7 +4,8 @@ namespace ModelinkBackend.Services
 {
     public interface IEventService
     {
-        Task<EventDetailsDTO?> GetEventDetails(int eventId, int userId);
-        Task<EventDetailsDTO?> UpdateEvent(UpdateEventDTO updateEventDTO);
+        Task<EventDetailsDTO?> GetEventDetailsAsync(int eventId, int userId);
+        Task<EventDetailsDTO?> UpdateEventAsync(UpdateEventDTO updateEventDTO);
+        Task<EventDetailsDTO?> DeleteEventAsync(int eventId);
     }
 }

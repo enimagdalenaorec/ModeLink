@@ -15,7 +15,7 @@ namespace ModelinkBackend.Services
             _eventRepository = eventRepository;
         }
 
-        public async Task<EventDetailsDTO?> GetEventDetails(int eventId, int userId)
+        public async Task<EventDetailsDTO?> GetEventDetailsAsync(int eventId, int userId)
         {
             var eventDetails = await _eventRepository.GetEventDetailsAsync(eventId);
 
@@ -47,7 +47,7 @@ namespace ModelinkBackend.Services
             return eventDetailsDTO;
         }
 
-        public async Task<EventDetailsDTO?> UpdateEvent(UpdateEventDTO updateEventDTO)
+        public async Task<EventDetailsDTO?> UpdateEventAsync(UpdateEventDTO updateEventDTO)
         {
             var eventToUpdate = await _eventRepository.GetEventByIdAsync(updateEventDTO.Id);
             if (eventToUpdate == null)
@@ -115,6 +115,35 @@ namespace ModelinkBackend.Services
                 ProfilePicture = eventToUpdate.ProfilePictureBase64,
                 Status = eventToUpdate.Status.ToString(),
                 AgencyName = eventToUpdate.Agency?.Name
+            };
+        }
+
+        public async Task<EventDetailsDTO?> DeleteEventAsync(int eventId)
+        {
+            var eventToDelete = await _eventRepository.GetEventByIdAsync(eventId);
+            if (eventToDelete == null)
+            {
+                return null;
+            }
+
+            await _eventRepository.DeleteEventAsync(eventToDelete);
+
+            return new EventDetailsDTO
+            {
+                Id = eventToDelete.Id,
+                Title = eventToDelete.Title,
+                Description = eventToDelete.Description,
+                Address = eventToDelete.Address,
+                CityName = eventToDelete.City?.Name,
+                CountryName = eventToDelete.City?.Country?.Name,
+                CountryCode = eventToDelete.City?.Country?.Code,
+                Latitude = eventToDelete.Latitude,
+                Longitude = eventToDelete.Longitude,
+                EventStart = eventToDelete.EventStart,
+                EventFinish = eventToDelete.EventFinish,
+                ProfilePicture = eventToDelete.ProfilePictureBase64,
+                Status = eventToDelete.Status.ToString(),
+                AgencyName = eventToDelete.Agency?.Name
             };
         }
     }

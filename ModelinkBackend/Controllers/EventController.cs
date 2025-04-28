@@ -20,9 +20,9 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpGet("getEventDetails/{eventId}/{userId}")]
-        public async Task<IActionResult> GetEventDetails(int eventId, int userId)
+        public async Task<IActionResult> GetEventDetailsAsync(int eventId, int userId)
         {
-            var eventDetails = await _eventService.GetEventDetails(eventId, userId);
+            var eventDetails = await _eventService.GetEventDetailsAsync(eventId, userId);
             if (eventDetails == null)
             {
                 return NotFound();
@@ -31,14 +31,25 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPut("updateEvent/{eventId}")]
-        public async Task<IActionResult> UpdateEvent(int eventId, [FromBody] UpdateEventDTO updateEventDTO)
+        public async Task<IActionResult> UpdateEventAsync(int eventId, [FromBody] UpdateEventDTO updateEventDTO)
         {
             if (eventId != updateEventDTO.Id)
             {
                 return BadRequest("Event ID mismatch.");
             }
 
-            var result = await _eventService.UpdateEvent(updateEventDTO);
+            var result = await _eventService.UpdateEventAsync(updateEventDTO);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpDelete("deleteEvent/{eventId}")]
+        public async Task<IActionResult> DeleteEventAsync(int eventId)
+        {
+            var result = await _eventService.DeleteEventAsync(eventId);
             if (result == null)
             {
                 return NotFound();

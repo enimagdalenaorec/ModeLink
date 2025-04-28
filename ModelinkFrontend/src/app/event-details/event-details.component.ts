@@ -262,7 +262,9 @@ export class EventDetailsComponent implements OnInit {
       .subscribe(
         () => {
           this.showToast('success', 'Success', 'Event deleted successfully!');
-          this.router.navigate(['/profile', this.userId]); // redirect to agency profile page
+          setTimeout(() => {
+            this.router.navigate(['/profile', this.userId]); // redirect to agency profile page
+          }, 1000); // wait for 1 sec
         },
         (error) => {
           this.showToast('error', 'Error', 'Failed to delete the event.');

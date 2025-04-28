@@ -12,6 +12,6 @@ namespace ModelinkBackend.Repositories
         Task<Country?> GetCountryByNameAsync(string countryName);
         Task CreateCountryAsync(Country country);
         Task CreateCityAsync(City city);
-
+        Task DeleteEventAsync(Event eventToDelete);
     }
 }
