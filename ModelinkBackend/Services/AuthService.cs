@@ -57,10 +57,35 @@ namespace ModelinkBackend.Services
 
             await _authRepository.CreateUserAsync(newUser); //  save User to get UserId
 
-            var city = await _authRepository.GetCityByNameAsync(modelDto.City);
             var country = !string.IsNullOrEmpty(modelDto.CountryName)
-                ? await _authRepository.GetCountryByNameAsync(modelDto.CountryName)
+            ? await _authRepository.GetCountryByNameAsync(modelDto.CountryName)
+            : null;
+
+            if (country == null && !string.IsNullOrEmpty(modelDto.CountryName) && !string.IsNullOrEmpty(modelDto.CountryCode))
+            {
+                // create new country
+                country = new Country 
+                {
+                    Name = modelDto.CountryName,
+                    Code = modelDto.CountryCode 
+                };
+                await _authRepository.CreateCountryAsync(country);
+            }
+
+            var city = !string.IsNullOrEmpty(modelDto.City)
+                ? await _authRepository.GetCityByNameAsync(modelDto.City)
                 : null;
+
+            if (city == null && !string.IsNullOrEmpty(modelDto.City) && country != null)
+            {
+                // create new city
+                city = new City
+                {
+                    Name = modelDto.City,
+                    CountryId = country.Id // associate city with country if available
+                };
+                await _authRepository.CreateCityAsync(city);
+            }
 
             var newModel = new Model
             {
@@ -111,13 +136,35 @@ namespace ModelinkBackend.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _authRepository.CreateUserAsync(newUser); 
+            await _authRepository.CreateUserAsync(newUser);
+
+            var country = !string.IsNullOrEmpty(agencyDto.CountryName)
+            ? await _authRepository.GetCountryByNameAsync(agencyDto.CountryName)
+            : null;
+
+            if (country == null && !string.IsNullOrEmpty(agencyDto.CountryName) && !string.IsNullOrEmpty(agencyDto.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = agencyDto.CountryName,
+                    Code = agencyDto.CountryCode
+                };
+                await _authRepository.CreateCountryAsync(country);
+            }
 
             var city = !string.IsNullOrEmpty(agencyDto.City)
-                    ? await _authRepository.GetCityByNameAsync(agencyDto.City) : null;
-            var country = !string.IsNullOrEmpty(agencyDto.CountryName)
-                ? await _authRepository.GetCountryByNameAsync(agencyDto.CountryName)
+                ? await _authRepository.GetCityByNameAsync(agencyDto.City)
                 : null;
+
+            if (city == null && !string.IsNullOrEmpty(agencyDto.City) && country != null)
+            {
+                city = new City
+                {
+                    Name = agencyDto.City,
+                    CountryId = country.Id
+                };
+                await _authRepository.CreateCityAsync(city);
+            }
 
             // create Agency entity
             var newAgency = new Agency

@@ -61,5 +61,17 @@ namespace ModelinkBackend.Repositories
             _context.ModelStatusHistories.Add(modelStatusHistory);
             await _context.SaveChangesAsync();
         }
+
+        public async Task CreateCountryAsync(Country country)
+        {
+            _context.Countries.Add(country);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CreateCityAsync(City city)
+        {
+            _context.Cities.Add(city);
+            await _context.SaveChangesAsync();
+        }
     }
 }
