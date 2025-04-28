@@ -1,6 +1,6 @@
 ﻿namespace ModelinkBackend.Models.DTOs
 {
-    public class EventDetailsDTO
+    public class UpdateEventDTO
     {
         public int Id { get; set; }
         public string Title { get; set; } = null!;
@@ -15,17 +15,5 @@
         public DateTime? EventFinish { get; set; }
         public string ProfilePicture { get; set; } = null!;
         public string Status { get; set; } = null!;
-        public string AgencyName { get; set; } = null!;
-        public List<ModelApplicationOverviewDTO> ModelApplications { get; set; } = new(); 
-        public Boolean isAttending { get; set; } = false;
-
-    }
-
-    public class ModelApplicationOverviewDTO
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
-        public string? ProfilePicture { get; set; } = null!;
     }
 }

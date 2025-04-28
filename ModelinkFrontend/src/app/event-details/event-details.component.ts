@@ -25,6 +25,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { on } from 'events';
 @Component({
   selector: 'app-event-details',
   standalone: true,
@@ -55,11 +56,13 @@ export class EventDetailsComponent implements OnInit {
     address: '',
     cityName: '',
     countryName: '',
+    countryCode: '',
     latitude: 0,
     longitude: 0,
     eventStart: new Date(),   // rmemember to transfor to string later
     eventFinish: new Date(),
-    profilePicture: ''
+    profilePicture: '',
+    status: ''
   };
   pictureForUpdate: File | null = null;
   addressSuggestions: any[] = [];
@@ -130,8 +133,10 @@ export class EventDetailsComponent implements OnInit {
           this.updatedEventDetails.address = this.eventDetails?.address || '';
           this.updatedEventDetails.cityName = this.eventDetails?.cityName || '';
           this.updatedEventDetails.countryName = this.eventDetails?.countryName || '';
+          this.updatedEventDetails.countryCode = this.eventDetails?.countryCode || '';
           this.updatedEventDetails.latitude = this.eventDetails?.latitude || 0;
           this.updatedEventDetails.longitude = this.eventDetails?.longitude || 0;
+          this.updatedEventDetails.status = this.eventDetails?.status || '';
           this.updatedEventDetails.eventStart = this.eventDetails?.eventStart
             ? new Date(this.eventDetails.eventStart)
             : new Date();
@@ -211,6 +216,8 @@ export class EventDetailsComponent implements OnInit {
 
   cancelEditEventChanges() {
     this.editDialogVisible = false;
+    this.pictureForUpdate = null; // reset the picture for update
+    this.onFileSelected({ files: [] }); // reset the file input
     this.getEventDetails(this.eventId, this.userId); // refresh event details
   }
 
@@ -233,7 +240,7 @@ export class EventDetailsComponent implements OnInit {
     }
     this.errorMessage = '';
     this.http
-      .put(`${this.apiUrl}Event/editEvent/${this.eventId}`, this.updatedEventDetails)
+      .put(`${this.apiUrl}Event/updateEvent/${this.eventId}`, this.updatedEventDetails)
       .subscribe(
         () => {
           this.showToast('success', 'Success', 'Event details updated successfully!');
@@ -279,12 +286,15 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
-  async onFileSelected(event: any) {
+  async onFileSelected(event: any, fileUpload?: any) {
     const file = event.files[0];
     if (file) {
       this.pictureForUpdate = file;
       const base64 = await this.convertFileToBase64(this.pictureForUpdate!);
       this.updatedEventDetails.profilePicture = base64;
+    }
+    if (fileUpload) {
+      fileUpload.clear(); // clear the file input after selection
     }
   }
 
@@ -340,6 +350,7 @@ export class EventDetailsComponent implements OnInit {
     this.updatedEventDetails.longitude = parseFloat(suggestion.lon);
     this.updatedEventDetails.cityName = suggestion.address?.city || suggestion.address?.town || '';
     this.updatedEventDetails.countryName = suggestion.address?.country || '';
+    this.updatedEventDetails.countryCode = suggestion.address?.country_code || '';
     this.addressSuggestions = [];
   }
 
@@ -347,10 +358,6 @@ export class EventDetailsComponent implements OnInit {
     return this.updatedEventDetails.title === '' ||
       this.updatedEventDetails.description === '' ||
       this.updatedEventDetails.address === '' ||
-      this.updatedEventDetails.cityName === '' ||
-      this.updatedEventDetails.countryName === '' ||
-      this.updatedEventDetails.latitude === 0 ||
-      this.updatedEventDetails.longitude === 0 ||
       this.updatedEventDetails.eventStart === null ||
       this.updatedEventDetails.eventFinish === null ||
       this.updatedEventDetails.profilePicture === ''

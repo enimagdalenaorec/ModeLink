@@ -22,6 +22,7 @@ export interface EventDetailsDto {
   address: string;
   cityName?: string;
   countryName?: string;
+  countryCode?: string;
   latitude?: number;
   longitude?: number;
   eventStart: string; // ISO date string
@@ -40,9 +41,11 @@ export interface UpdateEventDto {
   address: string;
   cityName?: string;
   countryName?: string;
+  countryCode?: string;
   latitude?: number;
   longitude?: number;
   eventStart: Date; // ISO date string
   eventFinish?: Date; // ISO date string
-  profilePicture?: string; // Base64 encoded string or URL
+  profilePicture?: string; // base64
+  status?: string; // "active"  "inactive"
 }

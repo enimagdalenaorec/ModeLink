@@ -17,7 +17,7 @@ namespace ModelinkBackend.Services
 
         public async Task<EventDetailsDTO?> GetEventDetails(int eventId, int userId)
         {
-            var eventDetails = await _eventRepository.GetEventDetails(eventId);
+            var eventDetails = await _eventRepository.GetEventDetailsAsync(eventId);
 
             EventDetailsDTO eventDetailsDTO = new EventDetailsDTO
             {
@@ -27,6 +27,7 @@ namespace ModelinkBackend.Services
                 Address = eventDetails.Address,
                 CityName = eventDetails.City.Name,
                 CountryName = eventDetails.City?.Country?.Name,
+                CountryCode = eventDetails.City?.Country?.Code,
                 Latitude = eventDetails.Latitude,
                 Longitude = eventDetails.Longitude,
                 EventStart = eventDetails.EventStart,
@@ -44,6 +45,77 @@ namespace ModelinkBackend.Services
                 isAttending = eventDetails.ModelApplications.Any(ma => ma.ModelId == userId)
             };
             return eventDetailsDTO;
+        }
+
+        public async Task<EventDetailsDTO?> UpdateEvent(UpdateEventDTO updateEventDTO)
+        {
+            var eventToUpdate = await _eventRepository.GetEventByIdAsync(updateEventDTO.Id);
+            if (eventToUpdate == null)
+            {
+                return null;
+            }
+
+            // Check or create country first
+            var country = !string.IsNullOrEmpty(updateEventDTO.CountryName)
+                ? await _eventRepository.GetCountryByNameAsync(updateEventDTO.CountryName)
+                : null;
+
+            if (country == null && !string.IsNullOrEmpty(updateEventDTO.CountryName) && !string.IsNullOrEmpty(updateEventDTO.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = updateEventDTO.CountryName,
+                    Code = updateEventDTO.CountryCode
+                };
+                await _eventRepository.CreateCountryAsync(country);
+            }
+
+            // Now check or create city
+            var city = !string.IsNullOrEmpty(updateEventDTO.CityName)
+                ? await _eventRepository.GetCityByNameAsync(updateEventDTO.CityName)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(updateEventDTO.CityName) && country != null)
+            {
+                city = new City
+                {
+                    Name = updateEventDTO.CityName,
+                    CountryId = country.Id
+                };
+                await _eventRepository.CreateCityAsync(city);
+            }
+
+            // Now update event
+            eventToUpdate.Title = updateEventDTO.Title;
+            eventToUpdate.Description = updateEventDTO.Description;
+            eventToUpdate.Address = updateEventDTO.Address;
+            eventToUpdate.CityId = city.Id;
+            eventToUpdate.Latitude = updateEventDTO.Latitude;
+            eventToUpdate.Longitude = updateEventDTO.Longitude;
+            eventToUpdate.EventStart = updateEventDTO.EventStart;
+            eventToUpdate.EventFinish = updateEventDTO.EventFinish;
+            eventToUpdate.ProfilePictureBase64 = updateEventDTO.ProfilePicture;
+            eventToUpdate.Status = updateEventDTO.Status;
+
+            await _eventRepository.UpdateEventAsync(eventToUpdate);
+
+            return new EventDetailsDTO
+            {
+                Id = eventToUpdate.Id,
+                Title = eventToUpdate.Title,
+                Description = eventToUpdate.Description,
+                Address = eventToUpdate.Address,
+                CityName = eventToUpdate.City?.Name,
+                CountryName = eventToUpdate.City?.Country?.Name,
+                CountryCode = eventToUpdate.City?.Country?.Code,
+                Latitude = eventToUpdate.Latitude,
+                Longitude = eventToUpdate.Longitude,
+                EventStart = eventToUpdate.EventStart,
+                EventFinish = eventToUpdate.EventFinish,
+                ProfilePicture = eventToUpdate.ProfilePictureBase64,
+                Status = eventToUpdate.Status.ToString(),
+                AgencyName = eventToUpdate.Agency?.Name
+            };
         }
     }
 }

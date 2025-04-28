@@ -5,6 +5,13 @@ namespace ModelinkBackend.Repositories
 {
     public interface IEventRepository
     {
-        Task<Event?> GetEventDetails(int eventId);
+        Task<Event?> GetEventDetailsAsync(int eventId);
+        Task<Event?> GetEventByIdAsync(int eventId);
+        Task<City?> GetCityByNameAsync(string cityName);
+        Task<Event?> UpdateEventAsync(Event eventToUpdate);
+        Task<Country?> GetCountryByNameAsync(string countryName);
+        Task CreateCountryAsync(Country country);
+        Task CreateCityAsync(City city);
+
     }
 }
