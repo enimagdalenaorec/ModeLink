@@ -5,6 +5,8 @@ import { RegistrationComponent } from './registration/registration/registration.
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
+import { ModelProfileComponent } from './profile/model-profile/model-profile.component';
+import { AgencyProfileComponent } from './profile/agency-profile/agency-profile.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +32,14 @@ export const routes: Routes = [
   {
     path: 'event-details/:id',
     component: EventDetailsComponent
+  },
+  {
+    path: 'model-profile/:id',
+    component: ModelProfileComponent
+  },
+  {
+    path: 'agency-profile/:id',
+    component: AgencyProfileComponent
   },
   {
     path: '**',

@@ -44,6 +44,10 @@
   width: 78%;
 }
 
+.divider-81 {
+  width: 81%;
+}
+
 .truncate {
   white-space: nowrap; /* Prevents the text from wrapping to the next line */
   overflow: hidden; /* Hides the overflowing text */

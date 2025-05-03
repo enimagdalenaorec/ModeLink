@@ -9,7 +9,7 @@ export interface EventCardDto {
 }
 
 export interface ModelApplicationOverviewDto {
-  id: number;
+  id: number; // userId of the model
   firstName: string;
   lastName: string;
   profilePicture?: string;
@@ -30,7 +30,7 @@ export interface EventDetailsDto {
   profilePicture: string;
   status: string;
   agencyName: string;
-  modelApplications: ModelApplicationOverviewDto[];
+  modelApplications: ModelApplicationOverviewDto[]; // id is the userId of the model
   isAttending: boolean;
 }
 

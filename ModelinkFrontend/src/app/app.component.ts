@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
       {
         label: 'Profile',
         icon: 'pi pi-user',
-        command: () => this.navigateTo('/profile')
+        command: () => this.navigateToProfile('/profile')
       }
     ];
 
@@ -62,9 +62,24 @@ export class AppComponent implements OnInit {
     this.router.navigate([route]);
   }
 
+  navigateToProfile(route: string): void {
+    if (this.authService.isLoggedIn()) {
+      const role = this.authService.getUserRole();
+      const userId = this.authService.getUserId();
+      if (role === 'model') {
+        this.router.navigate(['/model-profile', userId]);
+      } else if (role === 'agency') {
+        this.router.navigate(['/agency-profile', userId]);
+      }
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+
   logout(): void {
     this.authService.clearToken();
-    this.navigateTo('/login');
+    this.router.navigate(['/login']);
   }
 
   search(): void {

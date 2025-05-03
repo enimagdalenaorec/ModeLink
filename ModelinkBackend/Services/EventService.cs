@@ -18,6 +18,10 @@ namespace ModelinkBackend.Services
         public async Task<EventDetailsDTO?> GetEventDetailsAsync(int eventId, int userId)
         {
             var eventDetails = await _eventRepository.GetEventDetailsAsync(eventId);
+            if(eventDetails == null)
+            {
+                return null;
+            }
 
             EventDetailsDTO eventDetailsDTO = new EventDetailsDTO
             {
@@ -37,7 +41,7 @@ namespace ModelinkBackend.Services
                 AgencyName = eventDetails.Agency.Name,
                 ModelApplications = eventDetails.ModelApplications.Select(ma => new ModelApplicationOverviewDTO
                 {
-                    Id = ma.Id,
+                    Id = ma.Model.UserId,
                     FirstName = ma.Model.FirstName,
                     LastName = ma.Model.LastName,
                     ProfilePicture = ma.Model.ProfilePictureBase64

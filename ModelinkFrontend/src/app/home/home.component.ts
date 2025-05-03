@@ -96,10 +96,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   // for agency and models profiles
-  select(id: number) {
+  select(id: number, role: string) {
     this.searchService.setSearchQuery(''); // clear search query
-    // navigate to model's profile
-    this.router.navigate(['/profile', id]);
+    this.router.navigate([`/${role}-profile`, id]);
   }
 
   // for event details page

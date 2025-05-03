@@ -149,6 +149,7 @@ export class EventDetailsComponent implements OnInit {
         },
         (error) => {
           console.error('Error fetching event details:', error);
+          this.router.navigate(['/home']);
         }
       );
   }
@@ -206,8 +207,8 @@ export class EventDetailsComponent implements OnInit {
       );
   }
 
-  goToModelProfile(modelId: number) {
-    this.router.navigate(['/profile', modelId]);
+  goToModelProfile(userId: number) {
+    this.router.navigate(['/model-profile', userId]);
   }
 
   showToast(severity: string, summary: string, detail: string) {
@@ -263,7 +264,7 @@ export class EventDetailsComponent implements OnInit {
         () => {
           this.showToast('success', 'Success', 'Event deleted successfully!');
           setTimeout(() => {
-            this.router.navigate(['/profile', this.userId]); // redirect to agency profile page
+            this.router.navigate(['/agency-profile', this.userId]); // redirect to agency profile page
           }, 1000); // wait for 1 sec
         },
         (error) => {
@@ -363,6 +364,12 @@ export class EventDetailsComponent implements OnInit {
       this.updatedEventDetails.eventStart === null ||
       this.updatedEventDetails.eventFinish === null ||
       this.updatedEventDetails.profilePicture === ''
+  }
+
+  isEventFinished() {
+    const eventFinishDate = new Date(this.eventDetails?.eventFinish || '');
+    const today = new Date(new Date().setHours(0, 0, 0, 0)); // today's date, set to midnight
+    return eventFinishDate < today;
   }
 
 }

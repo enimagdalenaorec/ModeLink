@@ -29,7 +29,7 @@
       <div class="buttons flex flex-row justify-content-end">
         <p-button *ngIf="role == 'model'" class="mr-2" (onClick)="toggleAttendance()"
           [disabled]="!isAttending">Unattend</p-button>
-        <p-button *ngIf="role == 'model'" (onClick)="toggleAttendance()" [disabled]="isAttending">Attend</p-button>
+        <p-button *ngIf="role == 'model'" (onClick)="toggleAttendance()" [disabled]="isAttending || isEventFinished()">Attend</p-button>
         <p-button *ngIf="role == 'agency'" class="mr-2" (onClick)="editDialogVisible = true;">Edit</p-button>
         <p-button *ngIf="role == 'agency'" styleClass="delete-button"
           (onClick)="deleteDialogVisible = true; confirmDelete($event)">Delete</p-button>

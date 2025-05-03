@@ -9,7 +9,7 @@
       <p-divider class="text-200 divider-79"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId)">
+      <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -31,7 +31,7 @@
       <p-divider class="text-200 divider-78"></p-divider>
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
-      <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem" (click)="select(agency.userId)">
+      <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem" (click)="select(agency.userId, 'agency')">
         <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
@@ -57,7 +57,7 @@
       <p-divider class="text-200 suggested-divider"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId)">
+      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -80,7 +80,7 @@
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
-        (click)="select(agency.userId)">
+        (click)="select(agency.userId, 'agency')">
         <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
@@ -108,7 +108,7 @@
       <p-divider class="text-200 w-11"></p-divider>
     </div>
     <div *ngIf="modelsByAgency.length != 0" class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId)">
+      <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -133,7 +133,7 @@
     </div>
     <div *ngIf="outsideFreelancerModels.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of outsideFreelancerModels" class="item flex flex-column h-15rem"
-        (click)="select(model.userId)">
+        (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -160,7 +160,7 @@
     </div>
     <div *ngIf="outsideSignedModels.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let model of outsideSignedModels" class="item flex flex-column h-15rem"
-        (click)="select(model.userId)">
+        (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -194,8 +194,8 @@
     <div class="flex justify-content-between">
       <p
         style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
-        Active events posted by your agency</p>
-      <p-divider class="text-200 w-9"></p-divider>
+        Events posted by your agency</p>
+      <p-divider class="text-200 divider-81"></p-divider>
     </div>
     <div *ngIf="eventsByMotherAgency.length != 0" class="models-list flex flex-wrap gap-4">
       <div *ngFor="let event of eventsByMotherAgency" class="item flex flex-column h-15rem"
@@ -228,7 +228,7 @@
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
       <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
-        (click)="select(agency.userId)">
+        (click)="select(agency.userId, 'agency')">
         <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
@@ -246,7 +246,7 @@
       <p-divider class="text-200 w-10"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId)">
+      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
