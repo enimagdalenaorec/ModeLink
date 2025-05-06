@@ -40,6 +40,8 @@ namespace ModelinkBackend.Repositories
             return await _context.Models
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
+                .Include(m => m.User)
+                .Include(m => m.ModelApplications).ThenInclude(ma => ma.Event)
                 .FirstOrDefaultAsync(m => m.UserId == userId);
         }
 

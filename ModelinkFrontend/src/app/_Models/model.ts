@@ -68,3 +68,32 @@ export interface SuggestedModelDto {
   countryName?: string | null; // null if no country
   profilePicture: string;
 }
+
+export interface ModelApplicationForCalendarDTO {
+  applicationId: number;
+  eventId: number;
+  eventName: string;
+  eventStart: string; // ISO 8601 string format (DateTime in C#)
+  eventFinish: string; // ISO 8601 string format (DateTime in C#)
+}
+
+export interface ModelInfoDTO {
+  userId: number;
+  modelId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  agencyName: string;
+  agencyId: number;
+  cityName: string;
+  countryName: string;
+  countryCode: string;
+  height: number;
+  weight: number;
+  eyeColor: string;
+  hairColor: string;
+  skinColor: string;
+  gender: string;
+  modelApplications: ModelApplicationForCalendarDTO[];
+  profilePicture: string;
+}

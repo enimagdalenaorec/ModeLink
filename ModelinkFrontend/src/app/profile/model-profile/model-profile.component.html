@@ -1,1 +1,30 @@
-<p>model-profile works!</p>
+<div class="profile-container p-3 pr-5 pl-5">
+  <div class="left-panel pr-3">
+    <div class="profile-header flex justify-content-start align-items-center mt-2">
+      <img class="border-circle profile-picture" [src]="modelInfo.profilePicture" alt="Profile Image" />
+      <div class="pl-4">
+        <h2 class="font-semibold text-5xl mb-1 mt-0">{{modelInfo.firstName}}
+          {{modelInfo.lastName}}</h2>
+        <p class="font-medium text-2xl mb-1 mt-1"
+          *ngIf="modelInfo.agencyId != null || modelInfo.agencyId != '' || modelInfo.agencyId != 0">
+          {{modelInfo.agencyName}}
+        </p>
+      </div>
+    </div>
+    <div class="mt-3 mb-3 additional-info">
+      <p class="text-lg font-medium" *ngIf="modelInfo.cityName != '' || modelInfo.cityName != null"><i
+          class="pi pi-map-marker mr-2"></i> {{modelInfo.cityName}},
+        {{modelInfo.countryName}}</p>
+      <p class="mb-1 mt-1 text-lg font-medium"><i class="pi pi-envelope mr-2"></i> {{modelInfo.email}}</p>
+    </div>
+    <p-calendar [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy" [readonlyInput]="true">
+      <ng-template pTemplate="date" let-date>
+        <span [ngClass]="{
+          'highlighted-date': isHighlightedDate(date.day, date.month, date.year)
+        }">
+          {{ date.day }}
+        </span>
+      </ng-template></p-calendar>
+  </div>
+  <div class="right-panel">aa</div>
+</div>

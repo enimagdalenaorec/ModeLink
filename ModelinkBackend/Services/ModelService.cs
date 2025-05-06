@@ -82,5 +82,48 @@ namespace ModelinkBackend.Services
                 return await _modelRepository.AddModelToEventAsync(eventId, modelId);
             }
         }
+
+        public async Task<ModelInfoDTO> GetModelDetailsAsync(int userId)
+        {
+            var model = await _modelRepository.GetModelByIdAsync(userId);
+
+            if (model == null)
+            {
+                return null;
+            }
+
+            var modelApplicationsDto = model.ModelApplications.Select(a => new ModelApplicationForCalendarDTO
+            {
+                ApplicationId = a.Id,
+                EventId = a.EventId,
+                EventName = a.Event.Title,
+                EventStart = a.Event.EventStart,
+                EventFinish = (DateTime)a.Event.EventFinish
+            }).ToArray();
+
+            var modelInfo = new ModelInfoDTO
+            {
+                ModelApplications = modelApplicationsDto,
+                UserId = model.UserId,
+                ModelId = model.Id,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.User.Email,
+                AgencyName = model.Agency?.Name,
+                AgencyId = model.Agency.Id,
+                CityName = model.City?.Name,
+                CountryName = model.City?.Country?.Name,
+                CountryCode = model.City?.Country?.Code,
+                Height = model.Height,
+                Weight = model.Weight,
+                EyeColor = model.EyeColor,
+                HairColor = model.HairColor,
+                SkinColor = model.SkinColor,
+                Gender = model.Sex,
+                ProfilePicture = model.ProfilePictureBase64
+            };
+
+            return modelInfo;
+        }
     }
 }

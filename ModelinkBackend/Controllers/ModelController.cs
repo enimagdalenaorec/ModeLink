@@ -50,5 +50,17 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to toggle attendance.");
         }
+
+        // gets basic model info (without posts)
+        [HttpGet("getModelDetails/{userId}")]
+        public async Task<IActionResult> GetModelDetails(int userId)
+        {
+            var modelDetails = await _modelService.GetModelDetailsAsync(userId);
+            if (modelDetails == null)
+            {
+                return NotFound();
+            }
+            return Ok(modelDetails);
+        }
     }
 }

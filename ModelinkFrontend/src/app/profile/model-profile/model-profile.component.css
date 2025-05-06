@@ -1,0 +1,36 @@
+.profile-container {
+  display: flex;
+}
+
+.left-panel {
+  width: 40%;
+}
+
+.right-panel {
+  width: 60%;
+}
+
+.profile-picture {
+  height: 190px;
+  width: 190px;
+  object-fit: cover;
+}
+
+:host ::ng-deep .p-datepicker .p-datepicker-header {
+  background: none;
+}
+
+:host ::ng-deep .p-datepicker table td {
+  padding: 0.20rem;
+  padding-left: 0.40rem;
+  padding-right: 0.40rem;
+}
+
+.highlighted-date {
+  background-color: whitesmoke;
+  border-radius: 50%;
+  padding: 0.45rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
