@@ -3,11 +3,11 @@
 }
 
 .left-panel {
-  width: 40%;
+  width: 38%;
 }
 
 .right-panel {
-  width: 60%;
+  width: 62%;
 }
 
 .profile-picture {
@@ -21,9 +21,9 @@
 }
 
 :host ::ng-deep .p-datepicker table td {
-  padding: 0.20rem;
-  padding-left: 0.40rem;
-  padding-right: 0.40rem;
+  padding: 0.10rem;
+  padding-left: 0.20rem;
+  padding-right: 0.20rem;
 }
 
 .highlighted-date {
@@ -34,3 +34,25 @@
   color: var(--primary-color);
 }
 
+:host ::ng-deep .p-chip {
+  background-color: #d2dad5;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  color: #565757;
+}
+
+@media screen and (max-width: 1092px) {
+  .profile-container {
+    flex-direction: column;
+  }
+  .left-panel {
+    width: 100%;
+  }
+  .right-panel {
+    width: 100%;
+  }
+}

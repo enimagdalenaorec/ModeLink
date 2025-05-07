@@ -11,11 +11,31 @@
         </p>
       </div>
     </div>
-    <div class="mt-3 mb-3 additional-info">
+    <div class="mt-3 mb-2 additional-info">
       <p class="text-lg font-medium" *ngIf="modelInfo.cityName != '' || modelInfo.cityName != null"><i
           class="pi pi-map-marker mr-2"></i> {{modelInfo.cityName}},
         {{modelInfo.countryName}}</p>
-      <p class="mb-1 mt-1 text-lg font-medium"><i class="pi pi-envelope mr-2"></i> {{modelInfo.email}}</p>
+      <p class="mb-4 mt-1 text-lg font-medium"><i class="pi pi-envelope mr-2"></i> {{modelInfo.email}}</p>
+      <div class="attribute-chip-container flex flex-wrap gap-2">
+        <p-chip [label]="modelInfo.gender">
+          <i class="fas fa-venus-mars" style="margin-right: 8px;"></i>
+        </p-chip>
+        <p-chip [label]="modelInfo.height.toString() + ' cm'">
+          <i class="fas fa-ruler-vertical" style="margin-right: 8px;"></i>
+        </p-chip>
+        <p-chip [label]="modelInfo.weight.toString() + ' kg'">
+          <i class="fas fa-weight" style="margin-right: 8px;"></i>
+        </p-chip>
+        <p-chip [label]="modelInfo.hairColor + ' hair'">
+          <i class="fas fa-paint-brush" style="margin-right: 8px;"></i>
+        </p-chip>
+        <p-chip [label]="modelInfo.eyeColor">
+          <i class="fas fa-eye" style="margin-right: 8px;"></i>
+        </p-chip>
+        <p-chip [label]="modelInfo.skinColor + ' skin'">
+          <i class="fas fa-user" style="margin-right: 8px;"></i>
+        </p-chip>
+      </div>
     </div>
     <p-calendar [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy" [readonlyInput]="true">
       <ng-template pTemplate="date" let-date>

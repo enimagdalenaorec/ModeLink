@@ -7,10 +7,12 @@ import { AuthService } from '../../_Services/auth.service';
 import { environment } from '../../../environments/environment';
 import { CalendarModule } from 'primeng/calendar';
 import { NgIf } from '@angular/common';
+import { ChipModule } from 'primeng/chip';
+
 @Component({
   selector: 'app-model-profile',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf],
+  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule],
   templateUrl: './model-profile.component.html',
   styleUrl: './model-profile.component.css'
 })

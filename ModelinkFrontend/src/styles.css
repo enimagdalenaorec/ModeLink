@@ -1,17 +1,16 @@
 @import 'primeng/resources/themes/lara-light-indigo/theme.css';
 
-/* Import PrimeNG core styles */
 @import 'primeng/resources/primeng.min.css';
 
-/* Import PrimeIcons for icon support */
 @import 'primeicons/primeicons.css';
 
-/* Import PrimeFlex for layout utilities */
 @import 'primeflex/primeflex.css';
 
 @import url('leaflet/dist/leaflet.css');
 
 @import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 
 
 /* Custom colors */
