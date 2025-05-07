@@ -125,5 +125,24 @@ namespace ModelinkBackend.Services
 
             return modelInfo;
         }
+
+        public async Task<IEnumerable<PortfolioPostDTO>> GetPortfolioAsync(int modelId)
+        {
+            var portfolioPosts = await _modelRepository.GetPortfolioPostsAsync(modelId);
+
+            if (portfolioPosts == null)
+            {
+                return null;
+            }
+
+            return portfolioPosts.Select(p => new PortfolioPostDTO
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                CreatedAt = p.CreatedAt,
+                Images = p.PortfolioImages.Select(i => i.ImageBase64).ToList()
+            }).ToList();
+        }
     }
 }

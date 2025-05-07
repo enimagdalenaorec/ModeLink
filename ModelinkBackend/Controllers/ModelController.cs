@@ -62,5 +62,17 @@ namespace ModelinkBackend.Controllers
             }
             return Ok(modelDetails);
         }
+
+        // gets model portfolio (profile) posts
+        [HttpGet("getPortfolioPosts/{modelId}")]
+        public async Task<IActionResult> GetModelPortfolio(int modelId)
+        {
+            var portfolioPosts = await _modelService.GetPortfolioAsync(modelId);
+            if (portfolioPosts == null)
+            {
+                return NotFound();
+            }
+            return Ok(portfolioPosts);
+        }
     }
 }

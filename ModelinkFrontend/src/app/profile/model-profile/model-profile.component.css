@@ -10,7 +10,7 @@
   width: 62%;
 }
 
-.profile-picture {
+.picture {
   height: 190px;
   width: 190px;
   object-fit: cover;
@@ -55,4 +55,49 @@
   .right-panel {
     width: 100%;
   }
+}
+
+.profile-picture {
+  height: 100%;
+  width: auto;
+  object-fit: cover;
+}
+
+
+:host ::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+  background-color: var(--accent-color) !important;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator button {
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next .p-icon-wrapper {
+  color: var(--accent-color) !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev .p-icon-wrapper {
+  color: var(--accent-color) !important;
+  background-color: none !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-indicators {
+  padding-top: 0% !important;
+}
+
+.post {
+  height: 70vh;
+}
+
+.limited-carousel {
+  max-width: 50vw;
+  max-height: 68vh;
+  margin: 0 auto;
+}
+
+.limited-carousel img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }

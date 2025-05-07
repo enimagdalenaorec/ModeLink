@@ -2,17 +2,17 @@ import { Component, model, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ModelApplicationForCalendarDTO, ModelInfoDTO } from '../../_Models/model';
+import { ModelApplicationForCalendarDTO, ModelInfoDTO, PortfolioPostDTO } from '../../_Models/model';
 import { AuthService } from '../../_Services/auth.service';
 import { environment } from '../../../environments/environment';
 import { CalendarModule } from 'primeng/calendar';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { ChipModule } from 'primeng/chip';
-
+import { CarouselModule } from 'primeng/carousel';
 @Component({
   selector: 'app-model-profile',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule],
+  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule, NgFor, CarouselModule],
   templateUrl: './model-profile.component.html',
   styleUrl: './model-profile.component.css'
 })
@@ -40,10 +40,29 @@ export class ModelProfileComponent implements OnInit {
     modelApplications: [],
   };
   highlightedDates: Date[] = [];  // for calendar
+  portfolioPosts: PortfolioPostDTO[] = [];
+  responsiveOptions: any[] = [];
 
   constructor(private router: Router, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.responsiveOptions = [
+      {
+        breakpoint: '1024px',
+        numVisible: 3,
+        numScroll: 1
+      },
+      {
+        breakpoint: '768px',
+        numVisible: 2,
+        numScroll: 1
+      },
+      {
+        breakpoint: '560px',
+        numVisible: 1,
+        numScroll: 1
+      }
+    ];
     // get userId from url
     this.userId = this.route.snapshot.paramMap.get('id') || '';
     // fetch model info
@@ -54,9 +73,18 @@ export class ModelProfileComponent implements OnInit {
     this.http.get<ModelInfoDTO>(this.apiUrl + 'Model/getModelDetails/' + this.userId).subscribe(
       (response) => {
         this.modelInfo = response;
-        console.log(this.modelInfo);
+        // console.log(this.modelInfo);
         this.highlightedDates = this.modelInfo.modelApplications.map((application) =>
           new Date(application.eventFinish)
+        );
+        // get posts
+        this.http.get<PortfolioPostDTO[]>(this.apiUrl + 'Model/getPortfolioPosts/' + this.modelInfo.modelId).subscribe(
+          (posts) => {
+            this.portfolioPosts = posts;
+          },
+          (error) => {
+            console.error('Error fetching portfolio posts:', error);
+          }
         );
       }, (error) => {
         console.error('Error fetching model info:', error);
@@ -70,5 +98,32 @@ export class ModelProfileComponent implements OnInit {
       d.getMonth() === month &&
       d.getFullYear() === year
     );
+  }
+
+  onDateClick(date: Date) {
+    const clickedDate = new Date(date);
+    // find id of the event whose date is finish date
+    const eventId = this.modelInfo.modelApplications.find((event) => {
+      const eventFinishDate = new Date(event.eventFinish);
+      return eventFinishDate.getTime() === clickedDate.getTime();
+    })?.eventId;
+    if (eventId) {
+      this.router.navigate(['/event-details', eventId]);
+    } else {
+      console.log('No event found for the clicked date.');
+    }
+  }
+
+  formatDate(isoString: string): string {
+    const date = new Date(isoString);
+
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // getMonth() is zero-based
+    const year = date.getFullYear();
+
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
   }
 }

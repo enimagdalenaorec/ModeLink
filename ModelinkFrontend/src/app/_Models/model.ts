@@ -97,3 +97,12 @@ export interface ModelInfoDTO {
   modelApplications: ModelApplicationForCalendarDTO[];
   profilePicture: string;
 }
+
+export interface PortfolioPostDTO {
+  id: number;
+  title: string;
+  description: string;
+  createdAt: string; // ISO 8601 string (e.g., "2025-05-07T12:00:00Z")
+  images: string[];
+}
+

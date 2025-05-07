@@ -13,6 +13,7 @@ namespace ModelinkBackend.Repositories
         Task<bool> IsModelAttendingEventAsync(int eventId, int modelId);
         Task<bool> RemoveModelFromEventAsync(int eventId, int modelId);
         Task<bool> AddModelToEventAsync(int eventId, int modelId);
+        Task<IEnumerable<PortfolioPost>> GetPortfolioPostsAsync(int modelId);
 
     }
 }

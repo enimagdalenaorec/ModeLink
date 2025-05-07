@@ -1,7 +1,7 @@
 <div class="profile-container p-3 pr-5 pl-5">
   <div class="left-panel pr-3">
     <div class="profile-header flex justify-content-start align-items-center mt-2">
-      <img class="border-circle profile-picture" [src]="modelInfo.profilePicture" alt="Profile Image" />
+      <img class="border-circle picture" [src]="modelInfo.profilePicture" alt="Profile Image" />
       <div class="pl-4">
         <h2 class="font-semibold text-5xl mb-1 mt-0">{{modelInfo.firstName}}
           {{modelInfo.lastName}}</h2>
@@ -41,10 +41,24 @@
       <ng-template pTemplate="date" let-date>
         <span [ngClass]="{
           'highlighted-date': isHighlightedDate(date.day, date.month, date.year)
-        }">
+        }" (click)="onDateClick(date)"
+          [style.cursor]="isHighlightedDate(date.day, date.month, date.year) ? 'pointer' : 'default'">
           {{ date.day }}
         </span>
       </ng-template></p-calendar>
   </div>
-  <div class="right-panel">aa</div>
+  <div class="right-panel flex flex-column align-items-center justify-content-center">
+    <div *ngFor="let post of portfolioPosts" class="post">
+      <div class="flex align-items-center justify-content-beetwen">
+        <p>{{post.title}}</p>
+        <p>{{formatDate(post.createdAt)}}</p>
+      </div>
+      <!-- <p-carousel *ngIf="post?.images!.length > 0" [value]="post!.images" [numVisible]="1" [numScroll]="1"
+        [circular]="true" [responsiveOptions]="responsiveOptions" class="limited-carousel">
+        <ng-template let-image pTemplate="item">
+          <img class="profile-picture border-round-lg" [src]="image" alt="Post Image" />
+        </ng-template>
+      </p-carousel> -->
+    </div>
+  </div>
 </div>

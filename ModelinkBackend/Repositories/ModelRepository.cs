@@ -87,5 +87,12 @@ namespace ModelinkBackend.Repositories
             return true;
         }
 
+        public async Task<IEnumerable<PortfolioPost>> GetPortfolioPostsAsync(int modelId)
+        {
+            return await _context.PortfolioPosts
+                .Where(p => p.ModelId == modelId)
+                .Include(p => p.PortfolioImages)
+                .ToListAsync();
+        }
     }
 }
