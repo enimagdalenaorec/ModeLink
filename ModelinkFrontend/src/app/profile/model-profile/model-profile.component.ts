@@ -8,11 +8,12 @@ import { environment } from '../../../environments/environment';
 import { CalendarModule } from 'primeng/calendar';
 import { NgIf, NgFor } from '@angular/common';
 import { ChipModule } from 'primeng/chip';
-import { CarouselModule } from 'primeng/carousel';
+import { GalleriaModule } from 'primeng/galleria';
+import { DividerModule } from 'primeng/divider';
 @Component({
   selector: 'app-model-profile',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule, NgFor, CarouselModule],
+  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule, NgFor, GalleriaModule, DividerModule],
   templateUrl: './model-profile.component.html',
   styleUrl: './model-profile.component.css'
 })
@@ -42,27 +43,21 @@ export class ModelProfileComponent implements OnInit {
   highlightedDates: Date[] = [];  // for calendar
   portfolioPosts: PortfolioPostDTO[] = [];
   responsiveOptions: any[] = [];
+  responsiveOptionImages: any[] = [];
 
   constructor(private router: Router, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.responsiveOptions = [
+    this.responsiveOptionImages = [
       {
-        breakpoint: '1024px',
-        numVisible: 3,
-        numScroll: 1
+          breakpoint: '1300px',
+          numVisible: 4
       },
       {
-        breakpoint: '768px',
-        numVisible: 2,
-        numScroll: 1
-      },
-      {
-        breakpoint: '560px',
-        numVisible: 1,
-        numScroll: 1
+          breakpoint: '575px',
+          numVisible: 1
       }
-    ];
+  ];
     // get userId from url
     this.userId = this.route.snapshot.paramMap.get('id') || '';
     // fetch model info
@@ -126,4 +121,5 @@ export class ModelProfileComponent implements OnInit {
 
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   }
+
 }

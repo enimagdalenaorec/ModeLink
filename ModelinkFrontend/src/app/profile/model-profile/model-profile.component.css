@@ -86,18 +86,33 @@
   padding-top: 0% !important;
 }
 
-.post {
-  height: 70vh;
-}
-
-.limited-carousel {
-  max-width: 50vw;
-  max-height: 68vh;
-  margin: 0 auto;
-}
-
-.limited-carousel img {
-  width: 100%;
+.galleria-picture {
+  width: 40rem;
   height: auto;
+  max-height: 25rem;
   object-fit: cover;
+}
+
+:host ::ng-deep .p-galleria .p-galleria-indicators .p-galleria-indicator.p-highlight button {
+  background-color: var(--accent-color) !important;
+}
+
+:host ::ng-deep .p-galleria .p-galleria-indicators .p-galleria-indicator button {
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+}
+
+:host ::ng-deep .p-galleria .p-galleria-indicators {
+  padding: 0.5rem !important;
+}
+
+.description {
+  width: 40rem;
+}
+
+:host ::ng-deep .p-galleria .p-galleria-item-nav {
+  margin-right: 0.5rem !important;
+  height: 1rem !important;
+  width: 2rem !important;
+  padding: 1rem;
 }

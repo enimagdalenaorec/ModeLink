@@ -1,5 +1,5 @@
 <div class="profile-container p-3 pr-5 pl-5">
-  <div class="left-panel pr-3">
+  <div class="left-panel pr-4">
     <div class="profile-header flex justify-content-start align-items-center mt-2">
       <img class="border-circle picture" [src]="modelInfo.profilePicture" alt="Profile Image" />
       <div class="pl-4">
@@ -29,7 +29,7 @@
         <p-chip [label]="modelInfo.hairColor + ' hair'">
           <i class="fas fa-paint-brush" style="margin-right: 8px;"></i>
         </p-chip>
-        <p-chip [label]="modelInfo.eyeColor">
+        <p-chip [label]="modelInfo.eyeColor + ' eyes'">
           <i class="fas fa-eye" style="margin-right: 8px;"></i>
         </p-chip>
         <p-chip [label]="modelInfo.skinColor + ' skin'">
@@ -48,10 +48,10 @@
       </ng-template></p-calendar>
   </div>
   <div class="right-panel flex flex-column align-items-center justify-content-center">
-    <div *ngFor="let post of portfolioPosts" class="post">
-      <div class="flex align-items-center justify-content-beetwen">
-        <p>{{post.title}}</p>
-        <p>{{formatDate(post.createdAt)}}</p>
+    <div *ngFor="let post of portfolioPosts" class="post mb-2">
+      <div class="flex align-items-center justify-content-between font-medium text-gray-500">
+        <p class="mb-1 text-lg ">{{post.title}}</p>
+        <p class="mb-1 text-lg ">{{formatDate(post.createdAt)}}</p>
       </div>
       <!-- <p-carousel *ngIf="post?.images!.length > 0" [value]="post!.images" [numVisible]="1" [numScroll]="1"
         [circular]="true" [responsiveOptions]="responsiveOptions" class="limited-carousel">
@@ -59,6 +59,15 @@
           <img class="profile-picture border-round-lg" [src]="image" alt="Post Image" />
         </ng-template>
       </p-carousel> -->
+      <p-galleria [value]="post.images" [showIndicators]="true" [showThumbnails]="false" [showItemNavigators]="true"
+        [responsiveOptions]="responsiveOptionImages" [containerStyle]="{ 'max-width': '640px' }" [numVisible]="5">
+        <ng-template pTemplate="item" let-item>
+          <img [src]="item" class="galleria-picture" />
+        </ng-template>
+      </p-galleria>
+      <p class="description mb-1 mt-0 font-medium text-gray-500">{{post.description}}</p>
+      <p-divider align="center" type="solid">
+      </p-divider>
     </div>
   </div>
 </div>
