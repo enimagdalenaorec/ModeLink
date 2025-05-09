@@ -106,3 +106,21 @@ export interface PortfolioPostDTO {
   images: string[];
 }
 
+export interface UpdateModelInfoDTO {
+  modelId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  cityName: string;
+  countryName: string;
+  countryCode: string;
+  height: number; // corresponds to decimal in C#
+  weight: number;
+  eyeColor: string;
+  hairColor: string;
+  skinColor: string;
+  gender: string;
+  profilePicture: string;
+}
+
+

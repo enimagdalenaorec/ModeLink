@@ -116,3 +116,70 @@
   width: 2rem !important;
   padding: 1rem;
 }
+
+.attributes-and-edit-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.attribute-chip-container {
+  flex: 90%;
+}
+
+.edit-button {
+  flex: 10%;
+}
+
+:host ::ng-deep .edit-button .p-button {
+  background-color: var(--background-color) !important;
+  color: var(--primary-color) !important;
+}
+
+::ng-deep .edit-button .pi {
+  font-size: 1.5rem;
+}
+
+.form-invalid-message {
+  color: rgb(136, 29, 29);
+}
+
+:host ::ng-deep .dropdown .p-inputtext{
+  border: none
+}
+
+:host ::ng-deep .dropdown {
+  border-color: var(--secondary-color);
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  background: white;
+  z-index: 999;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  top: 60px;  /* for positioning belov address input field*/
+  border-radius: 6px;
+}
+
+.autocomplete-suggestions li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
+:host ::ng-deep .cancel-button .p-button {
+  background-color: #a5ada8 !important;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: var(--primary-color) !important;
+}

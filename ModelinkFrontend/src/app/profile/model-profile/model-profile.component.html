@@ -1,5 +1,5 @@
 <div class="profile-container p-3 pr-5 pl-5">
-  <div class="left-panel pr-4">
+  <div class="left-panel pr-3">
     <div class="profile-header flex justify-content-start align-items-center mt-2">
       <img class="border-circle picture" [src]="modelInfo.profilePicture" alt="Profile Image" />
       <div class="pl-4">
@@ -16,25 +16,28 @@
           class="pi pi-map-marker mr-2"></i> {{modelInfo.cityName}},
         {{modelInfo.countryName}}</p>
       <p class="mb-4 mt-1 text-lg font-medium"><i class="pi pi-envelope mr-2"></i> {{modelInfo.email}}</p>
-      <div class="attribute-chip-container flex flex-wrap gap-2">
-        <p-chip [label]="modelInfo.gender">
-          <i class="fas fa-venus-mars" style="margin-right: 8px;"></i>
-        </p-chip>
-        <p-chip [label]="modelInfo.height.toString() + ' cm'">
-          <i class="fas fa-ruler-vertical" style="margin-right: 8px;"></i>
-        </p-chip>
-        <p-chip [label]="modelInfo.weight.toString() + ' kg'">
-          <i class="fas fa-weight" style="margin-right: 8px;"></i>
-        </p-chip>
-        <p-chip [label]="modelInfo.hairColor + ' hair'">
-          <i class="fas fa-paint-brush" style="margin-right: 8px;"></i>
-        </p-chip>
-        <p-chip [label]="modelInfo.eyeColor + ' eyes'">
-          <i class="fas fa-eye" style="margin-right: 8px;"></i>
-        </p-chip>
-        <p-chip [label]="modelInfo.skinColor + ' skin'">
-          <i class="fas fa-user" style="margin-right: 8px;"></i>
-        </p-chip>
+      <div class="attributes-and-edit-button">
+        <div class="attribute-chip-container flex flex-wrap gap-2">
+          <p-chip [label]="modelInfo.gender">
+            <i class="fas fa-venus-mars" style="margin-right: 8px;"></i>
+          </p-chip>
+          <p-chip [label]="modelInfo.height.toString() + ' cm'">
+            <i class="fas fa-ruler-vertical" style="margin-right: 8px;"></i>
+          </p-chip>
+          <p-chip [label]="modelInfo.weight.toString() + ' kg'">
+            <i class="fas fa-weight" style="margin-right: 8px;"></i>
+          </p-chip>
+          <p-chip [label]="modelInfo.hairColor + ' hair'">
+            <i class="fas fa-paint-brush" style="margin-right: 8px;"></i>
+          </p-chip>
+          <p-chip [label]="modelInfo.eyeColor + ' eyes'">
+            <i class="fas fa-eye" style="margin-right: 8px;"></i>
+          </p-chip>
+          <p-chip [label]="modelInfo.skinColor + ' skin'">
+            <i class="fas fa-user" style="margin-right: 8px;"></i>
+          </p-chip>
+        </div>
+        <p-button icon="pi pi-pen-to-square" class="edit-button" (onClick)="editDialogeVisible = true;"></p-button>
       </div>
     </div>
     <p-calendar [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy" [readonlyInput]="true">
@@ -71,3 +74,96 @@
     </div>
   </div>
 </div>
+
+
+
+<p-dialog header="Edit Profile" [modal]="true" [(visible)]="editDialogeVisible" [style]="{ width: '45rem' }">
+  <div class="model mt-3">
+    <div class="basic-info grid p-1 gap-0">
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelFirstName">FIRST NAME</label>
+        <input type="text" pInputText [(ngModel)]="updateModelInfo.firstName" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4  flex flex-column">
+        <label class="text-xs mb-1" for="modelLastName">LAST NAME</label>
+        <input type="text" pInputText [(ngModel)]="updateModelInfo.lastName" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelEmail">MAIL</label>
+        <input type="text" pInputText [(ngModel)]="updateModelInfo.email" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column relative">
+        <label class="text-xs mb-1" for="modelCity">CITY</label>
+        <input id="city-autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for city"
+          (input)="onCitySearch($event)" [(ngModel)]="selectedCity" autocomplete="off" />
+
+        <ul *ngIf="citySuggestions.length > 0" class="autocomplete-suggestions">
+          <li *ngFor="let suggestion of citySuggestions" (click)="selectCitySuggestion(suggestion)">
+            {{ suggestion.display_name }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelHeight">HEIGHT</label>
+        <input type="number" pInputText [(ngModel)]="updateModelInfo.height" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelWeight">WEIGHT</label>
+        <input type="number" pInputText [(ngModel)]="updateModelInfo.weight" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelEyeColor">EYE COLOR</label>
+        <!-- <input type="text" pInputText [(ngModel)]="modelEyeColor" /> -->
+        <p-dropdown [options]="eyeColors" styleClass="w-full dropdown" [(ngModel)]="updateModelInfo.eyeColor"
+          placeholder="Select an eye color" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelHairColor">HAIR COLOR</label>
+        <!-- <input type="text" pInputText [(ngModel)]="modelHairColor" /> -->
+        <p-dropdown [options]="hairColors" styleClass="w-full dropdown" [(ngModel)]="updateModelInfo.hairColor"
+          placeholder="Select a hair color" />
+      </div>
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelSkinColor">SKIN COLOR</label>
+        <!-- <input type="text" pInputText [(ngModel)]="modelSkinColor" /> -->
+        <p-dropdown [options]="skinColors" styleClass="w-full dropdown" [(ngModel)]="updateModelInfo.skinColor"
+          placeholder="Select a skin color" />
+      </div>
+    </div>
+    <!-- gender -->
+    <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-3">
+      <label class="text-xs mb-2" for="modelGender">GENDER</label>
+      <div class="flex flex-wrap gap-3">
+        <div class="flex align-items-center">
+          <p-radioButton name="modelGender" value="Male" [(ngModel)]="updateModelInfo.gender" inputId="male" />
+          <label for="male" class="ml-2">
+            Male
+          </label>
+        </div>
+        <div class="flex align-items-center">
+          <p-radioButton name="modelGender" value="Female" [(ngModel)]="updateModelInfo.gender" inputId="female" />
+          <label for="female" class="ml-2">
+            Female
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- profile picture -->
+    <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-2">
+      <label class="text-xs mb-1" for="modelProfilePicture">PROFILE PICTURE</label>
+      <p-fileUpload #fileUpload mode="basic"
+        [chooseLabel]="updateModelInfo.profilePicture ? profilePictureName : 'Choose'" chooseIcon="pi pi-upload"
+        accept="image/*" maxFileSize="1000000" (onSelect)="onImageSelect($event, fileUpload)"></p-fileUpload>
+      <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
+    </div>
+  </div>
+  <div class="flex justify-content-end">
+    <p-button label="Cancel" icon="pi pi-times" class="cancel-button mr-2" (onClick)="editDialogeVisible = false" />
+    <p-button label="Save" icon="pi pi-check" (onClick)="updateModel()" />
+  </div>
+  <div class="form-invalid-message flex justify-content-end">
+      <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
+    </div>
+</p-dialog>
+
+<p-toast></p-toast>

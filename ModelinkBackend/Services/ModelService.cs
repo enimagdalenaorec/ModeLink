@@ -144,5 +144,67 @@ namespace ModelinkBackend.Services
                 Images = p.PortfolioImages.Select(i => i.ImageBase64).ToList()
             }).ToList();
         }
+
+        public async Task<bool> UpdateModelInfoAsync(UpdateModelInfoDTO modelInfo)
+        {
+            if (modelInfo == null)
+                throw new ArgumentNullException(nameof(modelInfo));
+
+            // retrieve the model
+            var existingModel = await _modelRepository.GetModelByIdAsync(modelInfo.ModelId);
+            if (existingModel == null)
+            {
+                return false;
+            }
+
+            // check or create country first
+            var country = !string.IsNullOrEmpty(modelInfo.CountryName)
+                ? await _modelRepository.GetCountryByNameAsync(modelInfo.CountryName)
+                : null;
+
+            if (country == null && !string.IsNullOrEmpty(modelInfo.CountryName) && !string.IsNullOrEmpty(modelInfo.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = modelInfo.CountryName,
+                    Code = modelInfo.CountryCode
+                };
+                await _modelRepository.CreateCountryAsync(country);
+            }
+
+            // check or create city
+            var city = !string.IsNullOrEmpty(modelInfo.CityName)
+                ? await _modelRepository.GetCityByNameAsync(modelInfo.CityName)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(modelInfo.CityName) && country != null)
+            {
+                city = new City
+                {
+                    Name = modelInfo.CityName,
+                    CountryId = country.Id
+                };
+                await _modelRepository.CreateCityAsync(city);
+            }
+
+            // update the properties 
+            existingModel.FirstName = modelInfo.FirstName;
+            existingModel.LastName = modelInfo.LastName;
+            existingModel.User.Email = modelInfo.Email;
+            existingModel.CityId = city.Id;
+            existingModel.Height = modelInfo.Height;
+            existingModel.Weight = modelInfo.Weight;
+            existingModel.EyeColor = modelInfo.EyeColor;
+            existingModel.HairColor = modelInfo.HairColor;
+            existingModel.SkinColor = modelInfo.SkinColor;
+            existingModel.Sex = modelInfo.Gender;
+            existingModel.ProfilePictureBase64 = modelInfo.ProfilePicture;
+
+
+            // update in the repository
+            await _modelRepository.UpdateModelInfoAsync(existingModel);
+
+            return true;
+        }
     }
 }

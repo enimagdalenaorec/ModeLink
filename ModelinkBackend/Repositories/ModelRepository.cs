@@ -94,5 +94,40 @@ namespace ModelinkBackend.Repositories
                 .Include(p => p.PortfolioImages)
                 .ToListAsync();
         }
+
+        public async Task<bool> UpdateModelInfoAsync(Model model)
+        {
+            //_context.Models.Update(model);
+            _context.Entry(model).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Country?> GetCountryByNameAsync(string countryName)
+        {
+            return await _context.Countries
+                .Where(c => c.Name == countryName)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<City?> GetCityByNameAsync(string cityName)
+        {
+            return await _context.Cities
+                .Where(c => c.Name == cityName)
+                .Include(c => c.Country)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task CreateCountryAsync(Country country)
+        {
+            await _context.Countries.AddAsync(country);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CreateCityAsync(City city)
+        {
+            await _context.Cities.AddAsync(city);
+            await _context.SaveChangesAsync();
+        }
     }
 }

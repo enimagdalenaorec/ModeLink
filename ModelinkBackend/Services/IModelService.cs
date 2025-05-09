@@ -13,5 +13,6 @@ namespace ModelinkBackend.Services
         Task<bool> ToggleEventAttendanceAsync(int eventId, int modelId);
         Task<ModelInfoDTO> GetModelDetailsAsync(int userId);
         Task<IEnumerable<PortfolioPostDTO>> GetPortfolioAsync(int modelId);
+        Task<bool> UpdateModelInfoAsync(UpdateModelInfoDTO modelInfo);
     }
 }

@@ -14,6 +14,10 @@ namespace ModelinkBackend.Repositories
         Task<bool> RemoveModelFromEventAsync(int eventId, int modelId);
         Task<bool> AddModelToEventAsync(int eventId, int modelId);
         Task<IEnumerable<PortfolioPost>> GetPortfolioPostsAsync(int modelId);
-
+        Task<bool> UpdateModelInfoAsync(Model model);
+        Task<Country?> GetCountryByNameAsync(string countryName);
+        Task<City?> GetCityByNameAsync(string cityName);
+        Task CreateCountryAsync(Country country);
+        Task CreateCityAsync(City city);
     }
 }

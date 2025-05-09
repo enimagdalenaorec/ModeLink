@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ModelinkBackend.Models.DTOs;
 using ModelinkBackend.Services;
 using System.Threading.Tasks;
 
@@ -73,6 +74,23 @@ namespace ModelinkBackend.Controllers
                 return NotFound();
             }
             return Ok(portfolioPosts);
+        }
+
+        // updates basic model info
+        [HttpPut("updateModelInfo/{modelId}")]
+        public async Task<IActionResult> UpdateModelInfo(int modelId, [FromBody] UpdateModelInfoDTO updateModelInfoDTO)
+        {
+            if (modelId != updateModelInfoDTO.ModelId)
+            {
+                return BadRequest("Model ID mismatch.");
+            }
+
+            var result = await _modelService.UpdateModelInfoAsync(updateModelInfoDTO);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to update model info.");
         }
     }
 }

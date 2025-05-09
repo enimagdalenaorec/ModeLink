@@ -59,7 +59,7 @@ namespace ModelinkBackend.Services
                 return null;
             }
 
-            // Check or create country first
+            // check or create country first
             var country = !string.IsNullOrEmpty(updateEventDTO.CountryName)
                 ? await _eventRepository.GetCountryByNameAsync(updateEventDTO.CountryName)
                 : null;
@@ -74,7 +74,7 @@ namespace ModelinkBackend.Services
                 await _eventRepository.CreateCountryAsync(country);
             }
 
-            // Now check or create city
+            // check or create city
             var city = !string.IsNullOrEmpty(updateEventDTO.CityName)
                 ? await _eventRepository.GetCityByNameAsync(updateEventDTO.CityName)
                 : null;
@@ -89,7 +89,7 @@ namespace ModelinkBackend.Services
                 await _eventRepository.CreateCityAsync(city);
             }
 
-            // Now update event
+            // update event
             eventToUpdate.Title = updateEventDTO.Title;
             eventToUpdate.Description = updateEventDTO.Description;
             eventToUpdate.Address = updateEventDTO.Address;
