@@ -110,7 +110,7 @@ namespace ModelinkBackend.Services
                 LastName = model.LastName,
                 Email = model.User.Email,
                 AgencyName = model.Agency?.Name,
-                AgencyId = model.Agency.Id,
+                AgencyId = model.Agency.UserId,
                 CityName = model.City?.Name,
                 CountryName = model.City?.Country?.Name,
                 CountryCode = model.City?.Country?.Code,

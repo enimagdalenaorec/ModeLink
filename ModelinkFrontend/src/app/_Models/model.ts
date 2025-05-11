@@ -84,7 +84,7 @@ export interface ModelInfoDTO {
   lastName: string;
   email: string;
   agencyName: string;
-  agencyId: number;
+  agencyId: number; // userId of ther agency
   cityName: string;
   countryName: string;
   countryCode: string;

@@ -25,7 +25,6 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { on } from 'events';
 @Component({
   selector: 'app-event-details',
   standalone: true,

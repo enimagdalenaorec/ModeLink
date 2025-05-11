@@ -6,7 +6,7 @@
         <h2 class="font-semibold text-5xl mb-1 mt-0">{{modelInfo.firstName}}
           {{modelInfo.lastName}}</h2>
         <p class="font-medium text-2xl mb-1 mt-1"
-          *ngIf="modelInfo.agencyId != null || modelInfo.agencyId != '' || modelInfo.agencyId != 0">
+          *ngIf="modelInfo.agencyId != null || modelInfo.agencyId != '' || modelInfo.agencyId != 0" (click)="goToAgencyProfile(modelInfo.agencyId)">
           {{modelInfo.agencyName}}
         </p>
       </div>

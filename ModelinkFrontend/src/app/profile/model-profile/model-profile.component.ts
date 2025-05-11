@@ -165,15 +165,15 @@ export class ModelProfileComponent implements OnInit {
     );
   }
 
-  onDateClick(date: Date) {
-    const clickedDate = new Date(date);
+  onDateClick(date: any) {
+    const recievedDate = new Date(date.year, date.month - 1, date.day);
     // find id of the event whose date is finish date
-    const eventId = this.modelInfo.modelApplications.find((event) => {
+    const clickedApplication = this.modelInfo.modelApplications.find((event) => {
       const eventFinishDate = new Date(event.eventFinish);
-      return eventFinishDate.getTime() === clickedDate.getTime();
-    })?.eventId;
-    if (eventId) {
-      this.router.navigate(['/event-details', eventId]);
+      return eventFinishDate.getDate() === recievedDate.getDate();
+    });
+    if (clickedApplication && clickedApplication.eventId) {
+      this.router.navigate(['/event-details', clickedApplication.eventId]);
     } else {
       console.log('No event found for the clicked date.');
     }
@@ -341,6 +341,10 @@ export class ModelProfileComponent implements OnInit {
         this.confirmDeleteButtonDialogeVisible = false;
       }
     });
+  }
+
+  goToAgencyProfile(agencyUserId: number) {
+    this.router.navigate(['/agency-profile', agencyUserId]);
   }
 
 }
