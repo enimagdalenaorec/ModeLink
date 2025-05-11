@@ -92,5 +92,29 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to update model info.");
         }
+
+        // updates model portfolio (profile) posts
+        [HttpPut("updatePortfolioPost/{modelId}")]
+        public async Task<IActionResult> UpdatePortfolioPost(int modelId, [FromBody] PortfolioPostDTO portfolioPost)
+        {
+            var result = await _modelService.UpdateModelPortfolioAsync(modelId, portfolioPost);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to update portfolio posts.");
+        }
+
+        // deletes model portfolio (profile) posts
+        [HttpDelete("deletePortfolioPost/{modelId}/{postId}")]
+        public async Task<IActionResult> DeletePortfolioPost(int modelId, int postId)
+        {
+            var result = await _modelService.DeleteModelPortfolioPostAsync(modelId, postId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to delete portfolio post.");
+        }
     }
 }

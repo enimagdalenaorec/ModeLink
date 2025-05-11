@@ -19,5 +19,8 @@ namespace ModelinkBackend.Repositories
         Task<City?> GetCityByNameAsync(string cityName);
         Task CreateCountryAsync(Country country);
         Task CreateCityAsync(City city);
+        Task<PortfolioPost> GetPortfolioPostByIdAsync(int postId);
+        Task<bool> UpdatePortfolioPostAsync(PortfolioPost portfolioPost);
+        Task<bool> DeletePortfolioPostAsync(PortfolioPost postToUpdate);
     }
 }

@@ -1,4 +1,4 @@
-import { Component, model, OnInit } from '@angular/core';
+import { Component, model, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -14,9 +14,9 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -28,7 +28,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
   selector: 'app-model-profile',
   standalone: true,
   imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule, NgFor, GalleriaModule, DividerModule, DialogModule, ButtonModule, FormsModule, FileUploadModule, ToastModule, ConfirmDialogModule, InputTextModule, DropdownModule, InputTextareaModule, InputNumberModule, RadioButtonModule],
-  providers: [MessageService, AuthService],
+  providers: [MessageService, AuthService, ConfirmationService],
   templateUrl: './model-profile.component.html',
   styleUrl: './model-profile.component.css'
 })
@@ -84,10 +84,20 @@ export class ModelProfileComponent implements OnInit {
   portfolioPosts: PortfolioPostDTO[] = [];
   responsiveOptions: any[] = [];
   responsiveOptionImages: any[] = [];
+  updatePost: PortfolioPostDTO = {
+    id: 0,
+    title: '',
+    description: '',
+    createdAt: '',
+    images: []
+  };
+  showFileUpload: boolean = true;
   // dialogs
   editDialogeVisible: boolean = false;
+  confirmDeleteButtonDialogeVisible: boolean = false;
+  editPostDialogeVisible: boolean = false;
 
-  constructor(private router: Router, private messageService: MessageService, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute) { }
+  constructor(private router: Router, private messageService: MessageService, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute, private confirmationService: ConfirmationService) { }
 
   ngOnInit(): void {
     this.responsiveOptionImages = [
@@ -257,6 +267,80 @@ export class ModelProfileComponent implements OnInit {
         this.showToast('error', 'Error', 'Error updating model info');
       }
     );
+  }
+
+  patchEditPostDto(post: PortfolioPostDTO) {
+    this.updatePost = {
+      id: post.id,
+      title: post.title,
+      description: post.description,
+      createdAt: post.createdAt,
+      images: post.images
+    };
+  }
+
+  deletePostImage(image: string) {
+    this.updatePost.images = this.updatePost.images.filter((img) => img !== image);
+  }
+
+  onEditPostImageSelect(event: any) {
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.updatePost.images.push(e.target.result);
+    };
+    reader.readAsDataURL(file);
+    // force re-render of file upload component
+    this.showFileUpload = false;
+    setTimeout(() => {
+      this.showFileUpload = true;
+    }, 1);
+  }
+
+  postUpdate() {
+    this.http.put(this.apiUrl + `Model/updatePortfolioPost/${this.modelInfo.modelId}`, this.updatePost).subscribe(
+      (response) => {
+        this.showToast('success', 'Success', 'Post updated successfully');
+        setTimeout(() => {
+          this.getModelInfo();
+          this.editPostDialogeVisible = false;
+        }, 500);
+      },
+      (error) => {
+        console.error('Error updating post:', error);
+        this.showToast('error', 'Error', 'Error updating post');
+      }
+    );
+  }
+
+  deletePost(post: PortfolioPostDTO) {
+    this.http.delete(this.apiUrl + `Model/deletePortfolioPost/${this.modelInfo.modelId}/${post.id}`).subscribe(
+      (response) => {
+        this.showToast('success', 'Success', 'Post deleted successfully');
+        setTimeout(() => {
+          this.getModelInfo();
+          this.confirmDeleteButtonDialogeVisible = false;
+        }, 500);
+      },
+      (error) => {
+        console.error('Error deleting post:', error);
+        this.showToast('error', 'Error', 'Error deleting post');
+      }
+    );
+  }
+
+  triggerDeleteConfDialog(post: PortfolioPostDTO) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this post?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deletePost(post);
+      },
+      reject: () => {
+        this.confirmDeleteButtonDialogeVisible = false;
+      }
+    });
   }
 
 }

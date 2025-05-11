@@ -129,5 +129,27 @@ namespace ModelinkBackend.Repositories
             await _context.Cities.AddAsync(city);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<PortfolioPost> GetPortfolioPostByIdAsync(int postId)
+        {
+            return await _context.PortfolioPosts
+                .Include(p => p.PortfolioImages)
+                .Include(p => p.Model)
+                .FirstOrDefaultAsync(p => p.Id == postId);
+        }
+
+        public async Task<bool> UpdatePortfolioPostAsync(PortfolioPost portfolioPost)
+        {
+            _context.Entry(portfolioPost).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeletePortfolioPostAsync(PortfolioPost portfolioPost)
+        {
+            _context.PortfolioPosts.Remove(portfolioPost);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

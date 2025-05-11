@@ -69,6 +69,12 @@
         </ng-template>
       </p-galleria>
       <p class="description mb-1 mt-0 font-medium text-gray-500">{{post.description}}</p>
+      <div class="buttons flex justify-content-end">
+        <p-button icon="pi pi-pen-to-square" class="edit-post-button"
+          (onClick)="editPostDialogeVisible = true; patchEditPostDto(post);"></p-button>
+        <p-button icon="pi pi-trash" class="delete-post-button"
+          (onClick)="confirmDeleteButtonDialogeVisible = true; triggerDeleteConfDialog(post)"></p-button>
+      </div>
       <p-divider align="center" type="solid">
       </p-divider>
     </div>
@@ -162,8 +168,40 @@
     <p-button label="Save" icon="pi pi-check" (onClick)="updateModel()" />
   </div>
   <div class="form-invalid-message flex justify-content-end">
-      <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
-    </div>
+    <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
+  </div>
 </p-dialog>
+
+<p-dialog header="Edit Post" [modal]="true" [(visible)]="editPostDialogeVisible" [style]="{ width: '48rem' }">
+  <div class="mt-3">
+    <div class="flex flex-column mb-2">
+      <label class="text-xs mb-1" for="modelPostTitle">POST TITLE</label>
+      <input type="text" pInputText [(ngModel)]="updatePost.title" />
+    </div>
+    <div class="flex flex-column mb-1">
+      <label class="text-xs mb-1" for="modelPostDescription">POST DESCRIPTION</label>
+      <textarea rows="4" type="text" pTextarea [(ngModel)]="updatePost.description"></textarea>
+    </div>
+    <label class="text-xs" for="modelPostImages">IMAGES</label>
+    <div class="images flex flex-wrap gap-2 mt-1">
+      <div *ngFor="let image of updatePost.images" class="flex flex-column align-items-end">
+        <img [src]="image" class="update-post-image-display" />
+        <p-button icon="pi pi-trash" class="delete-post-button" (onClick)="deletePostImage(image)"></p-button>
+      </div>
+    </div>
+    <div *ngIf="showFileUpload">
+      <p-fileUpload #fileUpload mode="basic" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
+        (onSelect)="onEditPostImageSelect($event)">
+      </p-fileUpload>
+    </div>
+    <div class="flex justify-content-end">
+      <p-button label="Cancel" icon="pi pi-times" class="cancel-button mr-2"
+        (onClick)="editPostDialogeVisible = false"></p-button>
+      <p-button label="Save" icon="pi pi-check" (onClick)="postUpdate()"></p-button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>
 
 <p-toast></p-toast>

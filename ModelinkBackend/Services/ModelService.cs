@@ -206,5 +206,63 @@ namespace ModelinkBackend.Services
 
             return true;
         }
+
+        public async Task<bool> UpdateModelPortfolioAsync(int modelId, PortfolioPostDTO portfolioPost)
+        {
+            if (portfolioPost == null)
+                throw new ArgumentNullException(nameof(portfolioPost));
+
+            // retrieve the model
+            var existingModel = await _modelRepository.GetModelByIdAsync(modelId);
+            if (existingModel == null)
+            {
+                return false;
+            }
+
+            // check or create portfolio post
+            var existingPortfolioPost = await _modelRepository.GetPortfolioPostByIdAsync(portfolioPost.Id);
+
+            // check if the model who sent request si the post's owner
+            if (existingPortfolioPost == null || existingPortfolioPost.Model.Id != modelId)
+            {
+                return false;
+            }
+
+            // update the properties 
+            existingPortfolioPost.Title = portfolioPost.Title;
+            existingPortfolioPost.Description = portfolioPost.Description;
+            existingPortfolioPost.CreatedAt = portfolioPost.CreatedAt;
+            existingPortfolioPost.PortfolioImages = portfolioPost.Images
+                .Select(image => new PortfolioImage
+                {
+                    ImageBase64 = image,
+                    PostId = existingPortfolioPost.Id
+                }).ToList();
+
+            // update in the repository
+            await _modelRepository.UpdatePortfolioPostAsync(existingPortfolioPost);
+
+            return true;
+        }
+
+        public async Task<bool> DeleteModelPortfolioPostAsync(int modelId, int postId)
+        {
+            // retrieve the model
+            var existingModel = await _modelRepository.GetModelByIdAsync(modelId);
+            if (existingModel == null)
+            {
+                return false;
+            }
+
+            // check if the model who sent request is the post's owner
+            var existingPortfolioPost = await _modelRepository.GetPortfolioPostByIdAsync(postId);
+            if (existingPortfolioPost == null || existingPortfolioPost.Model.Id != modelId)
+            {
+                return false;
+            }
+
+            // delete in the repository
+            return await _modelRepository.DeletePortfolioPostAsync(existingPortfolioPost);
+        }
     }
 }

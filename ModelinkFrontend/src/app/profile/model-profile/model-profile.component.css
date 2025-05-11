@@ -140,6 +140,24 @@
   font-size: 1.5rem;
 }
 
+:host ::ng-deep .edit-post-button .p-button {
+  background-color: var(--background-color) !important;
+  color: var(--primary-color) !important;
+}
+
+::ng-deep .edit-post-button .pi {
+  font-size: 1rem;
+}
+
+:host ::ng-deep .delete-post-button .p-button {
+  background-color: var(--background-color) !important;
+  color: rgb(136, 29, 29) !important;
+}
+
+::ng-deep .delete-post-button .pi {
+  font-size: 1rem;
+}
+
 .form-invalid-message {
   color: rgb(136, 29, 29);
 }
@@ -182,4 +200,32 @@
 
 :host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
   color: var(--primary-color) !important;
+}
+
+:host ::ng-deep textarea {
+  border-radius: 6px !important;
+  border: 1px solid var(--secondary-color) !important;
+  padding: 0.6rem !important;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+:host ::ng-deep .p-dialog-content {
+  background-color: var(--background-color) !important;
+}
+
+.update-post-image-display {
+  height: 130px;
+  width: 130px;
+  object-fit: cover;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  background: var(--background-color) !important;
 }
