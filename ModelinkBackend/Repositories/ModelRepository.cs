@@ -151,5 +151,19 @@ namespace ModelinkBackend.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> CreatePortfolioPostAsync(PortfolioPost postWithoutImages)
+        {
+            await _context.PortfolioPosts.AddAsync(postWithoutImages);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> AddPortfolioImageToPostAsync(PortfolioImage portfolioImage)
+        {
+            await _context.PortfolioImages.AddAsync(portfolioImage);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

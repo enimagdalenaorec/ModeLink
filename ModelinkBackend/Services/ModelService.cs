@@ -264,5 +264,46 @@ namespace ModelinkBackend.Services
             // delete in the repository
             return await _modelRepository.DeletePortfolioPostAsync(existingPortfolioPost);
         }
+
+        public async Task<bool> CreateModelPortfolioAsync(int modelId, CreatePortfolioPostDTO portfolioPost)
+        {
+            if (portfolioPost == null)
+                throw new ArgumentNullException(nameof(portfolioPost));
+
+            // check if model exists
+            var existingModel = await _modelRepository.GetModelByIdAsync(modelId);
+            if (existingModel == null)
+            {
+                return false;
+            }
+
+            // create portfolio post without images (set them after post creation
+            var newPortfolioPost = new PortfolioPost
+            {
+                Title = portfolioPost.Title,
+                Description = portfolioPost.Description,
+                CreatedAt = DateTime.UtcNow,
+                ModelId = modelId
+            };
+
+            // save post (without images) in the repository
+            var postCreationResult = await _modelRepository.CreatePortfolioPostAsync(newPortfolioPost);
+
+            // connect images to newly created post
+            if (postCreationResult)
+            {
+                foreach (var image in portfolioPost.Images)
+                {
+                    var newPortfolioImage = new PortfolioImage
+                    {
+                        ImageBase64 = image,
+                        PostId = newPortfolioPost.Id
+                    };
+                    await _modelRepository.AddPortfolioImageToPostAsync(newPortfolioImage);
+                }
+            }
+
+            return true;
+        }
     }
 }

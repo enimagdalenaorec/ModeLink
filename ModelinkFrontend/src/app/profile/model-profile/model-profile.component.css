@@ -229,3 +229,7 @@
 :host ::ng-deep .p-dialog .p-dialog-footer {
   background: var(--background-color) !important;
 }
+
+.agency-name:hover {
+  text-decoration: underline;
+}

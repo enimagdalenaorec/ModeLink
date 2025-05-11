@@ -116,5 +116,17 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to delete portfolio post.");
         }
+
+        // creates a new model portfolio (profile) post
+        [HttpPost("createPortfolioPost/{modelId}")]
+        public async Task<IActionResult> CreatePortfolioPost(int modelId, [FromBody] CreatePortfolioPostDTO portfolioPost)
+        {
+            var result = await _modelService.CreateModelPortfolioAsync(modelId, portfolioPost);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to create portfolio post.");
+        }
     }
 }

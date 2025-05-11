@@ -16,5 +16,6 @@ namespace ModelinkBackend.Services
         Task<bool> UpdateModelInfoAsync(UpdateModelInfoDTO modelInfo);
         Task<bool> UpdateModelPortfolioAsync(int modelId, PortfolioPostDTO portfolioPost);
         Task<bool> DeleteModelPortfolioPostAsync(int modelId, int postId);
+        Task<bool> CreateModelPortfolioAsync(int modelId, CreatePortfolioPostDTO portfolioPost);
     }
 }

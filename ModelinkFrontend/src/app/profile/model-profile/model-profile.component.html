@@ -5,8 +5,9 @@
       <div class="pl-4">
         <h2 class="font-semibold text-5xl mb-1 mt-0">{{modelInfo.firstName}}
           {{modelInfo.lastName}}</h2>
-        <p class="font-medium text-2xl mb-1 mt-1"
-          *ngIf="modelInfo.agencyId != null || modelInfo.agencyId != '' || modelInfo.agencyId != 0" (click)="goToAgencyProfile(modelInfo.agencyId)">
+        <p class="font-medium text-2xl mb-1 mt-1 cursor-pointer	agency-name"
+          *ngIf="modelInfo.agencyId != null || modelInfo.agencyId != '' || modelInfo.agencyId != 0"
+          (click)="goToAgencyProfile(modelInfo.agencyId)">
           {{modelInfo.agencyName}}
         </p>
       </div>
@@ -51,6 +52,10 @@
       </ng-template></p-calendar>
   </div>
   <div class="right-panel flex flex-column align-items-center justify-content-center">
+    <div class="flex justify-content-end w-full mb-2">
+      <p-button icon="pi pi-plus" label="Create Post" class="create-post-button"
+        (onClick)="createPostDialogeVisible = true"></p-button>
+    </div>
     <div *ngFor="let post of portfolioPosts" class="post mb-2">
       <div class="flex align-items-center justify-content-between font-medium text-gray-500">
         <p class="mb-1 text-lg ">{{post.title}}</p>
@@ -157,10 +162,13 @@
     <!-- profile picture -->
     <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-2">
       <label class="text-xs mb-1" for="modelProfilePicture">PROFILE PICTURE</label>
-      <p-fileUpload #fileUpload mode="basic"
-        [chooseLabel]="updateModelInfo.profilePicture ? profilePictureName : 'Choose'" chooseIcon="pi pi-upload"
-        accept="image/*" maxFileSize="1000000" (onSelect)="onImageSelect($event, fileUpload)"></p-fileUpload>
-      <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
+      <div class="flex gap-2 align-items-end">
+        <img *ngIf="updateModelInfo.profilePicture" [src]="updateModelInfo.profilePicture" alt="Uploaded Image"
+          class="mt-2" style="width: 150px; height: 150px; object-fit: cover;" />
+        <p-fileUpload #fileUpload mode="basic"
+          [chooseLabel]="updateModelInfo.profilePicture ? profilePictureName : 'Choose'" chooseIcon="pi pi-upload"
+          accept="image/*" maxFileSize="1000000" (onSelect)="onImageSelect($event, fileUpload)"></p-fileUpload>
+      </div>
     </div>
   </div>
   <div class="flex justify-content-end">
@@ -194,10 +202,47 @@
         (onSelect)="onEditPostImageSelect($event)">
       </p-fileUpload>
     </div>
+    <div class="form-invalid-message flex justify-content-end">
+      <p *ngIf="editPostFormInvalidMessageVisible" class="justify-content-end mb-2 pb-0">All fields are required!</p>
+    </div>
     <div class="flex justify-content-end">
       <p-button label="Cancel" icon="pi pi-times" class="cancel-button mr-2"
         (onClick)="editPostDialogeVisible = false"></p-button>
       <p-button label="Save" icon="pi pi-check" (onClick)="postUpdate()"></p-button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog header="Create Post" [modal]="true" [(visible)]="createPostDialogeVisible" [style]="{ width: '48rem' }">
+  <div class="mt-3">
+    <div class="flex flex-column mb-2">
+      <label class="text-xs mb-1" for="modelPostTitle">POST TITLE</label>
+      <input type="text" pInputText [(ngModel)]="createPost.title" />
+    </div>
+    <div class="flex flex-column mb-1">
+      <label class="text-xs mb-1" for="modelPostDescription">POST DESCRIPTION</label>
+      <textarea rows="4" type="text" pTextarea [(ngModel)]="createPost.description"></textarea>
+    </div>
+    <label class="text-xs" for="modelPostImages">IMAGES</label>
+    <div class="images flex flex-wrap gap-2 mt-1">
+      <div *ngFor="let image of createPost.images" class="flex flex-column align-items-end">
+        <img [src]="image" class="update-post-image-display" />
+        <p-button icon="pi pi-trash" class="delete-post-button"
+          (onClick)="deletePostImageInCreateDialog(image)"></p-button>
+      </div>
+    </div>
+    <div *ngIf="showCreatePostFileUpload">
+      <p-fileUpload #fileUpload mode="basic" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
+        (onSelect)="onCreatePostImageSelect($event)">
+      </p-fileUpload>
+    </div>
+    <div class="form-invalid-message flex justify-content-end mb-2">
+      <p *ngIf="createPostFormInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
+    </div>
+    <div class="flex justify-content-end">
+      <p-button label="Cancel" icon="pi pi-times" class="cancel-button mr-2"
+        (onClick)="createPostDialogeVisible = false"></p-button>
+      <p-button label="Create" icon="pi pi-check" (onClick)="postCreate()"></p-button>
     </div>
   </div>
 </p-dialog>

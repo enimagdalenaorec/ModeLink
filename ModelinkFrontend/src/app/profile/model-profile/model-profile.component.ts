@@ -2,7 +2,7 @@ import { Component, model, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { EyeColors, HairColors, ModelApplicationForCalendarDTO, ModelInfoDTO, PortfolioPostDTO, SkinColors, UpdateModelInfoDTO } from '../../_Models/model';
+import { EyeColors, HairColors, ModelApplicationForCalendarDTO, ModelInfoDTO, PortfolioPostDTO, SkinColors, UpdateModelInfoDTO, CreatePortfolioPostDTO } from '../../_Models/model';
 import { AuthService } from '../../_Services/auth.service';
 import { environment } from '../../../environments/environment';
 import { CalendarModule } from 'primeng/calendar';
@@ -76,6 +76,8 @@ export class ModelProfileComponent implements OnInit {
   hairColors: string[] = HairColors
   profilePictureName: string = '';
   formInvalidMessageVisible: boolean = false;
+  createPostFormInvalidMessageVisible: boolean = false;
+  editPostFormInvalidMessageVisible: boolean = false;
   citySuggestions: any[] = [];
   selectedCity: any = null;
   selectedAddress: any = null;
@@ -91,11 +93,18 @@ export class ModelProfileComponent implements OnInit {
     createdAt: '',
     images: []
   };
+  createPost: CreatePortfolioPostDTO = {
+    title: '',
+    description: '',
+    images: []
+  };
   showFileUpload: boolean = true;
+  showCreatePostFileUpload: boolean = true;
   // dialogs
   editDialogeVisible: boolean = false;
   confirmDeleteButtonDialogeVisible: boolean = false;
   editPostDialogeVisible: boolean = false;
+  createPostDialogeVisible: boolean = false;
 
   constructor(private router: Router, private messageService: MessageService, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute, private confirmationService: ConfirmationService) { }
 
@@ -283,6 +292,10 @@ export class ModelProfileComponent implements OnInit {
     this.updatePost.images = this.updatePost.images.filter((img) => img !== image);
   }
 
+  deletePostImageInCreateDialog(image: string) {
+    this.createPost.images = this.createPost.images.filter((img) => img !== image);
+  }
+
   onEditPostImageSelect(event: any) {
     const file = event.files[0];
     const reader = new FileReader();
@@ -297,7 +310,26 @@ export class ModelProfileComponent implements OnInit {
     }, 1);
   }
 
+  onCreatePostImageSelect(event: any) {
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.createPost.images.push(e.target.result);
+    };
+    reader.readAsDataURL(file);
+    // force re-render of file upload component
+    this.showCreatePostFileUpload = false;
+    setTimeout(() => {
+      this.showCreatePostFileUpload = true;
+    }, 1);
+  }
+
   postUpdate() {
+    if (this.updatePost.title === '' || this.updatePost.description === '' || this.updatePost.images.length === 0) {
+      this.editPostFormInvalidMessageVisible = true;
+      return;
+    }
+    this.createPostFormInvalidMessageVisible = false;
     this.http.put(this.apiUrl + `Model/updatePortfolioPost/${this.modelInfo.modelId}`, this.updatePost).subscribe(
       (response) => {
         this.showToast('success', 'Success', 'Post updated successfully');
@@ -341,6 +373,32 @@ export class ModelProfileComponent implements OnInit {
         this.confirmDeleteButtonDialogeVisible = false;
       }
     });
+  }
+
+  postCreate() {
+    if (this.createPost.title === '' || this.createPost.description === '' || this.createPost.images.length === 0) {
+      this.createPostFormInvalidMessageVisible = true;
+      return;
+    }
+    this.createPostFormInvalidMessageVisible = false;
+    this.http.post(this.apiUrl + `Model/createPortfolioPost/${this.modelInfo.modelId}`, this.createPost).subscribe(
+      (response) => {
+        this.showToast('success', 'Success', 'Post created successfully');
+        setTimeout(() => {
+          this.getModelInfo();
+          this.createPostDialogeVisible = false;
+          this.createPost = {
+            title: '',
+            description: '',
+            images: []
+          };
+        }, 500);
+      },
+      (error) => {
+        console.error('Error creating post:', error);
+        this.showToast('error', 'Error', 'Error creating post');
+      }
+    );
   }
 
   goToAgencyProfile(agencyUserId: number) {

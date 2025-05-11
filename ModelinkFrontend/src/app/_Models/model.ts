@@ -106,6 +106,12 @@ export interface PortfolioPostDTO {
   images: string[];
 }
 
+export interface CreatePortfolioPostDTO {
+  title: string;
+  description: string;
+  images: string[];
+}
+
 export interface UpdateModelInfoDTO {
   modelId: number;
   firstName: string;
