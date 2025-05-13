@@ -53,25 +53,29 @@
           {{ date.day }}
         </span>
       </ng-template></p-calendar>
-    <!-- if model is freelancer show request sent for agencies -->
-    <p-carousel *ngIf="freelancerRequests != [] && freelancerRequests.length > 0" [value]="freelancerRequests"
-      [numVisible]="1" [numScroll]="1" [circular]="true">
-      <ng-template let-request pTemplate="item">
-        <div class="flex justify-content-end">
-          <p>{{ formatDate(request.requestedAt) }}</p>
-        </div>
-        <div class="flex gap-2 w-10rem h-10rem">
-          <img class="profile-picture-request border-round-lg" [src]="request.agencyProfilePicture" alt="Request Image" />
-          <div>
-            <p (click)="goToAgencyProfile(request.agencyId)"
-              class="cursor-pointer text-gray-600 text-sm align-self-center mt-0 font-semibold">
-              {{ request.agencyName }}
-            </p>
-            <p>STATUS: {{ request.status }}</p>
+    <!-- if model is freelancer show request sent for agencies, but only if that is the profile of that user-->
+    <div *ngIf="loggedInUserId == userId && modelInfo.agencyId == null" class="mt-5">
+      <p class="mb-1">You have requested to join these agencies: </p>
+      <p-carousel *ngIf="freelancerRequests != [] && freelancerRequests.length > 0" [value]="freelancerRequests"
+        [numVisible]="1" [numScroll]="1" [circular]="true">
+        <ng-template let-request pTemplate="item">
+          <div class="flex justify-content-end align-items-end w-full">
+            <p>{{ formatDate(request.requestedAt) }}</p>
           </div>
-        </div>
-      </ng-template>
-    </p-carousel>
+          <div class="flex gap-2 w-full mb-3 ml-2">
+            <img class="profile-picture-request border-round-lg" [src]="request.agencyProfilePicture"
+              alt="Request Image" />
+            <div class="ml-2 flex flex-column justify-content-center">
+              <p (click)="goToAgencyProfile(request.agencyId)"
+                class="cursor-pointer text-gray-600 text-lg align-self-center mt-0 font-semibold">
+                {{ request.agencyName }}
+              </p>
+              <p class="mt-0">STATUS: {{ request.status }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
   </div>
   <div class="right-panel flex flex-column align-items-center justify-content-center">
     <div *ngIf="loggedInUserId == userId" class="flex justify-content-end w-full mb-2">

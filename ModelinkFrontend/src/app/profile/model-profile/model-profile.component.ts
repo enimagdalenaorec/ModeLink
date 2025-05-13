@@ -1,4 +1,4 @@
-import { Component, model, OnInit, ViewChild } from '@angular/core';
+import { Component, model, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -24,6 +24,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CarouselModule } from 'primeng/carousel';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-model-profile',
@@ -33,8 +34,9 @@ import { CarouselModule } from 'primeng/carousel';
   templateUrl: './model-profile.component.html',
   styleUrl: './model-profile.component.css'
 })
-export class ModelProfileComponent implements OnInit {
+export class ModelProfileComponent implements OnInit, OnDestroy {
   apiUrl: string = environment.apiUrl;
+  private routeSubscription: Subscription = new Subscription();
   userId: string = ''; // from url
   loggedInUserId: string = ''; // from auth service
   modelInfo: ModelInfoDTO = {
@@ -128,6 +130,21 @@ export class ModelProfileComponent implements OnInit {
     this.loggedInUserId = this.authService.getUserId()?.toString() || '';
     // fetch model info
     this.getModelInfo();
+
+    // subscribe since angular detect change isnt workin gpropertly in some cases
+    this.routeSubscription = this.route.params.subscribe(params => {
+      this.userId = params['id'];
+      this.freelancerRequests = [];
+      this.portfolioPosts = [];
+      this.getModelInfo();
+    });
+  }
+
+  ngOnDestroy() {
+    // Clean up subscription to prevent memory leaks
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   getModelInfo() {

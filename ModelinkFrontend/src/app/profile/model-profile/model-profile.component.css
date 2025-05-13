@@ -239,3 +239,16 @@
   width: 120px;
   object-fit: cover;
 }
+
+:host ::ng-deep .p-carousel-content {
+  border: 2px solid var(--accent-color) !important;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev {
+  margin: 0px 0px 0px 0px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next {
+  margin: 0px 0px 0px 0px !important;
+}
