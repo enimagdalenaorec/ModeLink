@@ -38,10 +38,13 @@
             <i class="fas fa-user" style="margin-right: 8px;"></i>
           </p-chip>
         </div>
-        <p-button *ngIf="loggedInUserId == userId" icon="pi pi-pen-to-square" class="edit-button" (onClick)="editDialogeVisible = true;"></p-button>
+        <p-button *ngIf="loggedInUserId == userId" icon="pi pi-pen-to-square" class="edit-button"
+          (onClick)="editDialogeVisible = true;"></p-button>
       </div>
     </div>
-    <p-calendar [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy" [readonlyInput]="true">
+    <!-- calendar shows is model is signed -> has some events to possibly attend -->
+    <p-calendar *ngIf="modelInfo.agencyId != null" [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy"
+      [readonlyInput]="true">
       <ng-template pTemplate="date" let-date>
         <span [ngClass]="{
           'highlighted-date': isHighlightedDate(date.day, date.month, date.year)
@@ -50,6 +53,25 @@
           {{ date.day }}
         </span>
       </ng-template></p-calendar>
+    <!-- if model is freelancer show request sent for agencies -->
+    <p-carousel *ngIf="freelancerRequests != [] && freelancerRequests.length > 0" [value]="freelancerRequests"
+      [numVisible]="1" [numScroll]="1" [circular]="true">
+      <ng-template let-request pTemplate="item">
+        <div class="flex justify-content-end">
+          <p>{{ formatDate(request.requestedAt) }}</p>
+        </div>
+        <div class="flex gap-2 w-10rem h-10rem">
+          <img class="profile-picture-request border-round-lg" [src]="request.agencyProfilePicture" alt="Request Image" />
+          <div>
+            <p (click)="goToAgencyProfile(request.agencyId)"
+              class="cursor-pointer text-gray-600 text-sm align-self-center mt-0 font-semibold">
+              {{ request.agencyName }}
+            </p>
+            <p>STATUS: {{ request.status }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </p-carousel>
   </div>
   <div class="right-panel flex flex-column align-items-center justify-content-center">
     <div *ngIf="loggedInUserId == userId" class="flex justify-content-end w-full mb-2">

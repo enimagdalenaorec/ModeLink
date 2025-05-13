@@ -233,3 +233,9 @@
 .agency-name:hover {
   text-decoration: underline;
 }
+
+.profile-picture-request {
+  height: 120px;
+  width: 120px;
+  object-fit: cover;
+}

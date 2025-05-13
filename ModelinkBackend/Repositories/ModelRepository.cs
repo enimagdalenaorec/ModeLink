@@ -165,5 +165,14 @@ namespace ModelinkBackend.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<FreelancerRequest>> GetFreelancerRequestsAsync(int modelId)
+        {
+            return await _context.FreelancerRequests
+                .Where(fr => fr.ModelId == modelId)
+                .Include(fr => fr.Agency)
+                .Include(fr => fr.Agency.City).ThenInclude(c => c.Country)
+                .ToListAsync();
+        }
     }
 }

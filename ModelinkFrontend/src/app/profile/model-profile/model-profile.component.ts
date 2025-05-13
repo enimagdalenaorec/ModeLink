@@ -2,7 +2,7 @@ import { Component, model, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { EyeColors, HairColors, ModelApplicationForCalendarDTO, ModelInfoDTO, PortfolioPostDTO, SkinColors, UpdateModelInfoDTO, CreatePortfolioPostDTO } from '../../_Models/model';
+import { EyeColors, HairColors, ModelApplicationForCalendarDTO, ModelInfoDTO, PortfolioPostDTO, SkinColors, UpdateModelInfoDTO, CreatePortfolioPostDTO, FreelancerRequestsFromModel } from '../../_Models/model';
 import { AuthService } from '../../_Services/auth.service';
 import { environment } from '../../../environments/environment';
 import { CalendarModule } from 'primeng/calendar';
@@ -23,11 +23,12 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { CarouselModule } from 'primeng/carousel';
 
 @Component({
   selector: 'app-model-profile',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule, NgFor, GalleriaModule, DividerModule, DialogModule, ButtonModule, FormsModule, FileUploadModule, ToastModule, ConfirmDialogModule, InputTextModule, DropdownModule, InputTextareaModule, InputNumberModule, RadioButtonModule],
+  imports: [CommonModule, HttpClientModule, CalendarModule, NgIf, ChipModule, NgFor, GalleriaModule, DividerModule, DialogModule, ButtonModule, FormsModule, FileUploadModule, ToastModule, ConfirmDialogModule, InputTextModule, DropdownModule, InputTextareaModule, InputNumberModule, RadioButtonModule, CarouselModule],
   providers: [MessageService, AuthService, ConfirmationService],
   templateUrl: './model-profile.component.html',
   styleUrl: './model-profile.component.css'
@@ -56,6 +57,7 @@ export class ModelProfileComponent implements OnInit {
     gender: '',
     modelApplications: [],
   };
+  freelancerRequests : FreelancerRequestsFromModel[] = [];
   updateModelInfo: UpdateModelInfoDTO = {
     modelId: 0,
     firstName: '',
@@ -163,6 +165,17 @@ export class ModelProfileComponent implements OnInit {
             console.error('Error fetching portfolio posts:', error);
           }
         );
+        // get freelancer requests if model is a freelancer
+        if (this.modelInfo.agencyId === null) {
+          this.http.get<FreelancerRequestsFromModel[]>(this.apiUrl + 'Model/getFreelancerRequests/' + this.modelInfo.modelId).subscribe(
+            (requests) => {
+              this.freelancerRequests = requests;
+            },
+            (error) => {
+              console.error('Error fetching freelancer requests:', error);
+            }
+          );
+        }
       }, (error) => {
         console.error('Error fetching model info:', error);
       }

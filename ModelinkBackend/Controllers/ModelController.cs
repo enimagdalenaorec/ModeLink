@@ -128,5 +128,17 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to create portfolio post.");
         }
+
+        // get model's sent request if the model is a freelancer
+        [HttpGet("getFreelancerRequests/{modelId}")]
+        public async Task<IActionResult> GetFreelancerRequests(int modelId)
+        {
+            var requests = await _modelService.GetFreelancerRequestsAsync(modelId);
+            if (requests == null)
+            {
+                return NotFound();
+            }
+            return Ok(requests);
+        }
     }
 }

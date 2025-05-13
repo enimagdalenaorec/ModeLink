@@ -129,4 +129,11 @@ export interface UpdateModelInfoDTO {
   profilePicture: string;
 }
 
-
+export interface FreelancerRequestsFromModel {
+  userAgencyId: number;
+  agencyId: number;
+  agencyName: string;
+  agencyProfilePicture: string;
+  status: string;
+  requestedAt: Date;
+}

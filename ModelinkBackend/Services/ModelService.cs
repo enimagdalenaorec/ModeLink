@@ -305,5 +305,20 @@ namespace ModelinkBackend.Services
 
             return true;
         }
+
+        public async Task<IEnumerable<FreelancerRequestsFromModel>> GetFreelancerRequestsAsync(int modelId)
+        {
+            var requests = await _modelRepository.GetFreelancerRequestsAsync(modelId);
+
+            return requests.Select(r => new FreelancerRequestsFromModel
+            {
+                UserAgencyId = r.Agency.UserId,
+                AgencyId = r.AgencyId,
+                AgencyName = r.Agency.Name,
+                AgencyProfilePicture = r.Agency.ProfilePictureBase64,
+                Status = r.Status,
+                RequestedAt = r.RequestedAt
+            });
+        }
     }
 }
