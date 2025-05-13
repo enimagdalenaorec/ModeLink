@@ -35,6 +35,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 export class ModelProfileComponent implements OnInit {
   apiUrl: string = environment.apiUrl;
   userId: string = ''; // from url
+  loggedInUserId: string = ''; // from auth service
   modelInfo: ModelInfoDTO = {
     userId: 0,
     modelId: 0,
@@ -121,6 +122,8 @@ export class ModelProfileComponent implements OnInit {
     ];
     // get userId from url
     this.userId = this.route.snapshot.paramMap.get('id') || '';
+    // get logged in userId from auth service
+    this.loggedInUserId = this.authService.getUserId()?.toString() || '';
     // fetch model info
     this.getModelInfo();
   }
@@ -175,6 +178,10 @@ export class ModelProfileComponent implements OnInit {
   }
 
   onDateClick(date: any) {
+    // rerouting is only allowed for the users whose profile this is
+    if (this.userId !== this.loggedInUserId) {
+      return;
+    }
     const recievedDate = new Date(date.year, date.month - 1, date.day);
     // find id of the event whose date is finish date
     const clickedApplication = this.modelInfo.modelApplications.find((event) => {

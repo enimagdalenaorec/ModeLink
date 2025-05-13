@@ -7,8 +7,8 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string AgencyName { get; set; }
-        public int AgencyId { get; set; }       // userId of the agency
+        public string? AgencyName { get; set; }
+        public int? AgencyId { get; set; }       // userId of the agency
         public string CityName { get; set; }
         public string CountryName { get; set; }
         public string CountryCode { get; set; }
