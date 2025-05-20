@@ -151,7 +151,7 @@ namespace ModelinkBackend.Services
                 throw new ArgumentNullException(nameof(modelInfo));
 
             // retrieve the model
-            var existingModel = await _modelRepository.GetModelByIdAsync(modelInfo.ModelId);
+            var existingModel = await _modelRepository.GetModelByModelIdAsync(modelInfo.ModelId);
             if (existingModel == null)
             {
                 return false;
@@ -213,7 +213,7 @@ namespace ModelinkBackend.Services
                 throw new ArgumentNullException(nameof(portfolioPost));
 
             // retrieve the model
-            var existingModel = await _modelRepository.GetModelByIdAsync(modelId);
+            var existingModel = await _modelRepository.GetModelByModelIdAsync(modelId);
             if (existingModel == null)
             {
                 return false;
@@ -248,7 +248,7 @@ namespace ModelinkBackend.Services
         public async Task<bool> DeleteModelPortfolioPostAsync(int modelId, int postId)
         {
             // retrieve the model
-            var existingModel = await _modelRepository.GetModelByIdAsync(modelId);
+            var existingModel = await _modelRepository.GetModelByModelIdAsync(modelId);
             if (existingModel == null)
             {
                 return false;
@@ -271,7 +271,7 @@ namespace ModelinkBackend.Services
                 throw new ArgumentNullException(nameof(portfolioPost));
 
             // check if model exists
-            var existingModel = await _modelRepository.GetModelByIdAsync(modelId);
+            var existingModel = await _modelRepository.GetModelByModelIdAsync(modelId);
             if (existingModel == null)
             {
                 return false;

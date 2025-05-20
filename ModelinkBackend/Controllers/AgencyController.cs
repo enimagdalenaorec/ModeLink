@@ -66,5 +66,12 @@ namespace ModelinkBackend.Controllers
             var events = await _agencyService.GetActiveEventsByAgencyIdAsync(agencyId);
             return Ok(events);
         }
+
+        [HttpGet("agencyInfo/{agencyId}")]
+        public async Task<IActionResult> GetAgencyInfo(int agencyId)
+        {
+            var agencyInfo = await _agencyService.GetAgencyInfoAsync(agencyId);
+            return Ok(agencyInfo);
+        }
     }
 }

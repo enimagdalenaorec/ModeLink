@@ -91,6 +91,8 @@
   height: auto;
   max-height: 25rem;
   object-fit: cover;
+  border-radius: 9px;
+  border: 4px var(--primary-color) solid;
 }
 
 :host ::ng-deep .p-galleria .p-galleria-indicators .p-galleria-indicator.p-highlight button {

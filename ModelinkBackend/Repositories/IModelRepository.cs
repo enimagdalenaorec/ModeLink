@@ -9,6 +9,7 @@ namespace ModelinkBackend.Repositories
         Task<IEnumerable<Model>> SearchModelsAsync(string query);
         Task<IEnumerable<Model>> GetModelSuggestionsAsync();
         Task<Model> GetModelByIdAsync(int userId);
+        Task<Model> GetModelByModelIdAsync(int modelId);
         Task<ModelStatusHistory> GetLatestModelStatus(int userId);
         Task<bool> IsModelAttendingEventAsync(int eventId, int modelId);
         Task<bool> RemoveModelFromEventAsync(int eventId, int modelId);

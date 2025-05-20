@@ -71,5 +71,17 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Agency> GetAgencyInfoAsync(int agencyId)
+        {
+            return await _context.Agencies
+                .Where(a => a.Id == agencyId)
+                .Include(a => a.User)
+                .Include(a => a.City).ThenInclude(c => c.Country)
+                .Include(a => a.Models)
+                .Include(a => a.Events).ThenInclude(e => e.City).ThenInclude(c => c.Country)
+                .Include(a => a.FreelancerRequests).ThenInclude(fr => fr.Model)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }
