@@ -193,5 +193,15 @@ namespace ModelinkBackend.Services
             return true;
         }
 
+        public async Task<bool> UnsignModelAsync(int userId)
+        {
+            Model model = await _agencyRepository.UnsignModelAsync(userId);
+            if (model == null)
+            {
+                return false; // model not found or could not be unsigned
+            }
+            return true; // model successfully unsigned
+        }
+
     }
 }

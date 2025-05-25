@@ -36,7 +36,6 @@ export class AgencyProfileComponent implements OnInit {
   pendingFreelancerRequests: FreelancerRequestForAgency[] = [];
   editDialogeVisible: boolean = false;
   addEventDalogueVisible: boolean = false;
-  unsignModelConfirmationDialogeVisible: boolean = false;
   eventStatusOptions: { label: string }[] = [
     { label: 'Active' },
     { label: 'Inactive' },
@@ -250,5 +249,32 @@ export class AgencyProfileComponent implements OnInit {
     } else if (event.value.label === 'Declined') {
       this.filteredFreelancerRequests = this.agencyInfo?.freelancerRequests!.filter(request => request.status === 'declined') || [];
     }
+  }
+
+  unsignModel(userId: number) {
+    // Show confirmation dialog before unsigning the model
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to unsign this model from your agency?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.processUnsignModel(userId);
+      },
+      reject: () => {
+        this.showToast('info', 'Request Cancelled', 'The model unsigning has been cancelled.');
+      }
+    });
+  }
+
+  processUnsignModel(userId: number) {
+    this.http.post(`${this.apiUrl}Agency/unsignModel/${userId}`, {}).subscribe(
+      (response) => {
+        this.showToast('success', 'Model Unsigning Successful', 'The model has been successfully unsigned from your agency.');
+        this.getAgencyInfo();
+      }, (error) => {
+        console.error('Error unsigning model:', error);
+        this.showToast('error', 'Unsigning Failed', 'The model could not be unsigned from your agency.');
+      }
+    );
   }
 }

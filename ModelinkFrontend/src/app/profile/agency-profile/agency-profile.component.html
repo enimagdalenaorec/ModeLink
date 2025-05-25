@@ -80,7 +80,7 @@
                 style="overflow: visible;" (click)="goToModelProfile(model.userId)">
                 <i class="pi pi-trash bg-white border-circle shadow-2 p-2 text-sm"
                   style="position: absolute; top: -10px; right: -10px;"
-                  (click)="unsignModelConfirmationDialogeVisible = true; $event.stopPropagation()"></i>
+                  (click)="unsignModel(model.userId); $event.stopPropagation()"></i>
                 <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
                   (error)="onImageError($event)" />
                 <div class="flex justify-content-between">

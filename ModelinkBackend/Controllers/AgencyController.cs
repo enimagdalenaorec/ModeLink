@@ -95,5 +95,17 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to decline freelancer request.");
         }
+
+        [HttpPost("unsignModel/{userId}")]
+        public async Task<IActionResult> UnsignModel(int userId)
+        {
+            // userId is user id for the model to be unsigned
+            var result = await _agencyService.UnsignModelAsync(userId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to unsign model.");
+        }
     }
 }

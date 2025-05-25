@@ -119,5 +119,22 @@ namespace ModelinkBackend.Repositories
             return request;
         }
 
+        public async Task<Model> UnsignModelAsync(int userId)
+        {
+            var model = await _context.Models
+                .FirstOrDefaultAsync(m => m.UserId == userId);
+
+            if (model == null)
+            {
+                return null; // Model not found
+            }
+
+            model.AgencyId = null; // unsign the model
+            _context.Models.Update(model);
+            await _context.SaveChangesAsync();
+
+            return model;
+        }
+
     }
 }
