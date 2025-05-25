@@ -29,9 +29,12 @@
 .highlighted-date {
   background-color: whitesmoke;
   border-radius: 50%;
+  width: 33px;
   padding: 0.45rem;
   font-weight: bold;
   color: var(--primary-color);
+  display: flex;
+  justify-content: center;
 }
 
 :host ::ng-deep .p-chip {

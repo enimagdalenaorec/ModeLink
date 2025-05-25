@@ -55,7 +55,7 @@
       </ng-template></p-calendar>
     <!-- if model is freelancer show request sent for agencies, but only if that is the profile of that user-->
     <div *ngIf="loggedInUserId == userId && modelInfo.agencyId == null" class="mt-5">
-      <p class="mb-1">You have requested to join these agencies: </p>
+      <p *ngIf="freelancerRequests != [] && freelancerRequests.length > 0" class="mb-1">You have requested to join these agencies: </p>
       <p-carousel *ngIf="freelancerRequests != [] && freelancerRequests.length > 0" [value]="freelancerRequests"
         [numVisible]="1" [numScroll]="1" [circular]="true">
         <ng-template let-request pTemplate="item">

@@ -67,10 +67,10 @@ namespace ModelinkBackend.Controllers
             return Ok(events);
         }
 
-        [HttpGet("agencyInfo/{agencyId}")]
-        public async Task<IActionResult> GetAgencyInfo(int agencyId)
+        [HttpGet("agencyInfo/{userId}")]
+        public async Task<IActionResult> GetAgencyInfo(int userId)
         {
-            var agencyInfo = await _agencyService.GetAgencyInfoAsync(agencyId);
+            var agencyInfo = await _agencyService.GetAgencyInfoAsync(userId);
             return Ok(agencyInfo);
         }
     }

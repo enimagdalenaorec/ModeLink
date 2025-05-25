@@ -107,9 +107,9 @@ namespace ModelinkBackend.Services
             });
         }
 
-        public async Task<AgencyInfoDto> GetAgencyInfoAsync(int agencyId)
+        public async Task<AgencyInfoDto> GetAgencyInfoAsync(int userId)
         {
-            var agency = await _agencyRepository.GetAgencyInfoAsync(agencyId);
+            var agency = await _agencyRepository.GetAgencyInfoAsync(userId);
 
             if (agency == null)
             {
@@ -135,6 +135,8 @@ namespace ModelinkBackend.Services
                     ModelId = fr.ModelId,
                     ModelFirstName = fr.Model.FirstName,
                     ModelLastName = fr.Model.LastName,
+                    ModelCityName = fr.Model.City?.Name, // ff null, return null
+                    ModelCountryName = fr.Model.City?.Country?.Name, // if null, return null
                     ModelProfilePicture = fr.Model.ProfilePictureBase64,
                     Status = fr.Status.ToString(),
                     RequestedAt = fr.RequestedAt

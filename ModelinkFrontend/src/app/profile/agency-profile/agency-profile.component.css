@@ -1,0 +1,261 @@
+.profile-container {
+  display: flex;
+}
+
+.left-panel {
+  width: 38%;
+}
+
+.right-panel {
+  width: 62%;
+}
+
+.picture {
+  height: 190px;
+  width: 190px;
+  object-fit: cover;
+}
+
+:host ::ng-deep .p-datepicker .p-datepicker-header {
+  background: none;
+}
+
+:host ::ng-deep .p-datepicker table td {
+  padding: 0.10rem;
+  padding-left: 0.20rem;
+  padding-right: 0.20rem;
+}
+
+.highlighted-date {
+  background-color: whitesmoke;
+  width: 33px;
+  display: flex;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0.45rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+@media screen and (max-width: 1092px) {
+  .profile-container {
+    flex-direction: column;
+  }
+  .left-panel {
+    width: 100%;
+  }
+}
+
+.profile-picture {
+  height: 100%;
+  width: auto;
+  object-fit: cover;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-indicators {
+  padding-bottom: 0.2rem !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+  background-color: var(--accent-color) !important;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator button {
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next .p-icon-wrapper {
+  color: var(--accent-color) !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev .p-icon-wrapper {
+  color: var(--accent-color) !important;
+  background-color: none !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-indicators {
+  padding-top: 0% !important;
+}
+
+.edit-button {
+  flex: 10%;
+}
+
+.flex-90 {
+  flex: 90%;
+}
+
+.flex-60 {
+  flex: 60%;
+}
+
+.view-requests-button {
+  flex: 32%;
+}
+
+:host ::ng-deep .edit-button .p-button {
+  background-color: var(--background-color) !important;
+  color: var(--primary-color) !important;
+}
+
+::ng-deep .edit-button .pi {
+  font-size: 1.5rem;
+}
+
+.form-invalid-message {
+  color: rgb(136, 29, 29);
+}
+
+:host ::ng-deep .dropdown .p-inputtext{
+  border: none
+}
+
+:host ::ng-deep .dropdown {
+  border-color: var(--secondary-color);
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  background: white;
+  z-index: 999;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  top: 60px;  /* for positioning belov address input field*/
+  border-radius: 6px;
+}
+
+.autocomplete-suggestions li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
+:host ::ng-deep .cancel-button .p-button {
+  background-color: #a5ada8 !important;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: var(--primary-color) !important;
+}
+
+:host ::ng-deep textarea {
+  border-radius: 6px !important;
+  border: 1px solid var(--secondary-color) !important;
+  padding: 0.6rem !important;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+:host ::ng-deep .p-dialog-content {
+  background-color: var(--background-color) !important;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  background: var(--background-color) !important;
+}
+
+.profile-picture-request {
+  height: 110px;
+  width: 110px;
+  object-fit: cover;
+}
+
+:host ::ng-deep .p-carousel-content {
+  border: 2px solid var(--accent-color) !important;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev {
+  margin: 0px 0px 0px 0px !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next {
+  margin: 0px 0px 0px 0px !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-nav {
+  width: 60% !important;
+  justify-self: start !important;
+}
+
+@media screen and (max-width: 1191px) {
+  :host ::ng-deep .p-stepper .p-stepper-nav {
+    width: 80% !important;
+  }
+}
+
+@media screen and (max-width: 1012px) {
+  :host ::ng-deep .p-stepper .p-stepper-nav {
+    width: 100% !important;
+    margin-top: 2rem !important;
+  }
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header .p-stepper-action {
+  background: none !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header.p-highlight .p-stepper-number {
+  background: var(--accent-color) !important;
+  color: white !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header:has(~ .p-highlight) .p-stepper-separator {
+  background: var(--accent-color) !important;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-trigger {
+  display: none !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-panels {
+  background: var(--background-color) !important;
+  padding: 0.5rem !important;
+}
+
+.profile-picture {
+  height: 70%;
+  width: auto;
+  object-fit: cover;
+}
+
+.location {
+  flex: 0 0 38%;
+  max-width: 38%;
+  text-align: right;
+}
+
+.truncate {
+  white-space: nowrap; /* Prevents the text from wrapping to the next line */
+  overflow: hidden; /* Hides the overflowing text */
+  text-overflow: ellipsis; /* Adds "..." at the end of the truncated text */
+}
+
+.info {
+  flex: 0 0 62%;
+  max-width: 62%;
+}
+
+.item {
+  background-color: #becfc6;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 220px;
+  width: 22%;
+}

@@ -215,14 +215,18 @@ export class ModelProfileComponent implements OnInit, OnDestroy {
     const recievedDate = new Date(date.year, date.month - 1, date.day);
     // find id of the event whose date is finish date
     const clickedApplication = this.modelInfo.modelApplications.find((event) => {
-      const eventFinishDate = new Date(event.eventFinish);
-      return eventFinishDate.getDate() === recievedDate.getDate();
-    });
-    if (clickedApplication && clickedApplication.eventId) {
-      this.router.navigate(['/event-details', clickedApplication.eventId]);
-    } else {
-      console.log('No event found for the clicked date.');
-    }
+    const eventFinishDate = new Date(event.eventFinish);
+    return (
+      eventFinishDate.getDate() === recievedDate.getDate() &&
+      eventFinishDate.getMonth() === recievedDate.getMonth() &&
+      eventFinishDate.getFullYear() === recievedDate.getFullYear()
+    );
+  });
+  if (clickedApplication && clickedApplication.eventId) {
+    this.router.navigate(['/event-details', clickedApplication.eventId]);
+  } else {
+    console.log('No event found for the clicked date.');
+  }
   }
 
   formatDate(isoString: string): string {
