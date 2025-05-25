@@ -131,6 +131,7 @@ namespace ModelinkBackend.Services
             List<FreelancerRequestForAgency> freelancerRequests = agency.FreelancerRequests
                 .Select(fr => new FreelancerRequestForAgency
                 {
+                    RequestId = fr.Id,
                     UserModelId = fr.Model.UserId,
                     ModelId = fr.ModelId,
                     ModelFirstName = fr.Model.FirstName,
@@ -170,6 +171,26 @@ namespace ModelinkBackend.Services
                 Events = events,   // could be empty
                 FreelancerRequests = freelancerRequests   // could be empty
             };
+        }
+
+        public async Task<bool> AcceptFreelancerRequestAsync(int requestId)
+        {
+            FreelancerRequest req = await _agencyRepository.AcceptFreelancerRequestAsync(requestId);
+            if (req == null)
+            {
+                return false; // request not found or could not be accepted
+            }
+            return true;
+        }
+
+        public async Task<bool> DeclineFreelancerRequestAsync(int requestId)
+        {
+            FreelancerRequest req = await _agencyRepository.DeclineFreelancerRequestAsync(requestId);
+            if (req == null)
+            {
+                return false; // request not found or could not be declined
+            }
+            return true;
         }
 
     }

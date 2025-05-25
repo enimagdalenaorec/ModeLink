@@ -83,5 +83,41 @@ namespace ModelinkBackend.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<FreelancerRequest> AcceptFreelancerRequestAsync(int requestId)
+        {
+            var request = await _context.FreelancerRequests
+                .Include(fr => fr.Model)
+                .FirstOrDefaultAsync(fr => fr.Id == requestId);
+
+            if (request == null)
+            {
+                return null; 
+            }
+
+            request.Status = "accepted";
+            _context.FreelancerRequests.Update(request);
+            await _context.SaveChangesAsync();
+
+            return request;
+        }
+
+        public async Task<FreelancerRequest> DeclineFreelancerRequestAsync(int requestId)
+        {
+            var request = await _context.FreelancerRequests
+                .Include(fr => fr.Model)
+                .FirstOrDefaultAsync(fr => fr.Id == requestId);
+
+            if (request == null)
+            {
+                return null;
+            }
+
+            request.Status = "declined";
+            _context.FreelancerRequests.Update(request);
+            await _context.SaveChangesAsync();
+
+            return request;
+        }
+
     }
 }

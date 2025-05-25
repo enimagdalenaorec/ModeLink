@@ -259,3 +259,13 @@
   min-width: 220px;
   width: 22%;
 }
+
+.all-requests {
+  border: solid 2px var(--accent-color) !important;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-button-secondary:hover {
+  background-color: var(--accent-color) !important;
+  color: var(--background-color) !important;
+}

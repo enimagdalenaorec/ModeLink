@@ -14,5 +14,7 @@ namespace ModelinkBackend.Services
         Task<IEnumerable<ModelSuggestionDto>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyId);
         Task<IEnumerable<EventCardDTO>> GetActiveEventsByAgencyIdAsync(int agencyId);
         Task<AgencyInfoDto> GetAgencyInfoAsync(int userId);
+        Task<bool> AcceptFreelancerRequestAsync(int requestId);
+        Task<bool> DeclineFreelancerRequestAsync(int requestId);
     }
 }

@@ -73,5 +73,27 @@ namespace ModelinkBackend.Controllers
             var agencyInfo = await _agencyService.GetAgencyInfoAsync(userId);
             return Ok(agencyInfo);
         }
+
+        [HttpPost("acceptFreelancerRequest/{requestId}")]
+        public async Task<IActionResult> AcceptFreelancerRequest(int requestId)
+        {
+            var result = await _agencyService.AcceptFreelancerRequestAsync(requestId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to accept freelancer request.");
+        }
+
+        [HttpPost("declineFreelancerRequest/{requestId}")]
+        public async Task<IActionResult> DeclineFreelancerRequest(int requestId)
+        {
+            var result = await _agencyService.DeclineFreelancerRequestAsync(requestId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to decline freelancer request.");
+        }
     }
 }

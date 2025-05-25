@@ -15,11 +15,13 @@ import { NgIf, NgFor } from '@angular/common';
 import { StepperModule } from 'primeng/stepper';
 import { DropdownModule } from 'primeng/dropdown';
 import { EventCardDto } from '../../_Models/event';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-agency-profile',
   standalone: true,
-  imports: [HttpClientModule, ChipModule, CalendarModule, FormsModule, CommonModule, CarouselModule, NgIf, NgFor, StepperModule, DropdownModule],
+  imports: [HttpClientModule, ChipModule, CalendarModule, FormsModule, CommonModule, CarouselModule, NgIf, NgFor, StepperModule, DropdownModule, ToastModule, ConfirmDialogModule],
   providers: [AuthService, ConfirmationService, MessageService],
   templateUrl: './agency-profile.component.html',
   styleUrl: './agency-profile.component.css'
@@ -40,8 +42,16 @@ export class AgencyProfileComponent implements OnInit {
     { label: 'Inactive' },
     { label: 'Remove Filter' }
   ];
+  freelancerRequestStatusOptions: { label: string }[] = [
+    { label: 'Pending' },
+    { label: 'Accepted' },
+    { label: 'Declined' },
+    { label: 'Remove Filter' }
+  ];
   selectedEventStatus: string | null = null;
   filteredEvents: EventCardDto[] = [];
+  selectedFreelancerRequestStatus: string | null = null;
+  filteredFreelancerRequests: FreelancerRequestForAgency[] = [];
 
   constructor(private router: Router, private messageService: MessageService, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute, private confirmationService: ConfirmationService) { }
 
@@ -73,6 +83,10 @@ export class AgencyProfileComponent implements OnInit {
         if (this.agencyInfo && this.agencyInfo.events) {
           // first all events are shown
           this.filteredEvents = this.agencyInfo.events;
+        }
+        if (this.agencyInfo && this.agencyInfo.freelancerRequests) {
+          // first all freelancer requests are shown
+          this.filteredFreelancerRequests = this.agencyInfo.freelancerRequests;
         }
       },
       (error) => {
@@ -169,5 +183,72 @@ export class AgencyProfileComponent implements OnInit {
     const month = dateString.split('-')[1];
     const year = dateString.split('-')[2];
     return `${day}/${month}/${year}`;
+  }
+
+  acceptFreelancerRequest(requestId: number) {
+    // Show confirmation dialog before accepting the request
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to accept this freelancer request?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.processAcceptFreelancerRequest(requestId);
+      },
+      reject: () => {
+        this.showToast('info', 'Request Cancelled', 'The freelancer request acceptance has been cancelled.');
+      }
+    });
+  }
+
+  processAcceptFreelancerRequest(requestId: number) {
+    this.http.post(`${this.apiUrl}Agency/acceptFreelancerRequest/${requestId}`, {}).subscribe(
+      (response) => {
+        this.showToast('success', 'Request Accepted', 'The freelancer request has been accepted successfully.');
+        this.getAgencyInfo();
+      }, (error) => {
+        console.error('Error accepting freelancer request:', error);
+        this.showToast('error', 'Request Failed', 'The freelancer request could not be accepted.');
+      }
+    );
+  }
+
+  declineFreelancerRequest(requestId: number) {
+    // Show confirmation dialog before declining the request
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to decline this freelancer request?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.processDeclineFreelancerRequest(requestId);
+      },
+      reject: () => {
+        this.showToast('info', 'Request Cancelled', 'The freelancer request decline has been cancelled.');
+      }
+    });
+  }
+
+  processDeclineFreelancerRequest(requestId: number) {
+    this.http.post(`${this.apiUrl}Agency/declineFreelancerRequest/${requestId}`, {}).subscribe(
+      (response) => {
+        this.showToast('success', 'Request Declined', 'The freelancer request has been declined successfully.');
+        this.getAgencyInfo();
+      }, (error) => {
+        console.error('Error declining freelancer request:', error);
+        this.showToast('error', 'Request Failed', 'The freelancer request could not be declined.');
+      }
+    );
+  }
+
+  freelancerRequestStatusFilterChange(event: any) {
+    if (event.value.label === 'Remove Filter') {
+      this.filteredFreelancerRequests = this.agencyInfo?.freelancerRequests || [];
+      this.selectedFreelancerRequestStatus = null;
+    } else if (event.value.label === 'Pending') {
+      this.filteredFreelancerRequests = this.agencyInfo?.freelancerRequests!.filter(request => request.status === 'pending') || [];
+    } else if (event.value.label === 'Accepted') {
+      this.filteredFreelancerRequests = this.agencyInfo?.freelancerRequests!.filter(request => request.status === 'accepted') || [];
+    } else if (event.value.label === 'Declined') {
+      this.filteredFreelancerRequests = this.agencyInfo?.freelancerRequests!.filter(request => request.status === 'declined') || [];
+    }
   }
 }

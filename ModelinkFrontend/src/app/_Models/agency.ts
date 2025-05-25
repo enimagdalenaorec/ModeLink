@@ -47,6 +47,7 @@ export interface AgencyInfoDto {
 }
 
 export interface FreelancerRequestForAgency {
+  requestId: number;
   userModelId: number;
   modelId: number;
   modelFirstName: string;

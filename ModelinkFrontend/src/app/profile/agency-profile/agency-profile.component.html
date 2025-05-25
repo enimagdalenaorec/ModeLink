@@ -68,7 +68,6 @@
             class="flex flex-column justify-content-center align-items-center  text-gray-400 text-sm font-medium pl-4">
             <img src="assets/images/not-found.png" alt="No events found" class="w-20rem h-20rem mt-3" />
             <p class="text-center text-lg font-semibold mt-0 pt-0">No events found.</p>
-
           </div>
         </ng-template>
       </p-stepperPanel>
@@ -111,22 +110,66 @@
                     <p class="mt-2">{{ formatDate(request.requestedAt) }}</p>
                   </div>
                   <div class="flex gap-2 w-full mb-3 ml-4">
-                    <img (click)="goToModelProfile(request.userModelId)" class="profile-picture-request border-round-lg" [src]="request.modelProfilePicture"
-                      alt="Request Image" />
+                    <img (click)="goToModelProfile(request.userModelId)" class="profile-picture-request border-round-lg"
+                      [src]="request.modelProfilePicture" alt="Request Image" />
                     <div class="ml-2 flex flex-column justify-content-center">
                       <p (click)="goToModelProfile(request.userModelId)"
                         class="cursor-pointer text-gray-600 text-lg align-self-start mt-0 mb-0 font-semibold">
                         {{ request.modelFirstName }} {{ request.modelLastName }}
                       </p>
-                      <p *ngIf="request.modelCityName != null" class="text-gray-500 text-sm mb-0 mt-1">{{ request.modelCityName }},
+                      <p *ngIf="request.modelCityName != null" class="text-gray-500 text-sm mb-0 mt-1">{{
+                        request.modelCityName }},
                         {{ request.modelCountryName }}</p>
+                      <div class="buttons flex gap-2 mt-2">
+                        <button pButton class="p-button-sm" label="Accept"
+                          (click)="acceptFreelancerRequest(request.requestId)"><i class="pi pi-check mr-2"></i></button>
+                        <button pButton class="p-button-sm p-button-secondary" label="Decline"
+                          (click)="declineFreelancerRequest(request.requestId)"><i
+                            class="pi pi-trash mr-2"></i></button>
+                      </div>
                     </div>
                   </div>
                 </ng-template>
               </p-carousel>
-              <button *ngIf="pendingFreelancerRequests.length == 0" pButton
-                class="mt-0 p-button-sm view-requests-button" label="View All Freelancer Requests"
-                (click)="goToFreelancerRequests()"></button>
+            </div>
+            <!-- all requests -->
+            <div *ngIf="agencyInfo?.freelancerRequests" class="all-requests p-3 mt-2">
+              <div class=" flex justify-content-between align-items-start">
+                <p class="mb-1 mt-0">All models requests:</p>
+                <div class="filter-bar mb-2 mr-2" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="pi pi-filter" style="font-size: 1.5rem;"></i>
+                  <p-dropdown [options]="freelancerRequestStatusOptions" [(ngModel)]="selectedFreelancerRequestStatus"
+                    placeholder="Filter by status" (onChange)="freelancerRequestStatusFilterChange($event)"
+                    styleClass="p-inputtext-sm" optionLabel="label">
+                  </p-dropdown>
+                </div>
+              </div>
+              <div *ngFor="let request of filteredFreelancerRequests">
+                <div class="flex gap-2 w-full mb-3 ml-4">
+                  <img (click)="goToModelProfile(request.userModelId)" class="profile-picture-request border-round-lg"
+                    [src]="request.modelProfilePicture" alt="Request Image" />
+                  <div class="ml-2 flex flex-column justify-content-center">
+                    <p (click)="goToModelProfile(request.userModelId)"
+                      class="cursor-pointer text-gray-600 text-lg align-self-start mt-0 mb-0 font-semibold">
+                      {{ request.modelFirstName }} {{ request.modelLastName }}
+                    </p>
+                    <p *ngIf="request.modelCityName != null" class="text-gray-500 text-sm mb-0 mt-1">{{
+                      request.modelCityName }},
+                      {{ request.modelCountryName }}</p>
+                    <div *ngIf="request.status == 'pending'" class="buttons flex gap-2 mt-2">
+                      <button pButton class="p-button-sm" label="Accept"
+                        (click)="acceptFreelancerRequest(request.requestId)"><i class="pi pi-check mr-2"></i></button>
+                      <button pButton class="p-button-sm p-button-secondary" label="Decline"
+                        (click)="declineFreelancerRequest(request.requestId)"><i class="pi pi-trash mr-2"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="filteredFreelancerRequests.length == 0"
+                class="flex flex-column justify-content-center align-items-center  text-gray-400 text-sm font-medium pl-4">
+                <img src="assets/images/not-found.png" alt="No events found" class="w-20rem h-20rem mt-3" />
+                <p class="text-center text-lg font-semibold mt-0 pt-0">No requests found.</p>
+              </div>
             </div>
           </div>
         </ng-template>
@@ -134,3 +177,7 @@
     </p-stepper>
   </div>
 </div>
+
+<p-toast></p-toast>
+
+<p-confirmDialog></p-confirmDialog>

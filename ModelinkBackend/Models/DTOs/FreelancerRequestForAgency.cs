@@ -2,6 +2,7 @@
 {
     public class FreelancerRequestForAgency
     {
+        public int RequestId { get; set; }
         public int UserModelId { get; set; }
         public int ModelId { get; set; }
         public string ModelFirstName { get; set; } = string.Empty;
