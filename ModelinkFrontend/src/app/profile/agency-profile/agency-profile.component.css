@@ -269,3 +269,11 @@
   background-color: var(--accent-color) !important;
   color: var(--background-color) !important;
 }
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}

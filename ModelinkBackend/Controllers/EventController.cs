@@ -57,5 +57,21 @@ namespace ModelinkBackend.Controllers
             return Ok(result);
         }
 
+        [HttpPost("addEvent/{agencyId}")]
+        public async Task<IActionResult> AddEventAsync(int agencyId, [FromBody] AddNewEventDTO addNewEventDTO)
+        {
+            if (agencyId != addNewEventDTO.AgencyId)
+            {
+                return BadRequest("Agency ID mismatch.");
+            }
+
+            var result = await _eventService.AddEventAsync(addNewEventDTO);
+            if (!(bool)result)
+            {
+                return BadRequest("Failed to add event.");
+            }
+            return Ok(result);
+        }
+
     }
 }

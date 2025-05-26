@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AgencyInfoDto, FreelancerRequestForAgency } from '../../_Models/agency';
+import { AddNewEventDTO } from '../../_Models/event';
 import { ChipModule } from 'primeng/chip';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
@@ -17,11 +18,15 @@ import { DropdownModule } from 'primeng/dropdown';
 import { EventCardDto } from '../../_Models/event';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { FileUploadModule } from 'primeng/fileupload';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-agency-profile',
   standalone: true,
-  imports: [HttpClientModule, ChipModule, CalendarModule, FormsModule, CommonModule, CarouselModule, NgIf, NgFor, StepperModule, DropdownModule, ToastModule, ConfirmDialogModule],
+  imports: [HttpClientModule, ChipModule, CalendarModule, FormsModule, CommonModule, CarouselModule, NgIf, NgFor, StepperModule, DropdownModule, ToastModule, ConfirmDialogModule, DialogModule, InputTextareaModule, FileUploadModule, InputTextModule],
   providers: [AuthService, ConfirmationService, MessageService],
   templateUrl: './agency-profile.component.html',
   styleUrl: './agency-profile.component.css'
@@ -35,7 +40,7 @@ export class AgencyProfileComponent implements OnInit {
   agencyInfo: AgencyInfoDto | null = null;
   pendingFreelancerRequests: FreelancerRequestForAgency[] = [];
   editDialogeVisible: boolean = false;
-  addEventDalogueVisible: boolean = false;
+  addEventDialogueVisible: boolean = false;
   eventStatusOptions: { label: string }[] = [
     { label: 'Active' },
     { label: 'Inactive' },
@@ -51,6 +56,26 @@ export class AgencyProfileComponent implements OnInit {
   filteredEvents: EventCardDto[] = [];
   selectedFreelancerRequestStatus: string | null = null;
   filteredFreelancerRequests: FreelancerRequestForAgency[] = [];
+  // for adding new event
+  newEvent: AddNewEventDTO = {
+    agencyId: 0,
+    title: '',
+    description: '',
+    address: '',
+    cityName: '',
+    countryName: '',
+    countryCode: '',
+    latitude: 0,
+    longitude: 0,
+    profilePicture: '',
+    eventStart: '',
+    eventFinish: ''
+  };
+  minDate: Date = new Date(new Date().setHours(0, 0, 0, 0)); // today's date, set to midnight
+  addEventAddressSuggestions: any[] = [];
+  selectedAddEventAddress: string = '';
+  addEventErrorMessage: string = '';
+  pictureForAddEvent: File | null = null;
 
   constructor(private router: Router, private messageService: MessageService, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute, private confirmationService: ConfirmationService) { }
 
@@ -277,4 +302,140 @@ export class AgencyProfileComponent implements OnInit {
       }
     );
   }
+
+  // for adding new event
+
+  onAddEventAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 4) {         // minimum 4 characters
+      this.addEventAddressSuggestions = [];
+      return;
+    }
+
+    this.http
+      .get(`https://nominatim.openstreetmap.org/search`, {
+        params: {
+          q: query,
+          format: 'json',
+          addressdetails: '1',
+          limit: '6'
+        }
+      })
+      .subscribe((results: any) => {
+        // make sure the suggestions always contain address
+        this.addEventAddressSuggestions = results.filter((result: any) => {
+          const address = result.address;
+          return (
+            address.road ||
+            address.neighbourhood ||
+            address.suburb
+          );
+        });
+      });
+  }
+
+  selectAddEventAddressSuggestion(suggestion: any) {
+    this.selectedAddEventAddress = suggestion.display_name;
+    const road =
+      suggestion.address.road ||
+      suggestion.address.neighbourhood ||
+      suggestion.address.suburb ||
+      suggestion.address.city_district ||
+      '';
+    const houseNumber = suggestion.address?.house_number || '';
+    this.newEvent.address = `${road} ${houseNumber}`.trim();
+    this.newEvent.latitude = parseFloat(suggestion.lat);
+    this.newEvent.longitude = parseFloat(suggestion.lon);
+    this.newEvent.cityName = suggestion.address?.city || suggestion.address?.town || '';
+    this.newEvent.countryName = suggestion.address?.country || '';
+    this.newEvent.countryCode = suggestion.address?.country_code || '';
+    this.addEventAddressSuggestions = [];
+  }
+
+  async onAddEventFileSelected(event: any, fileUpload?: any) {
+    const file = event.files[0];
+    if (file) {
+      this.pictureForAddEvent = file;
+      const base64 = await this.convertFileToBase64(this.pictureForAddEvent!);
+      this.newEvent.profilePicture = base64;
+    }
+    if (fileUpload) {
+      fileUpload.clear(); // clear the file input after selection
+    }
+  }
+
+  convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  cancelAddEventChanges() {
+    this.addEventDialogueVisible = false;
+    this.selectedAddEventAddress = ''; // reset the selected address
+    this.pictureForAddEvent = null; // reset the picture for add event
+    this.onAddEventFileSelected({ files: [] }); // reset the file input
+    this.newEvent = {
+      agencyId: 0,
+      title: '',
+      description: '',
+      address: '',
+      cityName: '',
+      countryName: '',
+      countryCode: '',
+      latitude: 0,
+      longitude: 0,
+      profilePicture: '',
+      eventStart: '',
+      eventFinish: ''
+    };
+  }
+
+  async saveAddEventChanges() {
+    if (this.pictureForAddEvent) {
+      const base64 = await this.convertFileToBase64(this.pictureForAddEvent);
+      this.newEvent.profilePicture = base64;
+    }
+    // check all required fields are filled and if finish date is later then start date
+    if (this.addEventFormNotValid()) {
+      this.addEventErrorMessage = 'Please fill all required fields.';
+      return;
+    } else if ((this.newEvent.eventFinish ?? new Date()) < (this.newEvent.eventStart ?? new Date())) {
+      this.addEventErrorMessage = 'Finish date must be later than start date.';
+      return;
+    }
+    // in case address is not selected from autocomplete, set it to the selected address
+    if (this.newEvent.address === '') {
+      this.newEvent.address = this.selectedAddEventAddress;
+    }
+    this.addEventErrorMessage = '';
+    // add agencyId to the newEvent object
+    this.newEvent.agencyId = this.agencyInfo?.agencyId || 0;
+    this.http
+      .post(`${this.apiUrl}Event/addEvent/${this.agencyInfo?.agencyId}`, this.newEvent)
+      .subscribe(
+        () => {
+          this.showToast('success', 'Success', 'Event details added successfully!');
+          this.getAgencyInfo(); // refresh the agency info to include the new event
+          this.addEventDialogueVisible = false; // close the dialog
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to add event details.');
+          console.error('Error adding event details:', error);
+        }
+      );
+  }
+
+  addEventFormNotValid() {
+    return this.newEvent.title === '' ||
+      this.newEvent.description === '' ||
+      this.newEvent.address === '' ||
+      this.newEvent.eventStart === '' ||
+      this.newEvent.eventFinish === '' ||
+      this.newEvent.profilePicture === ''
+  }
+
 }

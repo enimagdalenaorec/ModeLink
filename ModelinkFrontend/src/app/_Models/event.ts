@@ -49,3 +49,19 @@ export interface UpdateEventDto {
   profilePicture?: string; // base64
   status?: string; // "active"  "inactive"
 }
+
+export interface AddNewEventDTO {
+  agencyId: number;
+  title: string;
+  description?: string;
+  address: string;
+  cityName: string;
+  countryName: string;
+  countryCode: string; // ISO code of the country
+  latitude?: number;
+  longitude?: number;
+  eventStart: string; // ISO string, e.g., "2025-05-24T10:00:00Z"
+  eventFinish?: string; // nullable date
+  profilePicture?: string;
+}
+

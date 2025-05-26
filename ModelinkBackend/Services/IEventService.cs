@@ -7,5 +7,6 @@ namespace ModelinkBackend.Services
         Task<EventDetailsDTO?> GetEventDetailsAsync(int eventId, int userId);
         Task<EventDetailsDTO?> UpdateEventAsync(UpdateEventDTO updateEventDTO);
         Task<EventDetailsDTO?> DeleteEventAsync(int eventId);
+        Task<bool?> AddEventAsync(AddNewEventDTO addNewEventDTO);
     }
 }

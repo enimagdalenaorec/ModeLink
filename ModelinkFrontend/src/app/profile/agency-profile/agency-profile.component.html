@@ -43,7 +43,7 @@
                 </p-dropdown>
               </div>
               <p-button icon="pi pi-plus" class="add-event-button" label="Add Event"
-                (onClick)="addEventDalogueVisible = true"></p-button>
+                (onClick)="addEventDialogueVisible = true"></p-button>
             </div>
             <div *ngIf="filteredEvents.length != 0" class="models-list flex flex-wrap gap-4">
               <div *ngFor="let event of filteredEvents" class="item flex flex-column h-15rem"
@@ -181,3 +181,55 @@
 <p-toast></p-toast>
 
 <p-confirmDialog></p-confirmDialog>
+
+<p-dialog header="Add new event" [modal]="true"  [(visible)]="addEventDialogueVisible" [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
+  <div class="attributes-container mb-4">
+    <div class="flex flex-column mb-2">
+      <label for="title" class="font-semibold w-24 mb-1">Title</label>
+      <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="newEvent.title" />
+    </div>
+    <div class="flex flex-column mb-2">
+      <label for="description" class="font-semibold w-24 mb-1">Description</label>
+      <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="newEvent.description"></textarea>
+    </div>
+    <div class="flex flex-column mb-2 relative">
+      <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
+      <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+        (input)="onAddEventAddressSearch($event)" [(ngModel)]="selectedAddEventAddress" autocomplete="off" />
+      <ul *ngIf="addEventAddressSuggestions.length > 0" class="autocomplete-suggestions">
+        <li *ngFor="let suggestion of addEventAddressSuggestions" (click)="selectAddEventAddressSuggestion(suggestion)">
+          {{ suggestion.display_name }}
+        </li>
+      </ul>
+    </div>
+    <div class="calendars flex mb-1">
+      <div class="flex flex-column mb-2 mr-4">
+        <label for="startDate" class="font-semibold w-24 mb-1">Start date</label>
+        <p-calendar inputId="calendar-24h" [(ngModel)]="newEvent.eventStart" [minDate]="minDate"
+          [showTime]="true" [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+      <div class="flex flex-column mb-2">
+        <label for="finishDate" class="font-semibold w-24 mb-1">Finish date</label>
+        <p-calendar [(ngModel)]="newEvent.eventFinish" [minDate]="minDate" [showTime]="true"
+          [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+    </div>
+    <div class="thumbnail flex gap-3 align-items-end mb-4">
+      <div *ngIf="newEvent.profilePicture != ''" class="flex flex-column">
+        <label for="profilePicture" class="font-semibold w-24 mb-1">Thumbnail picture</label>
+        <img *ngIf="newEvent.profilePicture" [src]="newEvent.profilePicture" alt="Event Image"
+          class="w-max h-10rem border-round-lg mb-2" />
+      </div>
+      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false" [customUpload]="true"
+        [maxFileSize]="1000000" (onSelect)="onAddEventFileSelected($event, fileupload)" chooseLabel="Image">
+      </p-fileUpload>
+    </div>
+  </div>
+  <div class="form-invalid-message flex">
+    <p *ngIf="addEventErrorMessage != ''" class="justify-content-end mb-0 pb-0 mt-0">{{addEventErrorMessage}}</p>
+  </div>
+  <div class="flex justify-content-end gap-2 mt-3">
+    <p-button label="Cancel" (onClick)="cancelAddEventChanges()" />
+    <p-button label="Save" severity="secondary" (onClick)="saveAddEventChanges()" />
+  </div>
+</p-dialog>

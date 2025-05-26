@@ -150,5 +150,59 @@ namespace ModelinkBackend.Services
                 AgencyName = eventToDelete.Agency?.Name
             };
         }
+
+        public async Task<bool?> AddEventAsync(AddNewEventDTO addNewEventDTO)
+        {
+            // check or create country first
+            var country = !string.IsNullOrEmpty(addNewEventDTO.CountryName)
+                ? await _eventRepository.GetCountryByNameAsync(addNewEventDTO.CountryName)
+                : null;
+
+            if (country == null && !string.IsNullOrEmpty(addNewEventDTO.CountryName) && !string.IsNullOrEmpty(addNewEventDTO.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = addNewEventDTO.CountryName,
+                    Code = addNewEventDTO.CountryCode
+                };
+                await _eventRepository.CreateCountryAsync(country);
+            }
+
+            // check or create city
+            var city = !string.IsNullOrEmpty(addNewEventDTO.CityName)
+                ? await _eventRepository.GetCityByNameAsync(addNewEventDTO.CityName)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(addNewEventDTO.CityName) && country != null)
+            {
+                city = new City
+                {
+                    Name = addNewEventDTO.CityName,
+                    CountryId = country.Id
+                };
+                await _eventRepository.CreateCityAsync(city);
+            }
+
+            // create event
+            string status = "active"; // default status for a new event
+            var newEvent = new Event
+            {
+                Title = addNewEventDTO.Title,
+                Description = addNewEventDTO.Description,
+                Address = addNewEventDTO.Address,
+                CityId = city?.Id ?? 0,
+                Latitude = addNewEventDTO.Latitude,
+                Longitude = addNewEventDTO.Longitude,
+                EventStart = addNewEventDTO.EventStart,
+                EventFinish = addNewEventDTO.EventFinish,
+                ProfilePictureBase64 = addNewEventDTO.ProfilePicture,
+                AgencyId = addNewEventDTO.AgencyId,
+                Status = status, //  the default status for a new event
+            };
+
+            await _eventRepository.AddEventAsync(newEvent);
+
+            return true;
+        }
     }
 }
