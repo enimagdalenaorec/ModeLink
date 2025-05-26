@@ -203,5 +203,30 @@ namespace ModelinkBackend.Services
             return true; // model successfully unsigned
         }
 
+        public async Task<bool> UpdateAgencyInfoAsync(UpdateAgencyInfoDTO updateAgencyInfoDTO)
+        {
+            if (updateAgencyInfoDTO == null || updateAgencyInfoDTO.AgencyId <= 0)
+            {
+                return false; // invalid input
+            }
+
+            Agency agency = await _agencyRepository.GetAgencyByAgencyIdAsync(updateAgencyInfoDTO.AgencyId);
+            if (agency == null)
+            {
+                return false; // agency not found
+            }
+
+            agency.Name = updateAgencyInfoDTO.Name;
+            agency.User.Email = updateAgencyInfoDTO.Email;
+            agency.Description = updateAgencyInfoDTO.Description;
+            agency.City.Name = updateAgencyInfoDTO.CityName;
+            agency.City.Country.Name = updateAgencyInfoDTO.CountryName;
+            agency.City.Country.Code = updateAgencyInfoDTO.CountryCode;
+            agency.Address = updateAgencyInfoDTO.Address;
+            agency.ProfilePictureBase64 = updateAgencyInfoDTO.ProfilePicture;
+
+            return await _agencyRepository.UpdateAgencyAsync(agency);
+        }
+
     }
 }

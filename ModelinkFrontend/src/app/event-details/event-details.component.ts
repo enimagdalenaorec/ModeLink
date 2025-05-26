@@ -362,7 +362,8 @@ export class EventDetailsComponent implements OnInit {
       this.updatedEventDetails.address === '' ||
       this.updatedEventDetails.eventStart === null ||
       this.updatedEventDetails.eventFinish === null ||
-      this.updatedEventDetails.profilePicture === ''
+      this.updatedEventDetails.profilePicture === '' ||
+      this.selectedAddress === '';
   }
 
   isEventFinished() {

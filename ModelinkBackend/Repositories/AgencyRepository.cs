@@ -136,5 +136,21 @@ namespace ModelinkBackend.Repositories
             return model;
         }
 
+        public async Task<Agency> GetAgencyByAgencyIdAsync(int agencyId)
+        {
+            return await _context.Agencies
+                .Where(a => a.Id == agencyId)
+                .Include(a => a.User)
+                .Include(a => a.City).ThenInclude(c => c.Country)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> UpdateAgencyAsync(Agency agency)
+        {
+            _context.Entry(agency).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

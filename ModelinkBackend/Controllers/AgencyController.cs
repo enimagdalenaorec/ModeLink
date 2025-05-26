@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelinkBackend.Models.DTOs;
 using ModelinkBackend.Services;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -106,6 +107,22 @@ namespace ModelinkBackend.Controllers
                 return Ok();
             }
             return BadRequest("Failed to unsign model.");
+        }
+
+        [HttpPost("updateInfo/{agencyId}")]
+        public async Task<IActionResult> UpdateAgencyInfo(int agencyId, [FromBody] UpdateAgencyInfoDTO updateAgencyInfoDTO)
+        {
+            if (updateAgencyInfoDTO.AgencyId != agencyId)
+            {
+                return BadRequest("Agency ID mismatch.");
+            }
+
+            var result = await _agencyService.UpdateAgencyInfoAsync(updateAgencyInfoDTO);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to update agency information.");
         }
     }
 }

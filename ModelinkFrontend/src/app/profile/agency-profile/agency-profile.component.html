@@ -233,3 +233,49 @@
     <p-button label="Save" severity="secondary" (onClick)="saveAddEventChanges()" />
   </div>
 </p-dialog>
+
+<p-dialog header="Edit Agency Info" [modal]="true" [(visible)]="editDialogeVisible" [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
+  <div class="attributes-container mb-4">
+    <div class="attributes-container mb-4">
+    <div class="flex flex-column mb-2">
+      <label for="title" class="font-semibold w-24 mb-1">Name</label>
+      <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="editAgencyInfo.name" />
+    </div>
+    <div class="flex flex-column mb-2">
+      <label for="title" class="font-semibold w-24 mb-1">Email</label>
+      <input pInputText id="email" class="flex-auto" autocomplete="off" [(ngModel)]="editAgencyInfo.email" />
+    </div>
+    <div class="flex flex-column mb-2">
+      <label for="description" class="font-semibold w-24 mb-1">Description</label>
+      <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="editAgencyInfo.description"></textarea>
+    </div>
+    <div class="flex flex-column mb-2 relative">
+      <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
+      <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+        (input)="onUpdateInfoAddressSearch($event)" [(ngModel)]="selectedUpdateInfoAddress" autocomplete="off" />
+      <ul *ngIf="updateInfoAddressSuggestions.length > 0" class="autocomplete-suggestions">
+        <li *ngFor="let suggestion of updateInfoAddressSuggestions" (click)="selectUpdateInfoAddressSuggestion(suggestion)">
+          {{ suggestion.display_name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="thumbnail flex gap-3 align-items-end mb-4">
+      <div *ngIf="editAgencyInfo.profilePicture != ''" class="flex flex-column">
+        <label for="profilePicture" class="font-semibold w-24 mb-1">Profile picture</label>
+        <img *ngIf="editAgencyInfo.profilePicture" [src]="editAgencyInfo.profilePicture" alt="Event Image"
+          class="w-max h-10rem border-round-lg mb-2" />
+      </div>
+      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false" [customUpload]="true"
+        [maxFileSize]="1000000" (onSelect)="onUpdateInfoFileSelected($event, fileupload)" chooseLabel="Image">
+      </p-fileUpload>
+    </div>
+  </div>
+  <div class="form-invalid-message flex">
+    <p *ngIf="updateInfoErrorMessage != ''" class="justify-content-end mb-0 pb-0 mt-0">{{updateInfoErrorMessage}}</p>
+  </div>
+  <div class="flex justify-content-end gap-2 mt-3">
+    <p-button label="Cancel" (onClick)="cancelUpdateInfo()" />
+    <p-button label="Save" severity="secondary" (onClick)="saveUpdateInfo()" />
+  </div>
+</p-dialog>

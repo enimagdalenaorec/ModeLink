@@ -59,3 +59,16 @@ export interface FreelancerRequestForAgency {
   modelCountryName?: string; // optional, if model has a country
 }
 
+export interface UpdateAgencyInfoDTO {
+  agencyId: number;
+  name: string;
+  email: string;
+  description: string;
+  cityName: string;
+  countryName: string;
+  countryCode: string;
+  address: string;
+  profilePicture: string;
+}
+
+

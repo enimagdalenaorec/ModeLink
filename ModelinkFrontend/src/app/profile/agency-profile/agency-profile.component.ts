@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AgencyInfoDto, FreelancerRequestForAgency } from '../../_Models/agency';
+import { AgencyInfoDto, FreelancerRequestForAgency, UpdateAgencyInfoDTO } from '../../_Models/agency';
 import { AddNewEventDTO } from '../../_Models/event';
 import { ChipModule } from 'primeng/chip';
 import { CalendarModule } from 'primeng/calendar';
@@ -76,6 +76,22 @@ export class AgencyProfileComponent implements OnInit {
   selectedAddEventAddress: string = '';
   addEventErrorMessage: string = '';
   pictureForAddEvent: File | null = null;
+  // for editing agency info
+  editAgencyInfo: UpdateAgencyInfoDTO = {
+    name: '',
+    description: '',
+    email: '',
+    address: '',
+    cityName: '',
+    countryName: '',
+    countryCode: '',
+    profilePicture: '',
+    agencyId: 0
+  };
+  updateInfoErrorMessage: string = '';
+  updateInfoAddressSuggestions: any[] = [];
+  selectedUpdateInfoAddress: string = '';
+  pictureForUpdateInfo: File | null = null;
 
   constructor(private router: Router, private messageService: MessageService, private http: HttpClient, private authService: AuthService, private route: ActivatedRoute, private confirmationService: ConfirmationService) { }
 
@@ -112,6 +128,8 @@ export class AgencyProfileComponent implements OnInit {
           // first all freelancer requests are shown
           this.filteredFreelancerRequests = this.agencyInfo.freelancerRequests;
         }
+        // patch agency info into edit dialog
+        this.patchAgencyInfoIntoEditDialog();
       },
       (error) => {
         console.error('Error fetching agency profile:', error);
@@ -401,6 +419,10 @@ export class AgencyProfileComponent implements OnInit {
     }
     // check all required fields are filled and if finish date is later then start date
     if (this.addEventFormNotValid()) {
+      if (this.newEvent.address === '') {
+        this.addEventErrorMessage = 'Please select an address from the suggestions.';
+        return;
+      }
       this.addEventErrorMessage = 'Please fill all required fields.';
       return;
     } else if ((this.newEvent.eventFinish ?? new Date()) < (this.newEvent.eventStart ?? new Date())) {
@@ -438,4 +460,136 @@ export class AgencyProfileComponent implements OnInit {
       this.newEvent.profilePicture === ''
   }
 
+  // for editing agency info
+
+  onUpdateInfoAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 4) {         // minimum 4 characters
+      this.updateInfoAddressSuggestions = [];
+      return;
+    }
+
+    this.http
+      .get(`https://nominatim.openstreetmap.org/search`, {
+        params: {
+          q: query,
+          format: 'json',
+          addressdetails: '1',
+          limit: '6'
+        }
+      })
+      .subscribe((results: any) => {
+        // make sure the suggestions always contain address
+        this.updateInfoAddressSuggestions = results.filter((result: any) => {
+          const address = result.address;
+          return (
+            address.road ||
+            address.neighbourhood ||
+            address.suburb
+          );
+        });
+      });
+  }
+
+  selectUpdateInfoAddressSuggestion(suggestion: any) {
+    this.selectedUpdateInfoAddress = suggestion.display_name;
+    const road =
+      suggestion.address.road ||
+      suggestion.address.neighbourhood ||
+      suggestion.address.suburb ||
+      suggestion.address.city_district ||
+      '';
+    const houseNumber = suggestion.address?.house_number || '';
+    this.editAgencyInfo.address = `${road} ${houseNumber}`.trim();
+    this.editAgencyInfo.cityName = suggestion.address?.city || suggestion.address?.town || '';
+    this.editAgencyInfo.countryName = suggestion.address?.country || '';
+    this.editAgencyInfo.countryCode = suggestion.address?.country_code || '';
+    this.updateInfoAddressSuggestions = [];
+  }
+
+  async onUpdateInfoFileSelected(event: any, fileUpload?: any) {
+    const file = event.files[0];
+    if (file) {
+      this.pictureForUpdateInfo = file;
+      const base64 = await this.convertFileToBase64(this.pictureForUpdateInfo!);
+      this.editAgencyInfo.profilePicture = base64;
+    }
+    if (fileUpload) {
+      fileUpload.clear(); // clear the file input after selection
+    }
+  }
+
+  cancelUpdateInfo() {
+    this.editDialogeVisible = false;
+    this.selectedUpdateInfoAddress = ''; // reset the selected address
+    this.pictureForUpdateInfo = null; // reset the picture for update info
+    this.onUpdateInfoFileSelected({ files: [] }); // reset the file input
+    this.editAgencyInfo = {
+      agencyId: 0,
+      name: '',
+      email: '',
+      description: '',
+      address: '',
+      cityName: '',
+      countryName: '',
+      countryCode: '',
+      profilePicture: ''
+    };
+  }
+
+  async saveUpdateInfo() {
+    if (this.pictureForUpdateInfo) {
+      const base64 = await this.convertFileToBase64(this.pictureForUpdateInfo);
+      this.editAgencyInfo.profilePicture = base64;
+    }
+    // check all required fields are filled
+    if (this.updateInfoFormNotValid()) {
+      if (this.editAgencyInfo.address === '') {
+        this.updateInfoErrorMessage = 'Please select an address from the suggestions.';
+      } else {
+        this.updateInfoErrorMessage = 'Please fill all required fields.';
+        return;
+      }
+    }
+    this.updateInfoErrorMessage = '';
+    // add agencyId to the newEvent object
+    this.editAgencyInfo.agencyId = this.agencyInfo?.agencyId || 0;
+    this.http
+      .post(`${this.apiUrl}Agency/updateInfo/${this.agencyInfo?.agencyId}`, this.editAgencyInfo)
+      .subscribe(
+        () => {
+          this.showToast('success', 'Success', 'Agency info updated successfully!');
+          this.getAgencyInfo(); // refresh the agency info to include the new event
+          this.editDialogeVisible = false; // close the dialog
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to update agency info.');
+          console.error('Error updating agency info:', error);
+        }
+      );
+  }
+
+  updateInfoFormNotValid() {
+    return this.editAgencyInfo.name === '' ||
+      this.editAgencyInfo.description === '' ||
+      this.editAgencyInfo.address === '' ||
+      this.editAgencyInfo.profilePicture === '' ||
+      this.editAgencyInfo.email === '' ||
+      this.selectedUpdateInfoAddress === ''
+  }
+
+  patchAgencyInfoIntoEditDialog() {
+    this.editAgencyInfo = {
+      name: this.agencyInfo?.name || '',
+      description: this.agencyInfo?.description || '',
+      email: this.agencyInfo?.email || '',
+      address: this.agencyInfo?.address || '',
+      cityName: this.agencyInfo?.cityName || '',
+      countryName: this.agencyInfo?.countryName || '',
+      countryCode: this.agencyInfo?.countryCode || '',
+      profilePicture: this.agencyInfo?.profilePicture || '',
+      agencyId: this.agencyInfo?.agencyId || 0
+    }
+    this.selectedUpdateInfoAddress = this.agencyInfo?.address + ", " + this.agencyInfo?.cityName + ", " + this.agencyInfo?.countryName || '';
+  }
 }

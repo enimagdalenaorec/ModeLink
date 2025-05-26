@@ -16,5 +16,7 @@ namespace ModelinkBackend.Repositories
         Task<FreelancerRequest> AcceptFreelancerRequestAsync(int requestId);
         Task<FreelancerRequest> DeclineFreelancerRequestAsync(int requestId);
         Task<Model> UnsignModelAsync(int userId);
+        Task<Agency> GetAgencyByAgencyIdAsync(int agencyId);
+        Task<bool> UpdateAgencyAsync(Agency agency);
     }
 }
