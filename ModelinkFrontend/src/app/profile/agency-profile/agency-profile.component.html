@@ -17,6 +17,7 @@
       <div class="flex-90"></div>
       <p-button *ngIf="loggedInUserId == userId" icon="pi pi-pen-to-square" class="edit-button"
         (onClick)="editDialogeVisible = true;"></p-button>
+        <div *ngIf="loggedInUserId != userId" class="p-2" ></div>
     </div>
     <!-- calendar shows all event start dates -->
     <p-calendar [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy" [readonlyInput]="true">
@@ -42,7 +43,7 @@
                   styleClass="p-inputtext-sm" optionLabel="label">
                 </p-dropdown>
               </div>
-              <p-button icon="pi pi-plus" class="add-event-button" label="Add Event"
+              <p-button *ngIf="loggedInUserId == userId" icon="pi pi-plus" class="add-event-button" label="Add Event"
                 (onClick)="addEventDialogueVisible = true"></p-button>
             </div>
             <div *ngIf="filteredEvents.length != 0" class="models-list flex flex-wrap gap-4">
@@ -78,7 +79,7 @@
             <div *ngIf="agencyInfo?.models!.length > 0" class="models-list flex flex-wrap gap-4 mt-3">
               <div *ngFor="let model of agencyInfo!.models" class="item flex flex-column h-15rem relative"
                 style="overflow: visible;" (click)="goToModelProfile(model.userId)">
-                <i class="pi pi-trash bg-white border-circle shadow-2 p-2 text-sm"
+                <i *ngIf="loggedInUserId == userId" class="pi pi-trash bg-white border-circle shadow-2 p-2 text-sm"
                   style="position: absolute; top: -10px; right: -10px;"
                   (click)="unsignModel(model.userId); $event.stopPropagation()"></i>
                 <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
@@ -95,7 +96,7 @@
           </div>
         </ng-template>
       </p-stepperPanel>
-      <p-stepperPanel header="Requests">
+      <p-stepperPanel *ngIf="loggedInUserId == userId" header="Requests">
         <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback"
           let-index="index">
           <div class="flex flex-column">

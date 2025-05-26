@@ -35,6 +35,7 @@ export class AgencyProfileComponent implements OnInit {
   apiUrl = environment.apiUrl;
   userId: string | null = null;
   loggedInUserId: string = '';
+  loggedInUserIsModelOfThisAgency: boolean = false;
   highlightedDates: Date[] = [];
   private routeSubscription: Subscription = new Subscription();
   agencyInfo: AgencyInfoDto | null = null;
@@ -130,6 +131,8 @@ export class AgencyProfileComponent implements OnInit {
         }
         // patch agency info into edit dialog
         this.patchAgencyInfoIntoEditDialog();
+        // check if the logged in user is a model of this agency
+        this.loggedInUserIsModelOfThisAgency = this.agencyInfo?.models?.some(model => model.userId.toString() === this.loggedInUserId) ?? false;
       },
       (error) => {
         console.error('Error fetching agency profile:', error);
@@ -151,9 +154,9 @@ export class AgencyProfileComponent implements OnInit {
 
   onDateClick(date: any) {
     // rerouting is only allowed for models that are part of the agency, and the agency whos profile this is
-    // if (this.userId !== this.loggedInUserId) {
-    //   return;
-    // }
+    if (this.userId != this.loggedInUserId && !this.loggedInUserIsModelOfThisAgency) {
+      return;
+    }
     const recievedDate = new Date(date.year, date.month, date.day);
     const clickedEvent = this.agencyInfo?.events!.find((event) => {
       const [day, month, year] = event.startDate.split('-').map(Number);
@@ -188,10 +191,6 @@ export class AgencyProfileComponent implements OnInit {
     this.router.navigate(['/model-profile', userModelId]);
   }
 
-  goToFreelancerRequests() {
-    // this.router.navigate(['/freelancer-requests', this.userId]);   //userId is the agency user id
-  }
-
   eventStatusFilterChange(event: any) {
     if (event.value.label === 'Remove Filter') {
       this.filteredEvents = this.agencyInfo?.events || [];
@@ -212,7 +211,12 @@ export class AgencyProfileComponent implements OnInit {
   }
 
   selectEvent(eventId: number) {
-    this.router.navigate(['/event-details', eventId]);
+    // rerouting is only allowed for models that are part of the agency, and the agency whos profile this is
+    if (this.userId == this.loggedInUserId || this.loggedInUserIsModelOfThisAgency) {
+      this.router.navigate(['/event-details', eventId]);
+    } else {
+      return;
+    }
   }
 
   onImageError(event: any) {
