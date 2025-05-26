@@ -36,8 +36,8 @@
   width: 96%;
 }
 
-.divider-79 {
-  width: 79%;
+.divider-69 {
+  width: 69%;
 }
 
 .divider-78 {
@@ -53,3 +53,61 @@
   overflow: hidden; /* Hides the overflowing text */
   text-overflow: ellipsis; /* Adds "..." at the end of the truncated text */
 }
+
+.search-filters {
+  flex: 22%;
+  padding-left: 1.5rem;
+  padding-right: 1.2rem;
+  background-color: #dce6e1;
+}
+
+.search-results {
+  flex: 78%;
+}
+
+:host ::ng-deep .p-slider .p-slider-range {
+    background: var(--secondary-color);
+}
+
+:host ::ng-deep .p-slider .p-slider-handle {
+    border: 2px solid var(--secondary-color);
+}
+
+:host ::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+:host ::ng-deep .p-multiselect .p-component .p-inputwrapper .p-multiselect-chip.p-focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem var(--secondary-color);
+}
+
+:host ::ng-deep .p-multiselect:not(.p-disables):hover {
+    border-color: var(--secondary-color);
+}
+
+:host ::ng-deep .p-multiselect:not(.p-disables).p-focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem var(--secondary-color);
+}
+
+:host ::ng-deep .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
+    border-color: var(--secondary-color);
+}
+
+::ng-deep p-multiselect .p-multiselect-label{
+    display: flex;
+    flex-wrap: wrap;
+    max-height: none;
+    overflow: visible;
+}
+
+::ng-deep p-multiselect .p-multiselect-token{
+    margin-bottom: .5rem
+}
+
+:host ::ng-deep .p-multiselect .p-multiselect-trigger  {
+  display: none !important;
+}
+

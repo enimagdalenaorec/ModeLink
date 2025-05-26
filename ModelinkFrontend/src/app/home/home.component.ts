@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ModelSearchResultDto, SuggestedModelDto } from '../_Models/model';
+import { ModelSearchResultDto, SuggestedModelDto, EyeColors, SkinColors, HairColors } from '../_Models/model';
 import { AgencySearchResultDto, SuggestedAgencyDto } from '../_Models/agency';
 import { SearchService } from '../_Services/search.service';
 import { Subscription } from 'rxjs';
@@ -11,11 +11,15 @@ import { AuthService } from '../_Services/auth.service';
 import { DividerModule } from 'primeng/divider';
 import { EventCardDto } from '../_Models/event';
 import { CommonModule } from '@angular/common';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SliderModule } from 'primeng/slider';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, NgFor, HttpClientModule, DividerModule, CommonModule],
+  imports: [NgIf, NgFor, HttpClientModule, DividerModule, CommonModule, CheckboxModule, SliderModule, MultiSelectModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -35,6 +39,30 @@ export class HomeComponent implements OnInit, OnDestroy {
   searchQuery = '';
   cityQuery = '';
   countryQuery = '';
+  // for search filters
+  searchTypes = [
+    { label: 'Models', value: 'models' },
+    { label: 'Agencies', value: 'agencies' }
+  ];
+  genders = [
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' }
+  ];
+  // MultiSelect options
+  eyeColorOptions = EyeColors.map(color => ({ label: color, value: color }));
+  hairColorOptions = HairColors.map(color => ({ label: color, value: color }));
+  skinColorOptions = SkinColors.map(color => ({ label: color, value: color }));
+
+  // Filters binding
+  filters = {
+    types: [] as string[],
+    genders: [] as string[],
+    heightRange: [120, 220] as [number, number], // default range
+    weightRange: [30, 130] as [number, number],   // default range
+    eyeColors: [] as string[],
+    hairColors: [] as string[],
+    skinColors: [] as string[]
+  };
   // for suggested models & agencies (for a guest)
   suggestedModels: SuggestedModelDto[] = [];
   suggestedAgencies: SuggestedAgencyDto[] = [];

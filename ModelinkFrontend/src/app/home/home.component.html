@@ -1,65 +1,142 @@
 <!-- search results -->
-<div *ngIf="searchQuery != '' || cityQuery != '' || countryQuery != ''"
-  class="search-results flex flex-column p-4 pr-6 pl-6">
-  <h3>
-    Search Results
-    <span *ngIf="searchQuery">for "{{ searchQuery }}"</span>
-    <span *ngIf="cityQuery || countryQuery">
-      in
-      <span *ngIf="cityQuery">{{ cityQuery }}</span>
-      <span *ngIf="cityQuery && countryQuery">, </span>
-      <span *ngIf="countryQuery">{{ countryQuery }}</span>
-    </span>
-  </h3>
-  <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
-    <div class="flex justify-content-between">
-      <p
-        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
-        Models that matched your search</p>
-      <p-divider class="text-200 divider-79"></p-divider>
-    </div>
-    <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
-        <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
-        <div class="flex justify-content-between">
-          <div class="info">
-            <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
-            <p *ngIf="model.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
-          </div>
-          <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
-            model.countryName }}</p>
+<div *ngIf="searchQuery != '' || cityQuery != '' || countryQuery != ''" class="flex flex-row flex-wrap">
+  <div class="search-filters">
+
+    <div class="mb-5">
+      <h5 class="mb-2">Search For</h5>
+      <div class="flex flex-row flex-wrap gap-4">
+        <div *ngFor="let type of searchTypes">
+          <p-checkbox name="type" [value]="type.value" [(ngModel)]="filters.types" inputId="{{ type.value }}">
+          </p-checkbox>
+          <label class="ml-1" [for]="type.value">{{ type.label }}</label>
         </div>
       </div>
     </div>
-  </div>
 
-  <div *ngIf="!agenciesNotFound" class="agency-list-container">
-    <div class="flex justify-content-between">
-      <p
-        style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
-        Agencies that matched your search</p>
-      <p-divider class="text-200 divider-78"></p-divider>
-    </div>
-    <div class="agencies-list flex flex-wrap gap-4">
-      <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem"
-        (click)="select(agency.userId, 'agency')">
-        <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
-        <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
-        <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
-          agency.countryName }}</p>
+    <h4 class="mb-0">Additional filters for models: </h4>
+    <!-- GENDER -->
+    <div class="mb-4">
+      <h5 class="mb-2 mt-3">Gender</h5>
+      <div class="flex flex-row flex-wrap gap-4">
+        <div *ngFor="let gender of genders">
+          <p-checkbox name="gender" [value]="gender.value" [(ngModel)]="filters.genders" inputId="{{ gender.value }}">
+          </p-checkbox>
+          <label class="ml-1" [for]="gender.value">{{ gender.label }}</label>
+        </div>
       </div>
     </div>
+
+    <!-- HEIGHT SLIDER -->
+    <div class="mb-4 w-12">
+      <h5 class="mb-2">Height (cm) <span class="ml-4">{{ filters.heightRange[0] }} - {{ filters.heightRange[1] }}</span></h5>
+      <p-slider [(ngModel)]="filters.heightRange" [min]="120" [max]="220" [step]="1" [range]="true" styleClass="w-full">
+      </p-slider>
+      <div class="flex justify-content-between mt-2">
+        <span>120</span>
+        <span>220</span>
+      </div>
+    </div>
+
+    <!-- WEIGHT SLIDER -->
+    <div class="mb-4 w-12">
+      <h5 class="mb-2">Weight (kg) <span class="ml-4">{{ filters.weightRange[0] }} - {{ filters.weightRange[1] }}</span></h5>
+      <p-slider [(ngModel)]="filters.weightRange" [min]="30" [max]="130" [step]="1" [range]="true" styleClass="w-full">
+      </p-slider>
+      <div class="flex justify-content-between mt-2">
+        <span>30</span>
+        <span>130</span>
+      </div>
+    </div>
+
+    <!-- EYE COLOR -->
+    <div class="mb-1">
+      <h5 class="mb-1">Eye Color</h5>
+      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="eyeColorOptions" [(ngModel)]="filters.eyeColors" display="chip"
+        placeholder="Select eye colors" styleClass="w-full">
+      </p-multiSelect>
+    </div>
+
+    <!-- HAIR COLOR -->
+    <div class="mb-1">
+      <h5 class="mb-1 mt-3">Hair Color</h5>
+      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="hairColorOptions" [(ngModel)]="filters.hairColors" display="chip"
+        placeholder="Select hair colors" styleClass="w-full">
+      </p-multiSelect>
+    </div>
+
+    <!-- SKIN COLOR -->
+    <div class="mb-4">
+      <h5 class="mb-1 mt-3">Skin Color</h5>
+      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="skinColorOptions" [(ngModel)]="filters.skinColors" display="chip"
+        placeholder="Select skin colors" styleClass="w-full">
+      </p-multiSelect>
+    </div>
   </div>
 
-  <div *ngIf="modelsNotFound && agenciesNotFound"
-    class="mt-4 align-self-center justify-self-center flex flex-column align-items-center">
-    <img src="assets/images/not-found.png" alt="No results found" class="no-results-image h-24rem" />
-    <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No results found</h3>
+  <div class="search-results flex flex-column p-4 pr-6 pl-6">
+    <h3>
+      Search Results
+      <span *ngIf="searchQuery">for "{{ searchQuery }}"</span>
+      <span *ngIf="cityQuery || countryQuery">
+        in
+        <span *ngIf="cityQuery">{{ cityQuery }}</span>
+        <span *ngIf="cityQuery && countryQuery">, </span>
+        <span *ngIf="countryQuery">{{ countryQuery }}</span>
+      </span>
+    </h3>
+    <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
+      <div class="flex justify-content-between">
+        <p
+          style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+          Models that matched your search</p>
+        <p-divider class="text-200 divider-69"></p-divider>
+      </div>
+      <div class="models-list flex flex-wrap gap-4">
+        <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
+          <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
+          <div class="flex justify-content-between">
+            <div class="info">
+              <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ model.firstName }} {{model.lastName}}</h4>
+              <p *ngIf="model.agencyName != null" class="text-sm mb-0 mt-1 pr-2 pl-2">{{ model.agencyName }}</p>
+            </div>
+            <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
+              model.countryName }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="!agenciesNotFound" class="agency-list-container">
+      <div class="flex justify-content-between">
+        <p
+          style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
+          Agencies that matched your search</p>
+        <p-divider class="text-200 divider-69"></p-divider>
+      </div>
+      <div class="agencies-list flex flex-wrap gap-4">
+        <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem"
+          (click)="select(agency.userId, 'agency')">
+          <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
+          <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
+          <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
+            agency.countryName }}</p>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="modelsNotFound && agenciesNotFound"
+      class="mt-4 align-self-center justify-self-center flex flex-column align-items-center">
+      <img src="assets/images/not-found.png" alt="No results found" class="no-results-image h-24rem" />
+      <h3 style="font-size: x-large; font-weight: 700; color: rgb(124, 128, 126); margin-top: 0%;">No results found</h3>
+    </div>
   </div>
 </div>
 
 <!-- suggestions for a guest -->
-<div *ngIf="!isLoggedIn() && searchQuery == '' && cityQuery == '' && countryQuery == ''" class="suggestions flex flex-column p-4 pr-6 pl-6">
+<div *ngIf="!isLoggedIn() && searchQuery == '' && cityQuery == '' && countryQuery == ''"
+  class="suggestions flex flex-column p-4 pr-6 pl-6">
   <div *ngIf="suggestedModels != []" class="models-list-container mb-5">
     <div class="flex justify-content-between">
       <p
@@ -110,7 +187,8 @@
 </div>
 
 <!-- suggestions for an agency -->
-<div *ngIf="role == 'agency' && searchQuery == '' && cityQuery == '' && countryQuery == ''" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
+<div *ngIf="role == 'agency' && searchQuery == '' && cityQuery == '' && countryQuery == ''"
+  class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
 
   <div class="models-list-container mb-5">
     <div class="flex justify-content-between">
