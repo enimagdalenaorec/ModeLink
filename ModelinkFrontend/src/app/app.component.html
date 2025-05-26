@@ -5,10 +5,18 @@
     <h1 class="ml-2 mr-2">ModeLink</h1>
     <p-menubar [model]="items" />
   </div>
-  <div *ngIf="isHomeRoute()" class="absolute ml-4 searchbar-container flex">
-    <input type="text" placeholder="Search models or agencies" class="searchbar" pInputText [(ngModel)]="searchQuery" />
+  <div *ngIf="isHomeRoute()" class="absolute searchbar-container flex">
+    <input id="autocomplete" type="text" pInputText class="flex-auto searchbar-location" placeholder="Search by location"
+      (input)="onAddressSearch($event)" [(ngModel)]="selectedLocation" autocomplete="off" />
+    <ul *ngIf="locationSuggestions.length > 0" class="autocomplete-suggestions">
+      <li *ngFor="let suggestion of locationSuggestions" (click)="selectSuggestion(suggestion)">
+        {{ suggestion.display_name }}
+      </li>
+    </ul>
+    <input type="text" placeholder="Search by name" class="searchbar-name" pInputText [(ngModel)]="searchQuery" />
     <p-button icon="pi pi-search" class="searchbar-button" (onClick)="search()"></p-button>
-    <p-button icon="pi pi-times" class="searchbar-clear-button ml-2" *ngIf="searchQuery != '' " (onClick)="clearSearch()"></p-button>
+    <p-button icon="pi pi-times" class="searchbar-clear-button ml-2" *ngIf="searchQuery != '' "
+      (onClick)="clearSearch()"></p-button>
   </div>
   <div class="user-icon-auth-buttons flex align-end mr-3">
     <p-button class="mr-2 menubar-button" *ngIf="!isLoggedIn()" (onClick)="navigateTo('login')">Login</p-button>

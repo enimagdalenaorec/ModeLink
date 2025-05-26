@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from './_Services/auth.service';
 import { MenuItem } from 'primeng/api';
@@ -14,7 +14,7 @@ import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MenubarModule, NgIf, ButtonModule, InputTextModule, FormsModule, HttpClientModule],
+  imports: [RouterOutlet, MenubarModule, NgIf, ButtonModule, InputTextModule, FormsModule, HttpClientModule, NgFor],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -22,9 +22,15 @@ export class AppComponent implements OnInit {
   backednUrl = environment.apiUrl;
   title = 'Modelink';
   items: MenuItem[] | undefined;
-  searchQuery: string = '';
+  searchQuery: string = '';   // for search by name
   modelsNotFound: boolean = false;
   agenciesNotFound: boolean = false;
+  // for location search (search is by city or country)
+  locationSuggestions: any[] = [];
+  selectedLocation: string = '';
+  cityForSearch: string = ''; // for search by location
+  countryForSearch: string = '';  // for search by location
+  countryCodeForSearch: string = '';
 
   constructor(private router: Router, private authService: AuthService, private searchService: SearchService, private http: HttpClient) { }
 
@@ -45,7 +51,14 @@ export class AppComponent implements OnInit {
     // if user clicks on one of search results, the query should go "", so subscribe to changes
     this.searchService.searchQuery$.subscribe(query => {
       this.searchQuery = query;
-    })
+    });
+    this.searchService.cityQuery$.subscribe(city => {
+      this.cityForSearch = city;
+    });
+    this.searchService.countryQuery$.subscribe(country => {
+      this.countryForSearch = country;
+    });
+
   }
 
   shouldShowMenu(): boolean {
@@ -83,11 +96,18 @@ export class AppComponent implements OnInit {
   }
 
   search(): void {
-    if (this.searchQuery.trim() !== '') {
+    if (this.searchQuery.trim() !== '' || this.selectedLocation.trim() !== '') {
       this.searchService.setSearchQuery(this.searchQuery.trim());
+      this.searchService.setCityQuery(this.cityForSearch.trim());
+      this.searchService.setCountryQuery(this.countryForSearch.trim());
+      // if location has been erased, then set city and country to empty strings
+      if (this.selectedLocation.trim() === '') {
+        this.searchService.setCityQuery('');
+        this.searchService.setCountryQuery('');
+      }
 
       // call be api to get models
-      this.http.get<any[]>(`${this.backednUrl}Model/search?query=${this.searchQuery}`).subscribe(
+      this.http.get<any[]>(`${this.backednUrl}Model/search?name=${this.searchQuery}&city=${this.cityForSearch}&country=${this.countryForSearch}`).subscribe(
         (response) => {
           // save to service
           if (response.length === 0) {
@@ -111,7 +131,7 @@ export class AppComponent implements OnInit {
       );
 
       //call api to get agencies
-      this.http.get<any[]>(`${this.backednUrl}Agency/search?query=${this.searchQuery}`).subscribe(
+      this.http.get<any[]>(`${this.backednUrl}Agency/search?name=${this.searchQuery}&city=${this.cityForSearch}&country=${this.countryForSearch}`).subscribe(
         (response) => {
           // save to service
           if (response.length === 0) {
@@ -138,6 +158,13 @@ export class AppComponent implements OnInit {
 
   clearSearch(): void {
     this.searchQuery = '';
+    this.cityForSearch = '';
+    this.countryForSearch = '';
+    this.countryCodeForSearch = '';
+    this.locationSuggestions = [];
+    this.selectedLocation = '';
+    this.searchService.setCityQuery('');
+    this.searchService.setCountryQuery('');
     this.agenciesNotFound = false;
     this.modelsNotFound = false;
     this.searchService.setModels([]);
@@ -147,5 +174,38 @@ export class AppComponent implements OnInit {
 
   isHomeRoute(): boolean {
     return this.router.url === '/home' || this.router.url === '/home/' || this.router.url === '' || this.router.url === '/';
+  }
+
+  onAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 4) {         // minimum 4 characters
+      this.locationSuggestions = [];
+      return;
+    }
+
+    this.http
+      .get(`https://nominatim.openstreetmap.org/search`, {
+        params: {
+          q: query,
+          format: 'json',
+          addressdetails: '1',
+          limit: '6'
+        }
+      })
+      .subscribe((results: any) => {
+        // make sure the suggestions only contain city or country
+        this.locationSuggestions = results.filter((result: any) => {
+          const address = result.address;
+          return address.city || address.town || address.village;
+        });
+      });
+  }
+
+  selectSuggestion(suggestion: any) {
+    this.selectedLocation = suggestion.display_name;
+    this.cityForSearch = suggestion.address?.city || suggestion.address?.town || '';
+    this.countryForSearch = suggestion.address?.country || '';
+    this.countryCodeForSearch = suggestion.address?.country_code || '';
+    this.locationSuggestions = [];
   }
 }

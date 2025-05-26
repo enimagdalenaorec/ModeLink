@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelinkBackend.Models.DTOs;
+using ModelinkBackend.Models.Entities;
 using ModelinkBackend.Services;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -19,9 +20,9 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchAgencies([FromQuery] string query)
+        public async Task<IActionResult> SearchAgencies([FromQuery] string? name, [FromQuery] string? city, [FromQuery] string? country)
         {
-            var agencies = await _agencyService.SearchAgenciesAsync(query);
+            var agencies = await _agencyService.SearchAgenciesAsync(name, city, country);
             return Ok(agencies);
         }
 

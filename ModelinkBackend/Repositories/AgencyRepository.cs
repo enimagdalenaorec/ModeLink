@@ -16,13 +16,39 @@ namespace ModelinkBackend.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Agency>> SearchAgenciesAsync(string query)
+        public async Task<IEnumerable<Agency>> SearchAgenciesAsync(string name, string city, string country)
         {
-            var searchTerms = query.ToLower().Split(' '); // Split query into words
-            return await _context.Agencies
-                .Where(a => searchTerms.Any(term => a.Name.ToLower().Contains(term)))
+            // collect agencies
+            var query = _context.Agencies
                 .Include(a => a.City).ThenInclude(c => c.Country)
-                .ToListAsync();
+                .AsQueryable();
+
+            // filter by name if provided
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var searchTerms = name.ToLower().Split(' '); // split name into words
+                query = query.Where(a => searchTerms.Any(term => a.Name.ToLower().Contains(term)));
+            }
+
+            // filter by city and country together if both are provided
+            if (!string.IsNullOrWhiteSpace(city) && !string.IsNullOrWhiteSpace(country))
+            {
+                query = query.Where(a => a.City.Name.ToLower() == city.ToLower() &&
+                                         a.City.Country.Name.ToLower() == country.ToLower());
+            }
+            // filter by city only if provided and country is not
+            else if (!string.IsNullOrWhiteSpace(city))
+            {
+                query = query.Where(a => a.City.Name.ToLower() == city.ToLower());
+            }
+            // filter by country only if provided and city is not
+            else if (!string.IsNullOrWhiteSpace(country))
+            {
+                query = query.Where(a => a.City.Country.Name.ToLower() == country.ToLower());
+            }
+
+            // execute the query and return the results
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<Agency>> GetAgencySuggestionsAsync()

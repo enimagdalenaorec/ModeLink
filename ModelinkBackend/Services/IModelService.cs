@@ -7,7 +7,7 @@ namespace ModelinkBackend.Services
 {
     public interface IModelService
     {
-        Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string query);
+        Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string name, string city, string country);
         Task<IEnumerable<ModelSuggestionDto>> GetModelSuggestionsAsync();
         Task<ModelStatusAndAgencyIdDTO> GetModelStatusAndAgencyIdAsync(int userId);
         Task<bool> ToggleEventAttendanceAsync(int eventId, int modelId);

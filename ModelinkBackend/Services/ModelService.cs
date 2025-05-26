@@ -15,9 +15,9 @@ namespace ModelinkBackend.Services
             _modelRepository = modelRepository;
         }
 
-        public async Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string query)
+        public async Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string name, string city, string country)
         {
-            var models = await _modelRepository.SearchModelsAsync(query);
+            var models = await _modelRepository.SearchModelsAsync(name, city, country);
 
             return models.Select(m => new ModelSearchDto
             {

@@ -6,7 +6,7 @@ namespace ModelinkBackend.Repositories
 {
     public interface IModelRepository
     {
-        Task<IEnumerable<Model>> SearchModelsAsync(string query);
+        Task<IEnumerable<Model>> SearchModelsAsync(string name, string city, string country);
         Task<IEnumerable<Model>> GetModelSuggestionsAsync();
         Task<Model> GetModelByIdAsync(int userId);
         Task<Model> GetModelByModelIdAsync(int modelId);

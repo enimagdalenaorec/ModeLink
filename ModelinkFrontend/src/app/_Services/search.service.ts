@@ -13,8 +13,15 @@ export class SearchService {
   private agenciesNotFound = new BehaviorSubject<boolean>(false);
   agenciesNotFound$ = this.agenciesNotFound.asObservable();
 
+  // this is for search by name
   private searchQuery = new BehaviorSubject<string>('');
   searchQuery$ = this.searchQuery.asObservable();
+
+  // this is for search by location
+  private cityQuery = new BehaviorSubject<string>('');
+  cityQuery$ = this.cityQuery.asObservable();
+  private countryQuery = new BehaviorSubject<string>('');
+  countryQuery$ = this.countryQuery.asObservable();
 
   private models = new BehaviorSubject<ModelSearchResultDto[]>([]);
   models$ = this.models.asObservable();
@@ -24,6 +31,14 @@ export class SearchService {
 
   setSearchQuery(query: string) {
     this.searchQuery.next(query);
+  }
+
+  setCityQuery(city: string) {
+    this.cityQuery.next(city); // update city query for location search
+  }
+
+  setCountryQuery(country: string) {
+    this.countryQuery.next(country); // update country query for location search
   }
 
   setModelsNotFound(value: boolean) {

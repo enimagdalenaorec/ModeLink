@@ -16,14 +16,42 @@ namespace ModelinkBackend.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Model>> SearchModelsAsync(string query)
+        public async Task<IEnumerable<Model>> SearchModelsAsync(string name, string city, string country)
         {
-            var searchTerms = query.ToLower().Split(' '); // Split query into words
-            return await _context.Models
-                .Where(m => searchTerms.Any(term => m.FirstName.ToLower().Contains(term) || m.LastName.ToLower().Contains(term)))
+            // collect models
+            var query = _context.Models
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
-                .ToListAsync();
+                .AsQueryable();
+
+            // filter by name if provided
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var searchTerms = name.ToLower().Split(' '); // split name into words
+                query = query.Where(m => searchTerms.Any(term =>
+                    m.FirstName.ToLower().Contains(term) ||
+                    m.LastName.ToLower().Contains(term)));
+            }
+
+            // filter by city and country together if both are provided
+            if (!string.IsNullOrWhiteSpace(city) && !string.IsNullOrWhiteSpace(country))
+            {
+                query = query.Where(m => m.City.Name.ToLower() == city.ToLower() &&
+                                         m.City.Country.Name.ToLower() == country.ToLower());
+            }
+            // filter by city only if provided and country is not
+            else if (!string.IsNullOrWhiteSpace(city))
+            {
+                query = query.Where(m => m.City.Name.ToLower() == city.ToLower());
+            }
+            // filter by country only if provided and city is not
+            else if (!string.IsNullOrWhiteSpace(country))
+            {
+                query = query.Where(m => m.City.Country.Name.ToLower() == country.ToLower());
+            }
+
+            // execute the query and return the results
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<Model>> GetModelSuggestionsAsync()

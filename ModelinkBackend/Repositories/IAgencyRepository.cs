@@ -6,7 +6,7 @@ namespace ModelinkBackend.Repositories
 {
     public interface IAgencyRepository
     {
-        Task<IEnumerable<Agency>> SearchAgenciesAsync(string query);
+        Task<IEnumerable<Agency>> SearchAgenciesAsync(string name, string city, string country);
         Task<IEnumerable<Agency>> GetAgencySuggestionsAsync();
         Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyId);
         Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId);

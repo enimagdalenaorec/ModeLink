@@ -18,19 +18,26 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.searchbar {
+.searchbar-name {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   border: none;
+  border-left: solid 1px var(--accent-color);
+  border-radius: 0%;
+}
+
+.searchbar-location {
+  border: none;
   border-top-right-radius: 0%;
   border-bottom-right-radius: 0%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .searchbar-container {
   bottom: -20px;
-  left: 50%;
+  left: 45%;
   border: none;
-  width: 25%;
+  width: 38%;
 }
 
 @media screen and (max-width: 969px) {
@@ -41,4 +48,28 @@
   .menubar-container {
     min-width: 550px;
   }
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  background: white;
+  z-index: 999;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  top: 60px;  /* for positioning belov address input field*/
+  border-radius: 6px;
+}
+
+.autocomplete-suggestions li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-suggestions li:hover {
+  background-color: #f0f0f0;
 }

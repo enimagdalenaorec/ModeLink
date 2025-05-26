@@ -33,6 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   modelsNotFound = false;
   agenciesNotFound = false;
   searchQuery = '';
+  cityQuery = '';
+  countryQuery = '';
   // for suggested models & agencies (for a guest)
   suggestedModels: SuggestedModelDto[] = [];
   suggestedAgencies: SuggestedAgencyDto[] = [];
@@ -73,6 +75,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.searchQuery = query;
       })
     );
+    this.subscriptions.push(
+      this.searchService.cityQuery$.subscribe(city => {
+        this.cityQuery = city;
+      })
+    );
+    this.subscriptions.push(
+      this.searchService.countryQuery$.subscribe(country => {
+        this.countryQuery = country;
+      })
+    );
     // get user role
     this.role = this.authService.getUserRole();
     // get user id
@@ -98,12 +110,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   // for agency and models profiles
   select(id: number, role: string) {
     this.searchService.setSearchQuery(''); // clear search query
+    this.searchService.setCityQuery(''); // clear city query
+    this.searchService.setCountryQuery(''); // clear country query
     this.router.navigate([`/${role}-profile`, id]);
   }
 
   // for event details page
   selectEvent(id: number) {
     this.searchService.setSearchQuery(''); // clear search query
+    this.searchService.setCityQuery(''); // clear city query
+    this.searchService.setCountryQuery(''); // clear country query
     this.router.navigate(['/event-details', id]);
   }
 

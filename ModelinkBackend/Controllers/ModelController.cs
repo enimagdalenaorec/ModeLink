@@ -17,9 +17,9 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchModels([FromQuery] string query)
+        public async Task<IActionResult> SearchModels([FromQuery] string? name, [FromQuery] string? city, [FromQuery] string? country)
         {
-            var models = await _modelService.SearchModelsAsync(query);
+            var models = await _modelService.SearchModelsAsync(name, city, country);
             return Ok(models);
         }
 

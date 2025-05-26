@@ -15,9 +15,9 @@ namespace ModelinkBackend.Services
             _agencyRepository = agencyRepository;
         }
 
-        public async Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string query)
+        public async Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string name, string city, string country)
         {
-            var agencies = await _agencyRepository.SearchAgenciesAsync(query);
+            var agencies = await _agencyRepository.SearchAgenciesAsync(name, city, country);
 
             return agencies.Select(a => new AgencySearchDto
             {

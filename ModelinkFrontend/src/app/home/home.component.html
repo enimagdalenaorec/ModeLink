@@ -1,6 +1,16 @@
 <!-- search results -->
-<div *ngIf="searchQuery != ''" class="search-results flex flex-column p-4 pr-6 pl-6">
-  <h3>Search Results for "{{ searchQuery }}"</h3>
+<div *ngIf="searchQuery != '' || cityQuery != '' || countryQuery != ''"
+  class="search-results flex flex-column p-4 pr-6 pl-6">
+  <h3>
+    Search Results
+    <span *ngIf="searchQuery">for "{{ searchQuery }}"</span>
+    <span *ngIf="cityQuery || countryQuery">
+      in
+      <span *ngIf="cityQuery">{{ cityQuery }}</span>
+      <span *ngIf="cityQuery && countryQuery">, </span>
+      <span *ngIf="countryQuery">{{ countryQuery }}</span>
+    </span>
+  </h3>
   <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
     <div class="flex justify-content-between">
       <p
@@ -31,7 +41,8 @@
       <p-divider class="text-200 divider-78"></p-divider>
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
-      <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem" (click)="select(agency.userId, 'agency')">
+      <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem"
+        (click)="select(agency.userId, 'agency')">
         <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
@@ -48,7 +59,7 @@
 </div>
 
 <!-- suggestions for a guest -->
-<div *ngIf="!isLoggedIn() && searchQuery == ''" class="suggestions flex flex-column p-4 pr-6 pl-6">
+<div *ngIf="!isLoggedIn() && searchQuery == '' && cityQuery == '' && countryQuery == ''" class="suggestions flex flex-column p-4 pr-6 pl-6">
   <div *ngIf="suggestedModels != []" class="models-list-container mb-5">
     <div class="flex justify-content-between">
       <p
@@ -57,7 +68,8 @@
       <p-divider class="text-200 suggested-divider"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
+      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem"
+        (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -98,7 +110,7 @@
 </div>
 
 <!-- suggestions for an agency -->
-<div *ngIf="role == 'agency' && searchQuery == ''" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
+<div *ngIf="role == 'agency' && searchQuery == '' && cityQuery == '' && countryQuery == ''" class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
 
   <div class="models-list-container mb-5">
     <div class="flex justify-content-between">
@@ -108,7 +120,8 @@
       <p-divider class="text-200 w-11"></p-divider>
     </div>
     <div *ngIf="modelsByAgency.length != 0" class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
+      <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem"
+        (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -186,7 +199,7 @@
 </div>
 
 <!-- suggestions for a model -->
-<div *ngIf="role != 'agency' && searchQuery == '' && isLoggedIn()"
+<div *ngIf="role != 'agency' && searchQuery == '' && isLoggedIn() && cityQuery == '' && countryQuery == ''"
   class="agency-suggestions flex flex-column p-4 pr-6 pl-6">
 
   <!-- if the model is signed -> show events from mother agency -->
@@ -208,7 +221,8 @@
           </div>
           <div class="location">
             <p *ngIf="event.cityName != null" class="text-sm mb-0 mt-3 pr-3">{{ event.cityName }}</p>
-            <p *ngIf="event.startDate != null" class="text-sm mb-0 mt-1 pr-3">{{ event.startDate | date: 'dd/MM/yyyy' }}</p>
+            <p *ngIf="event.startDate != null" class="text-sm mb-0 mt-1 pr-3">{{ event.startDate | date: 'dd/MM/yyyy' }}
+            </p>
           </div>
         </div>
       </div>
@@ -246,7 +260,8 @@
       <p-divider class="text-200 w-10"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
+      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem"
+        (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">

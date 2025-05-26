@@ -7,7 +7,7 @@ namespace ModelinkBackend.Services
 {
     public interface IAgencyService
     {
-        Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string query);
+        Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string name, string city, string country);
         Task<IEnumerable<AgencySuggestionDto>> GetAgencySuggestionsAsync();
         Task<IEnumerable<ModelSuggestionDto>> GetModelsByAgencyIdAsync(int agencyId);
         Task<IEnumerable<ModelSuggestionDto>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId);
