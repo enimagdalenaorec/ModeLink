@@ -9,10 +9,12 @@ namespace ModelinkBackend.Services
     public class ModelService : IModelService
     {
         private readonly IModelRepository _modelRepository;
+        private readonly IAgencyRepository _agencyRepository;
 
-        public ModelService(IModelRepository modelRepository)
+        public ModelService(IModelRepository modelRepository, IAgencyRepository agencyRepository)
         {
             _modelRepository = modelRepository;
+            _agencyRepository = agencyRepository;
         }
 
         public async Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string name, string city, string country)
@@ -325,6 +327,68 @@ namespace ModelinkBackend.Services
                 Status = r.Status,
                 RequestedAt = r.RequestedAt
             });
+        }
+
+        public async Task<bool> RequestToJoinAgencyAsync(int agencyId, int modelUserId)
+        {
+            // check if the agency exists
+            var agency = await _agencyRepository.GetAgencyByAgencyIdAsync(agencyId);
+            if (agency == null)
+            {
+                return false;
+            }
+
+            // check if the model exists
+            var model = await _modelRepository.GetModelByIdAsync(modelUserId);
+            if (model == null)
+            {
+                return false;
+            }
+
+            // create a new request
+            var request = new FreelancerRequest
+            {
+                AgencyId = agency.Id,
+                ModelId = model.Id,
+                Status = "pending",
+                RequestedAt = DateTime.UtcNow
+            };
+
+            // save the request in the repository
+            FreelancerRequest freelancerRequest = await _modelRepository.CreateFreelancerRequestAsync(request);
+            
+            if (freelancerRequest == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> CancelRequestToJoinAgencyAsync(int agencyId, int modelUserId)
+        {
+            // check if the agency exists
+            var agency = await _agencyRepository.GetAgencyByAgencyIdAsync(agencyId);
+            if (agency == null)
+            {
+                return false;
+            }
+
+            // check if the model exists
+            var model = await _modelRepository.GetModelByIdAsync(modelUserId);
+            if (model == null)
+            {
+                return false;
+            }
+
+            // find the request
+            var request = await _modelRepository.GetFreelancerRequestAsync(agency.Id, model.Id);
+            if (request == null)
+            {
+                return false;
+            }
+
+            // delete the request in the repository
+            return await _modelRepository.DeleteFreelancerRequestAsync(request);
         }
     }
 }

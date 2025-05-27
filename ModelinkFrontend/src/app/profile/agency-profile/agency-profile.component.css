@@ -277,3 +277,15 @@
 :host ::ng-deep .p-dialog .p-dialog-content {
   padding:  1.5rem 2rem 1.5rem !important;
 }
+
+:host ::ng-deep .p-button.request-to-join-agency-button {
+  padding: 0.3rem 0.6rem !important;
+  background-color: var(--accent-color) !important;
+  font-size: small;
+  font-weight: lighter;
+}
+
+:host ::ng-deep .p-button.request-to-join-agency-button .p-button-label {
+    font-size: small;
+    font-weight: lighter;
+}

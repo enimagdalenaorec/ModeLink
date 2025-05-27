@@ -212,5 +212,25 @@ namespace ModelinkBackend.Repositories
                 .Include(fr => fr.Agency.City).ThenInclude(c => c.Country)
                 .ToListAsync();
         }
+
+        public async Task<FreelancerRequest> CreateFreelancerRequestAsync(FreelancerRequest request)
+        {
+            await _context.FreelancerRequests.AddAsync(request);
+            await _context.SaveChangesAsync();
+            return request;
+        }
+
+        public async Task<FreelancerRequest> GetFreelancerRequestAsync(int agencyId, int modelId)
+        {
+            return await _context.FreelancerRequests
+                .FirstOrDefaultAsync(fr => fr.AgencyId == agencyId && fr.ModelId == modelId);
+        }
+
+        public async Task<bool> DeleteFreelancerRequestAsync(FreelancerRequest request)
+        {
+            _context.FreelancerRequests.Remove(request);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

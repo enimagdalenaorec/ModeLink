@@ -36,6 +36,8 @@ export class AgencyProfileComponent implements OnInit {
   userId: string | null = null;
   loggedInUserId: string = '';
   loggedInUserIsModelOfThisAgency: boolean = false;
+  loggedInUserIsFreelancerThatRequestedToJoinThisAgency: boolean = false;
+  loggedInUserIsFreelancer: boolean = false; // this is used to check if the logged in user is a freelancer
   highlightedDates: Date[] = [];
   private routeSubscription: Subscription = new Subscription();
   agencyInfo: AgencyInfoDto | null = null;
@@ -133,6 +135,10 @@ export class AgencyProfileComponent implements OnInit {
         this.patchAgencyInfoIntoEditDialog();
         // check if the logged in user is a model of this agency
         this.loggedInUserIsModelOfThisAgency = this.agencyInfo?.models?.some(model => model.userId.toString() === this.loggedInUserId) ?? false;
+        // check if the logged in user is a freelancer that requested to join this agency
+        this.loggedInUserIsFreelancerThatRequestedToJoinThisAgency = this.agencyInfo?.freelancerRequests?.some(request => request.userModelId.toString() === this.loggedInUserId && request.status === 'pending') ?? false;
+        // check if the logged in user is a freelancer
+        this.loggedInUserIsFreelancer = this.agencyInfo?.models?.some(model => model.userId.toString() === this.loggedInUserId) ? false : true;
       },
       (error) => {
         console.error('Error fetching agency profile:', error);
@@ -595,5 +601,59 @@ export class AgencyProfileComponent implements OnInit {
       agencyId: this.agencyInfo?.agencyId || 0
     }
     this.selectedUpdateInfoAddress = this.agencyInfo?.address + ", " + this.agencyInfo?.cityName + ", " + this.agencyInfo?.countryName || '';
+  }
+
+  requestToJoinAgency() {
+    if (!this.loggedInUserIsFreelancerThatRequestedToJoinThisAgency) {
+      this.confirmationService.confirm({
+        message: 'Are you sure you want to send a request to join this agency?',
+        header: 'Confirm',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.processRequestToJoinAgency();
+        },
+        reject: () => {
+          this.showToast('info', 'Request Cancelled', 'The request to join the agency has been cancelled.');
+        }
+      });
+    } else {
+      this.confirmationService.confirm({
+        message: 'You have already sent a request to join this agency. Do you want to cancel your request?',
+        header: 'Confirm',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.http.post(`${this.apiUrl}Model/cancelRequestToJoin/${this.agencyInfo?.agencyId}/${this.loggedInUserId}`, {})
+            .subscribe(
+              () => {
+                this.showToast('success', 'Request Cancelled', 'Your request to join the agency has been cancelled.');
+                this.loggedInUserIsFreelancerThatRequestedToJoinThisAgency = false; // set the flag to false
+                this.getAgencyInfo();
+              },
+              (error) => {
+                this.showToast('error', 'Error', 'Failed to cancel request to join the agency.');
+                console.error('Error cancelling request to join agency:', error);
+              }
+            );
+        },
+        reject: () => {
+          this.showToast('info', 'Request Not Cancelled', 'Your request to join the agency has not been cancelled.');
+        }
+      });
+    }
+  }
+
+  processRequestToJoinAgency() {
+    this.http.post(`${this.apiUrl}Model/requestToJoin/${this.agencyInfo?.agencyId}/${this.loggedInUserId}`, {})
+      .subscribe(
+        () => {
+          this.showToast('success', 'Request Sent', 'Your request to join the agency has been sent.');
+          this.loggedInUserIsFreelancerThatRequestedToJoinThisAgency = true; // set the flag to true
+          this.getAgencyInfo();
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to send request to join the agency.');
+          console.error('Error sending request to join agency:', error);
+        }
+      );
   }
 }

@@ -18,5 +18,7 @@ namespace ModelinkBackend.Services
         Task<bool> DeleteModelPortfolioPostAsync(int modelId, int postId);
         Task<bool> CreateModelPortfolioAsync(int modelId, CreatePortfolioPostDTO portfolioPost);
         Task<IEnumerable<FreelancerRequestsFromModel>> GetFreelancerRequestsAsync(int modelId);
+        Task<bool> RequestToJoinAgencyAsync(int agencyId, int modelUserId);
+        Task<bool> CancelRequestToJoinAgencyAsync(int agencyId, int modelUserId);
     }
 }

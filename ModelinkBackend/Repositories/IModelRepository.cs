@@ -26,5 +26,8 @@ namespace ModelinkBackend.Repositories
         Task<bool> CreatePortfolioPostAsync(PortfolioPost postWithoutImages);
         Task<bool> AddPortfolioImageToPostAsync(PortfolioImage portfolioImage);
         Task<IEnumerable<FreelancerRequest>> GetFreelancerRequestsAsync(int modelId);
+        Task<FreelancerRequest> CreateFreelancerRequestAsync(FreelancerRequest request);
+        Task<FreelancerRequest> GetFreelancerRequestAsync(int agencyId, int modelId);
+        Task<bool> DeleteFreelancerRequestAsync(FreelancerRequest request);
     }
 }

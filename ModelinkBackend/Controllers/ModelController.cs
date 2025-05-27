@@ -140,5 +140,27 @@ namespace ModelinkBackend.Controllers
             }
             return Ok(requests);
         }
+
+        [HttpPost("requestToJoin/{agencyId}/{modelUserId}")]
+        public async Task<IActionResult> RequestToJoinAgency(int agencyId, int modelUserId)
+        {
+            var result = await _modelService.RequestToJoinAgencyAsync(agencyId, modelUserId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to send request to join agency.");
+        }
+
+        [HttpPost("cancelRequestToJoin/{agencyId}/{modelUserId}")]
+        public async Task<IActionResult> CancelRequestToJoinAgency(int agencyId, int modelUserId)
+        {
+            var result = await _modelService.CancelRequestToJoinAgencyAsync(agencyId, modelUserId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to cancel request to join agency.");
+        }
     }
 }

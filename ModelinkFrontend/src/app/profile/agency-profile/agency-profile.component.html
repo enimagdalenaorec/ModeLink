@@ -4,6 +4,7 @@
       <img class="border-circle picture" [src]="agencyInfo?.profilePicture" alt="Profile Image" />
       <div class="pl-4">
         <h2 class="font-semibold text-5xl mb-1 mt-0">{{agencyInfo?.name}}</h2>
+        <button *ngIf="loggedInUserIsFreelancer" pButton (click)="requestToJoinAgency()" [label]="loggedInUserIsFreelancerThatRequestedToJoinThisAgency ? 'Cancel Request' : 'Request to Join'" class="request-to-join-agency-button"></button>
       </div>
     </div>
     <div class="mt-3 mb-0 additional-info">
