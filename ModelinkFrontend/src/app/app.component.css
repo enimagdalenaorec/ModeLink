@@ -73,3 +73,7 @@
 .autocomplete-suggestions li:hover {
   background-color: #f0f0f0;
 }
+
+.modelink-title {
+  color: rgb(5, 93, 82);
+}

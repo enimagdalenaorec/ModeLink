@@ -7,6 +7,7 @@ import { HomeComponent } from './home/home.component';
 import { EventDetailsComponent } from './event-details/event-details.component';
 import { ModelProfileComponent } from './profile/model-profile/model-profile.component';
 import { AgencyProfileComponent } from './profile/agency-profile/agency-profile.component';
+import { AdminHomeComponent } from './admin-home/admin-home.component';
 
 export const routes: Routes = [
   {
@@ -40,6 +41,10 @@ export const routes: Routes = [
   {
     path: 'agency-profile/:id',
     component: AgencyProfileComponent
+  },
+  {
+    path: 'admin',
+    component: AdminHomeComponent
   },
   {
     path: '**',
