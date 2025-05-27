@@ -57,6 +57,12 @@ export interface ModelSearchResultDto {
   cityName?: string | null; // null if no city
   countryName?: string | null; // null if no country
   profilePicture: string;
+  gender: string | null;
+  height: number | null;
+  weight: number | null;
+  eyeColor: string | null;
+  hairColor: string | null;
+  skinColor: string | null;
 }
 
 export interface SuggestedModelDto {

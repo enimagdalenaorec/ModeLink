@@ -71,9 +71,14 @@
         placeholder="Select skin colors" styleClass="w-full">
       </p-multiSelect>
     </div>
+
+    <div class="filter-buttons flex justify-content-end mb-4">
+      <button pButton label="Apply" class="p-button-sm mr-1 apply-filters-button" (click)="applyFilters()"></button>
+      <button pButton label="Reset" class="p-button-sm" (click)="resetFilters()"></button>
+    </div>
   </div>
 
-  <div class="search-results flex flex-column p-4 pr-6 pl-6">
+  <div class="search-results flex flex-column p-4 pr-3 pl-6">
     <h3>
       Search Results
       <span *ngIf="searchQuery">for "{{ searchQuery }}"</span>
@@ -84,14 +89,14 @@
         <span *ngIf="countryQuery">{{ countryQuery }}</span>
       </span>
     </h3>
-    <div *ngIf="!modelsNotFound" class="models-list-container mb-5">
+    <div *ngIf="!modelsNotFound && !modelsNotIncludedInSearch" class="models-list-container">
       <div class="flex justify-content-between">
         <p
           style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
           Models that matched your search</p>
         <p-divider class="text-200 divider-69"></p-divider>
       </div>
-      <div class="models-list flex flex-wrap gap-4">
+      <div class="models-list flex flex-wrap gap-3 mb-5">
         <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
           <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
           <div class="flex justify-content-between">
@@ -107,8 +112,8 @@
     </div>
 
 
-    <div *ngIf="!agenciesNotFound" class="agency-list-container">
-      <div class="flex justify-content-between">
+    <div *ngIf="!agenciesNotFound && !agenciesNotIncludedInSearch" class="agency-list-container">
+      <div *ngIf="filters" class="flex justify-content-between">
         <p
           style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126); margin: 0.3rem; margin-left: 0px; margin-top: 0.5rem;">
           Agencies that matched your search</p>

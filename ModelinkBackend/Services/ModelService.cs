@@ -27,7 +27,13 @@ namespace ModelinkBackend.Services
                 AgencyName = m.Agency?.Name, // if null, return null
                 CityName = m.City?.Name, // if null, return null
                 CountryName = m.City?.Country?.Name, // if null, return null
-                ProfilePicture = m.ProfilePictureBase64
+                ProfilePicture = m.ProfilePictureBase64,
+                Gender = m.Sex,
+                Height = (int)m.Height,
+                Weight = (int)m.Weight,
+                EyeColor = m.EyeColor,
+                HairColor = m.HairColor,
+                SkinColor = m.SkinColor
             });
         }
 

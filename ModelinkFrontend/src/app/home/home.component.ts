@@ -15,11 +15,12 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SliderModule } from 'primeng/slider';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [NgIf, NgFor, HttpClientModule, DividerModule, CommonModule, CheckboxModule, SliderModule, MultiSelectModule, FormsModule],
+  imports: [NgIf, NgFor, HttpClientModule, DividerModule, CommonModule, CheckboxModule, SliderModule, MultiSelectModule, FormsModule, ButtonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -33,7 +34,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   userId: number | null = null; // user id
   // for search results
   models: ModelSearchResultDto[] = [];
+  searchModelsNotFiltered: ModelSearchResultDto[] = [];
   agencies: AgencySearchResultDto[] = [];
+  searchAgenciesNotFiltered: AgencySearchResultDto[] = [];
   modelsNotFound = false;
   agenciesNotFound = false;
   searchQuery = '';
@@ -48,21 +51,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     { label: 'Male', value: 'male' },
     { label: 'Female', value: 'female' }
   ];
-  // MultiSelect options
+  // multiSelect options
   eyeColorOptions = EyeColors.map(color => ({ label: color, value: color }));
   hairColorOptions = HairColors.map(color => ({ label: color, value: color }));
   skinColorOptions = SkinColors.map(color => ({ label: color, value: color }));
 
-  // Filters binding
+  // filters binding
   filters = {
-    types: [] as string[],
-    genders: [] as string[],
+    types: ['models', 'agencies'] as string[],
+    genders: ['male', 'female'] as string[],
     heightRange: [120, 220] as [number, number], // default range
     weightRange: [30, 130] as [number, number],   // default range
     eyeColors: [] as string[],
     hairColors: [] as string[],
     skinColors: [] as string[]
   };
+  agenciesNotIncludedInSearch = false; // if agencies are not included in search, only models are shown
+  modelsNotIncludedInSearch = false; // if models are not included in search, only agencies are shown
   // for suggested models & agencies (for a guest)
   suggestedModels: SuggestedModelDto[] = [];
   suggestedAgencies: SuggestedAgencyDto[] = [];
@@ -81,11 +86,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.searchService.models$.subscribe(models => {
         this.models = models;
+        this.searchModelsNotFiltered = models;
       })
     );
     this.subscriptions.push(
       this.searchService.agencies$.subscribe(agencies => {
         this.agencies = agencies;
+        this.searchAgenciesNotFiltered = agencies;
       })
     );
     this.subscriptions.push(
@@ -222,17 +229,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getEventsByMotherAgency(agencyId: number | null) {
-      this.http.get<EventCardDto[]>(`${this.apiUrl}Agency/activeEvents/${agencyId}`)
-        .subscribe((data: EventCardDto[]) => {
-          this.eventsByMotherAgency = data;
-          this.eventsByMotherAgency = this.eventsByMotherAgency.map(event => ({
-            ...event,
-            startDate: this.parseCustomDateString(event.startDate).toISOString() // Convert Date back to string
-          }));
-        }, (error: any) => {
-            console.error('Error fetching events by mother agency:', error);
-          }
-        );
+    this.http.get<EventCardDto[]>(`${this.apiUrl}Agency/activeEvents/${agencyId}`)
+      .subscribe((data: EventCardDto[]) => {
+        this.eventsByMotherAgency = data;
+        this.eventsByMotherAgency = this.eventsByMotherAgency.map(event => ({
+          ...event,
+          startDate: this.parseCustomDateString(event.startDate).toISOString() // Convert Date back to string
+        }));
+      }, (error: any) => {
+        console.error('Error fetching events by mother agency:', error);
+      }
+      );
   }
 
   parseCustomDateString(dateStr: string): Date {
@@ -243,4 +250,55 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
+
+  applyFilters() {
+    // filter models array, i saved a copy in searchModelsNotFiltered
+    if (this.filters.types.includes('models')) {
+      this.models = this.searchModelsNotFiltered.filter(model => {
+        const matchesGender = model.gender !== null && this.filters.genders.includes(model.gender.toLowerCase());
+        const matchesHeight = model.height !== null && model.height >= this.filters.heightRange[0] && model.height <= this.filters.heightRange[1];
+        const matchesWeight = model.weight !== null && model.weight >= this.filters.weightRange[0] && model.weight <= this.filters.weightRange[1];
+        const matchesEyeColor = this.filters.eyeColors.length === 0 || (model.eyeColor !== null && this.filters.eyeColors.includes(model.eyeColor));
+        const matchesHairColor = this.filters.hairColors.length === 0 || (model.hairColor !== null && this.filters.hairColors.includes(model.hairColor));
+        const matchesSkinColor = this.filters.skinColors.length === 0 || (model.skinColor !== null && this.filters.skinColors.includes(model.skinColor));
+
+        return matchesGender && matchesHeight && matchesWeight && matchesEyeColor && matchesHairColor && matchesSkinColor;
+      });
+      this.modelsNotIncludedInSearch = false; // if models are included in search, we show them
+      this.modelsNotFound = this.models.length === 0;
+    } else {
+      this.models = [];
+      this.modelsNotIncludedInSearch = true; // if models are not included in search, only agencies are shown
+      this.modelsNotFound = false; // reset to false, because we don't show models
+    }
+    // filter agencies array, i saved a copy in searchAgenciesNotFiltered (can only be shown or not shown)
+    if (this.filters.types.includes('agencies')) {
+      this.agencies = this.searchAgenciesNotFiltered;
+      this.agenciesNotFound = this.agencies.length === 0;
+      this.agenciesNotIncludedInSearch = false; // if agencies are included in search, we show them
+    } else {
+      this.agencies = [];
+      this.agenciesNotIncludedInSearch = true; // if agencies are not included in search, only models are shown
+      this.agenciesNotFound = false; // reset to false, because we don't show agencies
+    }
+  }
+
+  resetFilters() {
+    this.filters = {
+      types: ['models', 'agencies'],
+      genders: [],
+      heightRange: [120, 220],
+      weightRange: [30, 130],
+      eyeColors: [],
+      hairColors: [],
+      skinColors: []
+    };
+    this.models = this.searchModelsNotFiltered;
+    this.agencies = this.searchAgenciesNotFiltered;
+    this.modelsNotFound = false;
+    this.agenciesNotFound = false;
+    this.agenciesNotIncludedInSearch = false; // reset to default
+    this.modelsNotIncludedInSearch = false; // reset to default
+  }
+
 }

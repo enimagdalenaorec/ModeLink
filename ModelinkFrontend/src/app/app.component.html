@@ -15,7 +15,7 @@
     </ul>
     <input type="text" placeholder="Search by name" class="searchbar-name" pInputText [(ngModel)]="searchQuery" />
     <p-button icon="pi pi-search" class="searchbar-button" (onClick)="search()"></p-button>
-    <p-button icon="pi pi-times" class="searchbar-clear-button ml-2" *ngIf="searchQuery != '' "
+    <p-button icon="pi pi-times" class="searchbar-clear-button ml-1" *ngIf="searchQuery != '' || selectedLocation != ''"
       (onClick)="clearSearch()"></p-button>
   </div>
   <div class="user-icon-auth-buttons flex align-end mr-3">
