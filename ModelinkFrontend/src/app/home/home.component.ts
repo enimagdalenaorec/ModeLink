@@ -286,7 +286,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   resetFilters() {
     this.filters = {
       types: ['models', 'agencies'],
-      genders: [],
+      genders: ['male', 'female'],
       heightRange: [120, 220],
       weightRange: [30, 130],
       eyeColors: [],

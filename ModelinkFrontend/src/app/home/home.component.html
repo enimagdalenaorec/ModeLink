@@ -15,8 +15,8 @@
 
     <h4 class="mb-0">Additional filters for models: </h4>
     <!-- GENDER -->
-    <div class="mb-4">
-      <h5 class="mb-2 mt-3">Gender</h5>
+    <div class="mb-5">
+      <h5 class="mb-2 mt-3"><i class="fas fa-venus-mars" style="margin-right: 8px;"></i>Gender</h5>
       <div class="flex flex-row flex-wrap gap-4">
         <div *ngFor="let gender of genders">
           <p-checkbox name="gender" [value]="gender.value" [(ngModel)]="filters.genders" inputId="{{ gender.value }}">
@@ -28,7 +28,7 @@
 
     <!-- HEIGHT SLIDER -->
     <div class="mb-4 w-12">
-      <h5 class="mb-2">Height (cm) <span class="ml-4">{{ filters.heightRange[0] }} - {{ filters.heightRange[1] }}</span></h5>
+      <h5 class="mb-2"><i class="fas fa-ruler-vertical" style="margin-right: 8px;"></i>Height (cm) <span class="ml-4">{{ filters.heightRange[0] }} - {{ filters.heightRange[1] }}</span></h5>
       <p-slider [(ngModel)]="filters.heightRange" [min]="120" [max]="220" [step]="1" [range]="true" styleClass="w-full">
       </p-slider>
       <div class="flex justify-content-between mt-2">
@@ -39,7 +39,7 @@
 
     <!-- WEIGHT SLIDER -->
     <div class="mb-4 w-12">
-      <h5 class="mb-2">Weight (kg) <span class="ml-4">{{ filters.weightRange[0] }} - {{ filters.weightRange[1] }}</span></h5>
+      <h5 class="mb-2"><i class="fas fa-weight" style="margin-right: 8px;"></i>Weight (kg) <span class="ml-4">{{ filters.weightRange[0] }} - {{ filters.weightRange[1] }}</span></h5>
       <p-slider [(ngModel)]="filters.weightRange" [min]="30" [max]="130" [step]="1" [range]="true" styleClass="w-full">
       </p-slider>
       <div class="flex justify-content-between mt-2">
@@ -50,7 +50,7 @@
 
     <!-- EYE COLOR -->
     <div class="mb-1">
-      <h5 class="mb-1">Eye Color</h5>
+      <h5 class="mb-1"><i class="fas fa-eye" style="margin-right: 8px;"></i>Eye Color</h5>
       <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="eyeColorOptions" [(ngModel)]="filters.eyeColors" display="chip"
         placeholder="Select eye colors" styleClass="w-full">
       </p-multiSelect>
@@ -58,7 +58,7 @@
 
     <!-- HAIR COLOR -->
     <div class="mb-1">
-      <h5 class="mb-1 mt-3">Hair Color</h5>
+      <h5 class="mb-1 mt-3"><i class="fas fa-paint-brush" style="margin-right: 8px;"></i>Hair Color</h5>
       <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="hairColorOptions" [(ngModel)]="filters.hairColors" display="chip"
         placeholder="Select hair colors" styleClass="w-full">
       </p-multiSelect>
@@ -66,7 +66,7 @@
 
     <!-- SKIN COLOR -->
     <div class="mb-4">
-      <h5 class="mb-1 mt-3">Skin Color</h5>
+      <h5 class="mb-1 mt-3"><i class="fas fa-user" style="margin-right: 8px;"></i>Skin Color</h5>
       <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="skinColorOptions" [(ngModel)]="filters.skinColors" display="chip"
         placeholder="Select skin colors" styleClass="w-full">
       </p-multiSelect>
