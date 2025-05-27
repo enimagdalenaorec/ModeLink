@@ -257,3 +257,11 @@
 :host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next {
   margin: 0px 0px 0px 0px !important;
 }
+
+.load-more-button {
+  background-color: none;
+  background: none;
+  padding: 0.3rem 0.6rem;
+  border: 2px solid var(--secondary-color);
+  color: var(--secondary-color);
+}

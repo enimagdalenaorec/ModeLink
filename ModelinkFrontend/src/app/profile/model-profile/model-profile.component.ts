@@ -89,6 +89,7 @@ export class ModelProfileComponent implements OnInit, OnDestroy {
 
   highlightedDates: Date[] = [];  // for calendar
   portfolioPosts: PortfolioPostDTO[] = [];
+  portfolioPostCount: number = 3;   // for load more posts button
   responsiveOptions: any[] = [];
   responsiveOptionImages: any[] = [];
   updatePost: PortfolioPostDTO = {
@@ -444,6 +445,10 @@ export class ModelProfileComponent implements OnInit, OnDestroy {
 
   goToAgencyProfile(agencyUserId: number) {
     this.router.navigate(['/agency-profile', agencyUserId]);
+  }
+
+  loadMorePortfolioPosts() {
+    this.portfolioPostCount += 3;
   }
 
 }

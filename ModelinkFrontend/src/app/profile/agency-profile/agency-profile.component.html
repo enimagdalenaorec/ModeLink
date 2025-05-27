@@ -4,7 +4,9 @@
       <img class="border-circle picture" [src]="agencyInfo?.profilePicture" alt="Profile Image" />
       <div class="pl-4">
         <h2 class="font-semibold text-5xl mb-1 mt-0">{{agencyInfo?.name}}</h2>
-        <button *ngIf="loggedInUserIsFreelancer" pButton (click)="requestToJoinAgency()" [label]="loggedInUserIsFreelancerThatRequestedToJoinThisAgency ? 'Cancel Request' : 'Request to Join'" class="request-to-join-agency-button"></button>
+        <button *ngIf="loggedInUserIsFreelancer && userRole === 'model'" pButton (click)="requestToJoinAgency()"
+          [label]="loggedInUserIsFreelancerThatRequestedToJoinThisAgency ? 'Cancel Request' : 'Request to Join'"
+          class="request-to-join-agency-button"></button>
       </div>
     </div>
     <div class="mt-3 mb-0 additional-info">
@@ -18,7 +20,7 @@
       <div class="flex-90"></div>
       <p-button *ngIf="loggedInUserId == userId" icon="pi pi-pen-to-square" class="edit-button"
         (onClick)="editDialogeVisible = true;"></p-button>
-        <div *ngIf="loggedInUserId != userId" class="p-2" ></div>
+      <div *ngIf="loggedInUserId != userId" class="p-2"></div>
     </div>
     <!-- calendar shows all event start dates -->
     <p-calendar [inline]="true" [showIcon]="true" dateFormat="dd/mm/yy" [readonlyInput]="true">
@@ -48,8 +50,8 @@
                 (onClick)="addEventDialogueVisible = true"></p-button>
             </div>
             <div *ngIf="filteredEvents.length != 0" class="models-list flex flex-wrap gap-4">
-              <div *ngFor="let event of filteredEvents" class="item flex flex-column h-15rem"
-                (click)="selectEvent(event.id)">
+              <div *ngFor="let event of filteredEvents | slice:0:filteredEventsCount"
+                class="item flex flex-column h-15rem" (click)="selectEvent(event.id)">
                 <img [src]="event.profilePicture" alt="Event Image" class="profile-picture"
                   (error)="onImageError($event)" />
                 <div class="flex justify-content-between">
@@ -63,6 +65,11 @@
                       formatDateForEventCard(event.startDate) }}</p>
                   </div>
                 </div>
+              </div>
+              <div *ngIf="filteredEventsCount < filteredEvents.length"
+                class="flex justify-content-end w-full mb-3 mr-6">
+                <button pButton label="Load More" class="p-button-sm load-more-button"
+                  (click)="loadMoreFilteredEvents()"></button>
               </div>
             </div>
           </div>
@@ -78,12 +85,13 @@
           let-index="index">
           <div class="flex flex-column">
             <div *ngIf="agencyInfo?.models!.length > 0" class="models-list flex flex-wrap gap-4 mt-3">
-              <div *ngFor="let model of agencyInfo!.models" class="item flex flex-column h-15rem relative"
-                style="overflow: visible;" (click)="goToModelProfile(model.userId)">
+              <div *ngFor="let model of agencyInfo!.models | slice:0:agencyInfoModelsCount"
+                class="item flex flex-column h-15rem relative" style="overflow: visible;"
+                (click)="goToModelProfile(model.userId)">
                 <i *ngIf="loggedInUserId == userId" class="pi pi-trash bg-white border-circle shadow-2 p-2 text-sm"
                   style="position: absolute; top: -10px; right: -10px;"
                   (click)="unsignModel(model.userId); $event.stopPropagation()"></i>
-                <img [src]="model.profilePicture" alt="Model Image" class="profile-picture"
+                <img [src]="model.profilePicture" alt="Model Image" style="border-top-left-radius: 10px; border-top-right-radius: 10px;" class="profile-picture"
                   (error)="onImageError($event)" />
                 <div class="flex justify-content-between">
                   <div class="pl-2 pr-2 w-full">
@@ -92,6 +100,11 @@
                       {{model.countryName }}</p>
                   </div>
                 </div>
+              </div>
+              <div *ngIf="agencyInfoModelsCount < agencyInfo?.models!.length"
+                class="flex justify-content-end w-full mb-3 mr-6">
+                <button pButton label="Load More" class="p-button-sm load-more-button"
+                  (click)="loadMoreAgencyInfoModels()"></button>
               </div>
             </div>
           </div>
@@ -146,7 +159,7 @@
                   </p-dropdown>
                 </div>
               </div>
-              <div *ngFor="let request of filteredFreelancerRequests">
+              <div *ngFor="let request of filteredFreelancerRequests | slice:0:filteredFreelancerRequestsCount">
                 <div class="flex gap-2 w-full mb-3 ml-4">
                   <img (click)="goToModelProfile(request.userModelId)" class="profile-picture-request border-round-lg"
                     [src]="request.modelProfilePicture" alt="Request Image" />
@@ -167,6 +180,11 @@
                   </div>
                 </div>
               </div>
+              <div *ngIf="filteredFreelancerRequestsCount < filteredFreelancerRequests.length"
+                class="flex justify-content-end w-full mb-3 mr-7">
+                <button pButton label="Load More" class="p-button-sm load-more-button"
+                  (click)="loadMoreFilteredFreelancerRequests()"></button>
+              </div>
               <div *ngIf="filteredFreelancerRequests.length == 0"
                 class="flex flex-column justify-content-center align-items-center  text-gray-400 text-sm font-medium pl-4">
                 <img src="assets/images/not-found.png" alt="No events found" class="w-20rem h-20rem mt-3" />
@@ -184,7 +202,8 @@
 
 <p-confirmDialog></p-confirmDialog>
 
-<p-dialog header="Add new event" [modal]="true"  [(visible)]="addEventDialogueVisible" [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
+<p-dialog header="Add new event" [modal]="true" [(visible)]="addEventDialogueVisible"
+  [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
   <div class="attributes-container mb-4">
     <div class="flex flex-column mb-2">
       <label for="title" class="font-semibold w-24 mb-1">Title</label>
@@ -207,13 +226,13 @@
     <div class="calendars flex mb-1">
       <div class="flex flex-column mb-2 mr-4">
         <label for="startDate" class="font-semibold w-24 mb-1">Start date</label>
-        <p-calendar inputId="calendar-24h" [(ngModel)]="newEvent.eventStart" [minDate]="minDate"
-          [showTime]="true" [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+        <p-calendar inputId="calendar-24h" [(ngModel)]="newEvent.eventStart" [minDate]="minDate" [showTime]="true"
+          [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
       </div>
       <div class="flex flex-column mb-2">
         <label for="finishDate" class="font-semibold w-24 mb-1">Finish date</label>
-        <p-calendar [(ngModel)]="newEvent.eventFinish" [minDate]="minDate" [showTime]="true"
-          [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+        <p-calendar [(ngModel)]="newEvent.eventFinish" [minDate]="minDate" [showTime]="true" [hourFormat]="'24'"
+          dateFormat="dd/mm/yy" appendTo="body" />
       </div>
     </div>
     <div class="thumbnail flex gap-3 align-items-end mb-4">
@@ -222,8 +241,9 @@
         <img *ngIf="newEvent.profilePicture" [src]="newEvent.profilePicture" alt="Event Image"
           class="w-max h-10rem border-round-lg mb-2" />
       </div>
-      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false" [customUpload]="true"
-        [maxFileSize]="1000000" (onSelect)="onAddEventFileSelected($event, fileupload)" chooseLabel="Image">
+      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false"
+        [customUpload]="true" [maxFileSize]="1000000" (onSelect)="onAddEventFileSelected($event, fileupload)"
+        chooseLabel="Image">
       </p-fileUpload>
     </div>
   </div>
@@ -236,40 +256,43 @@
   </div>
 </p-dialog>
 
-<p-dialog header="Edit Agency Info" [modal]="true" [(visible)]="editDialogeVisible" [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
+<p-dialog header="Edit Agency Info" [modal]="true" [(visible)]="editDialogeVisible"
+  [style]="{ width: '60%', overflow: 'auto', maxHeight: '86%' }" [baseZIndex]="10000">
   <div class="attributes-container mb-4">
     <div class="attributes-container mb-4">
-    <div class="flex flex-column mb-2">
-      <label for="title" class="font-semibold w-24 mb-1">Name</label>
-      <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="editAgencyInfo.name" />
+      <div class="flex flex-column mb-2">
+        <label for="title" class="font-semibold w-24 mb-1">Name</label>
+        <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="editAgencyInfo.name" />
+      </div>
+      <div class="flex flex-column mb-2">
+        <label for="title" class="font-semibold w-24 mb-1">Email</label>
+        <input pInputText id="email" class="flex-auto" autocomplete="off" [(ngModel)]="editAgencyInfo.email" />
+      </div>
+      <div class="flex flex-column mb-2">
+        <label for="description" class="font-semibold w-24 mb-1">Description</label>
+        <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="editAgencyInfo.description"></textarea>
+      </div>
+      <div class="flex flex-column mb-2 relative">
+        <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
+        <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+          (input)="onUpdateInfoAddressSearch($event)" [(ngModel)]="selectedUpdateInfoAddress" autocomplete="off" />
+        <ul *ngIf="updateInfoAddressSuggestions.length > 0" class="autocomplete-suggestions">
+          <li *ngFor="let suggestion of updateInfoAddressSuggestions"
+            (click)="selectUpdateInfoAddressSuggestion(suggestion)">
+            {{ suggestion.display_name }}
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="flex flex-column mb-2">
-      <label for="title" class="font-semibold w-24 mb-1">Email</label>
-      <input pInputText id="email" class="flex-auto" autocomplete="off" [(ngModel)]="editAgencyInfo.email" />
-    </div>
-    <div class="flex flex-column mb-2">
-      <label for="description" class="font-semibold w-24 mb-1">Description</label>
-      <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="editAgencyInfo.description"></textarea>
-    </div>
-    <div class="flex flex-column mb-2 relative">
-      <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
-      <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
-        (input)="onUpdateInfoAddressSearch($event)" [(ngModel)]="selectedUpdateInfoAddress" autocomplete="off" />
-      <ul *ngIf="updateInfoAddressSuggestions.length > 0" class="autocomplete-suggestions">
-        <li *ngFor="let suggestion of updateInfoAddressSuggestions" (click)="selectUpdateInfoAddressSuggestion(suggestion)">
-          {{ suggestion.display_name }}
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="thumbnail flex gap-3 align-items-end mb-4">
+    <div class="thumbnail flex gap-3 align-items-end mb-4">
       <div *ngIf="editAgencyInfo.profilePicture != ''" class="flex flex-column">
         <label for="profilePicture" class="font-semibold w-24 mb-1">Profile picture</label>
         <img *ngIf="editAgencyInfo.profilePicture" [src]="editAgencyInfo.profilePicture" alt="Event Image"
           class="w-max h-10rem border-round-lg mb-2" />
       </div>
-      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false" [customUpload]="true"
-        [maxFileSize]="1000000" (onSelect)="onUpdateInfoFileSelected($event, fileupload)" chooseLabel="Image">
+      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false"
+        [customUpload]="true" [maxFileSize]="1000000" (onSelect)="onUpdateInfoFileSelected($event, fileupload)"
+        chooseLabel="Image">
       </p-fileUpload>
     </div>
   </div>

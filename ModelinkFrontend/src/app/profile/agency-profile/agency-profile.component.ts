@@ -34,6 +34,7 @@ import { InputTextModule } from 'primeng/inputtext';
 export class AgencyProfileComponent implements OnInit {
   apiUrl = environment.apiUrl;
   userId: string | null = null;
+  userRole: string = '';
   loggedInUserId: string = '';
   loggedInUserIsModelOfThisAgency: boolean = false;
   loggedInUserIsFreelancerThatRequestedToJoinThisAgency: boolean = false;
@@ -57,8 +58,11 @@ export class AgencyProfileComponent implements OnInit {
   ];
   selectedEventStatus: string | null = null;
   filteredEvents: EventCardDto[] = [];
+  filteredEventsCount: number = 9;
+  agencyInfoModelsCount: number = 9;
   selectedFreelancerRequestStatus: string | null = null;
   filteredFreelancerRequests: FreelancerRequestForAgency[] = [];
+  filteredFreelancerRequestsCount: number = 5;
   // for adding new event
   newEvent: AddNewEventDTO = {
     agencyId: 0,
@@ -101,6 +105,7 @@ export class AgencyProfileComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id');
     this.loggedInUserId = this.authService.getUserId()?.toString() || '';
+    this.userRole = this.authService.getUserRole() || '';
     this.getAgencyInfo();
 
     // subscribe since angular detect change isnt workin gpropertly in some cases
@@ -655,5 +660,17 @@ export class AgencyProfileComponent implements OnInit {
           console.error('Error sending request to join agency:', error);
         }
       );
+  }
+
+  loadMoreFilteredEvents() {
+    this.filteredEventsCount += 9; // increase the count by 9
+  }
+
+  loadMoreAgencyInfoModels() {
+    this.agencyInfoModelsCount += 9; // increase the count by 9
+  }
+
+  loadMoreFilteredFreelancerRequests() {
+    this.filteredFreelancerRequestsCount += 5; // increase the count by 5
   }
 }

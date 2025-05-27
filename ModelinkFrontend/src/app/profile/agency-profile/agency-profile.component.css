@@ -289,3 +289,11 @@
     font-size: small;
     font-weight: lighter;
 }
+
+.load-more-button {
+  background-color: none;
+  background: none;
+  padding: 0.3rem 0.6rem;
+  border: 2px solid var(--secondary-color);
+  color: var(--secondary-color);
+}
