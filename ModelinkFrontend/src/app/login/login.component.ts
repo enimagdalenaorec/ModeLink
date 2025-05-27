@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { environment } from '../../environments/environment';
-import {  HttpClient, HttpClientModule  }  from  '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { LoginDto } from '../_Models/loginDto';
 import { AuthService } from '../_Services/auth.service';
 
@@ -46,6 +46,21 @@ export class LoginComponent {
     if (!this.isFormValid()) {
       this.formInvalidMessageVisible = true;
       return;
+    } else if (this.email === 'admin@gmail.com') {
+      // const loginDto: LoginDto = {
+      //   email: this.email,
+      //   password: this.password
+      // };
+      // this.http.post(this.backendUrl + 'Auth/admin-login', loginDto).subscribe((response: any) => {
+      //   this.showToast('success', 'Success', 'Login successful!');
+      //   this.authService.saveToken(response.token); // store token in localstorage
+      //   setTimeout(() => {
+      //     this.resetForm();
+      //     this.router.navigate(['/admin']);
+      //   }, 500);
+      // }, (error) => {
+      //   this.showToast('error', 'Error', 'Login failed!');
+      // });
     } else {
       //call be api
       const loginDto: LoginDto = {

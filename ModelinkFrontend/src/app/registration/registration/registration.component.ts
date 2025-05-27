@@ -66,6 +66,7 @@ export class RegistrationComponent implements OnInit {
   //both
   profilePictureName: string = '';
   formInvalidMessageVisible: boolean = false;
+  userWithEmailExists: boolean = false;
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private http: HttpClient, private router: Router, private messageService: MessageService) { }
 
@@ -161,6 +162,11 @@ export class RegistrationComponent implements OnInit {
       }, 1000);
     }, (error) => {
       this.showToast('error', 'Error', 'Registration failed!');
+      if (error.status === 400 && error.error === 'User with this email already exists.') {
+        this.userWithEmailExists = true;
+      } else {
+        console.error('Registration error:', error);
+      }
     });
   }
 
