@@ -35,8 +35,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   // for search results
   models: ModelSearchResultDto[] = [];
   searchModelsNotFiltered: ModelSearchResultDto[] = [];
+  searchedModelsCount = 8;
   agencies: AgencySearchResultDto[] = [];
   searchAgenciesNotFiltered: AgencySearchResultDto[] = [];
+  searchedAgenciesCount = 8;
   modelsNotFound = false;
   agenciesNotFound = false;
   searchQuery = '';
@@ -70,12 +72,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   modelsNotIncludedInSearch = false; // if models are not included in search, only agencies are shown
   // for suggested models & agencies (for a guest)
   suggestedModels: SuggestedModelDto[] = [];
+  suggestedModelsCount = 8;
   suggestedAgencies: SuggestedAgencyDto[] = [];
+  suggestedAgenciesCount = 8;
   // all models by one agency and models from other agencies, signed and freelancers (for agency profile)
   modelsByAgency: SuggestedModelDto[] = [];
+  modelsByAgencyCount = 8;
   outsideSignedModels: SuggestedModelDto[] = [];
+  outsideSignedModelsCount = 8;
   outsideFreelancerModels: SuggestedModelDto[] = [];
+  outsideFreelancerModelsCount = 8;
   eventsByMotherAgency: EventCardDto[] = []; // events by mother agency (for signed logged in model)
+  eventsByMotherAgencyCount = 8; // count for events by mother agency
 
   private subscriptions: Subscription[] = []; // destroy on OnDestroy
 
@@ -299,6 +307,38 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.agenciesNotFound = false;
     this.agenciesNotIncludedInSearch = false; // reset to default
     this.modelsNotIncludedInSearch = false; // reset to default
+  }
+
+  loadMoreSearchedModels() {
+    this.searchedModelsCount += 8;
+  }
+
+  loadMoreSearchedAgencies() {
+    this.searchedAgenciesCount += 8; // reusing the same count for agencies, as they are shown in the same section
+  }
+
+  loadMoreSuggestedModels() {
+    this.suggestedModelsCount += 8;
+  }
+
+  loadMoreSuggestedAgencies() {
+    this.suggestedAgenciesCount += 8;
+  }
+
+  loadMoreModelsByAgency() {
+    this.modelsByAgencyCount += 8;
+  }
+
+  loadMoreOutsideSignedModels() {
+    this.outsideSignedModelsCount += 8;
+  }
+
+  loadMoreOutsideFreelancerModels() {
+    this.outsideFreelancerModelsCount += 8;
+  }
+
+  loadMoreEventsByMotherAgency() {
+    this.eventsByMotherAgencyCount += 8;
   }
 
 }

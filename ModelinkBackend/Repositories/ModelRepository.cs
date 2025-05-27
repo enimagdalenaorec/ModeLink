@@ -59,7 +59,6 @@ namespace ModelinkBackend.Repositories
             return await _context.Models
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
-                .Take(7) // limit to 7
                 .ToListAsync();
         }
 

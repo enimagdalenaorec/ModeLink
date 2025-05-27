@@ -55,7 +55,6 @@ namespace ModelinkBackend.Repositories
         {
             return await _context.Agencies
                 .Include(a => a.City).ThenInclude(c => c.Country)
-                .Take(7) // limit to 7
                 .ToListAsync();
         }
 
@@ -74,7 +73,6 @@ namespace ModelinkBackend.Repositories
                 .Where(m => ( m.AgencyId != agencyId && m.AgencyId != null) )
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
-                .Take(7) // limit to 7
                 .ToListAsync();
         }
 
@@ -84,7 +82,6 @@ namespace ModelinkBackend.Repositories
                 .Where(m => (m.AgencyId != agencyId && m.AgencyId == null))
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
-                .Take(7) // limit to 7
                 .ToListAsync();
         }
 

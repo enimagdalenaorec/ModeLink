@@ -28,7 +28,8 @@
 
     <!-- HEIGHT SLIDER -->
     <div class="mb-4 w-12">
-      <h5 class="mb-2"><i class="fas fa-ruler-vertical" style="margin-right: 8px;"></i>Height (cm) <span class="ml-4">{{ filters.heightRange[0] }} - {{ filters.heightRange[1] }}</span></h5>
+      <h5 class="mb-2"><i class="fas fa-ruler-vertical" style="margin-right: 8px;"></i>Height (cm) <span class="ml-4">{{
+          filters.heightRange[0] }} - {{ filters.heightRange[1] }}</span></h5>
       <p-slider [(ngModel)]="filters.heightRange" [min]="120" [max]="220" [step]="1" [range]="true" styleClass="w-full">
       </p-slider>
       <div class="flex justify-content-between mt-2">
@@ -39,7 +40,8 @@
 
     <!-- WEIGHT SLIDER -->
     <div class="mb-4 w-12">
-      <h5 class="mb-2"><i class="fas fa-weight" style="margin-right: 8px;"></i>Weight (kg) <span class="ml-4">{{ filters.weightRange[0] }} - {{ filters.weightRange[1] }}</span></h5>
+      <h5 class="mb-2"><i class="fas fa-weight" style="margin-right: 8px;"></i>Weight (kg) <span class="ml-4">{{
+          filters.weightRange[0] }} - {{ filters.weightRange[1] }}</span></h5>
       <p-slider [(ngModel)]="filters.weightRange" [min]="30" [max]="130" [step]="1" [range]="true" styleClass="w-full">
       </p-slider>
       <div class="flex justify-content-between mt-2">
@@ -51,24 +53,24 @@
     <!-- EYE COLOR -->
     <div class="mb-1">
       <h5 class="mb-1"><i class="fas fa-eye" style="margin-right: 8px;"></i>Eye Color</h5>
-      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="eyeColorOptions" [(ngModel)]="filters.eyeColors" display="chip"
-        placeholder="Select eye colors" styleClass="w-full">
+      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="eyeColorOptions"
+        [(ngModel)]="filters.eyeColors" display="chip" placeholder="Select eye colors" styleClass="w-full">
       </p-multiSelect>
     </div>
 
     <!-- HAIR COLOR -->
     <div class="mb-1">
       <h5 class="mb-1 mt-3"><i class="fas fa-paint-brush" style="margin-right: 8px;"></i>Hair Color</h5>
-      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="hairColorOptions" [(ngModel)]="filters.hairColors" display="chip"
-        placeholder="Select hair colors" styleClass="w-full">
+      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="hairColorOptions"
+        [(ngModel)]="filters.hairColors" display="chip" placeholder="Select hair colors" styleClass="w-full">
       </p-multiSelect>
     </div>
 
     <!-- SKIN COLOR -->
     <div class="mb-4">
       <h5 class="mb-1 mt-3"><i class="fas fa-user" style="margin-right: 8px;"></i>Skin Color</h5>
-      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="skinColorOptions" [(ngModel)]="filters.skinColors" display="chip"
-        placeholder="Select skin colors" styleClass="w-full">
+      <p-multiSelect [maxSelectedLabels]="10" [filter]="false" [options]="skinColorOptions"
+        [(ngModel)]="filters.skinColors" display="chip" placeholder="Select skin colors" styleClass="w-full">
       </p-multiSelect>
     </div>
 
@@ -97,7 +99,8 @@
         <p-divider class="text-200 divider-69"></p-divider>
       </div>
       <div class="models-list flex flex-wrap gap-3 mb-5">
-        <div *ngFor="let model of models" class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
+        <div *ngFor="let model of models | slice:0:searchedModelsCount" class="item flex flex-column h-15rem"
+          (click)="select(model.userId, 'model')">
           <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
           <div class="flex justify-content-between">
             <div class="info">
@@ -107,6 +110,10 @@
             <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
               model.countryName }}</p>
           </div>
+        </div>
+        <div *ngIf="searchedModelsCount < models.length" class="flex justify-content-end w-full mb-3 mr-4">
+          <button pButton label="Load More" class="p-button-sm load-more-button"
+            (click)="loadMoreSearchedModels()"></button>
         </div>
       </div>
     </div>
@@ -120,12 +127,16 @@
         <p-divider class="text-200 divider-69"></p-divider>
       </div>
       <div class="agencies-list flex flex-wrap gap-4">
-        <div *ngFor="let agency of agencies" class="item flex flex-column h-15rem"
+        <div *ngFor="let agency of agencies | slice:0:searchedAgenciesCount" class="item flex flex-column h-15rem"
           (click)="select(agency.userId, 'agency')">
           <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
           <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
           <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
             agency.countryName }}</p>
+        </div>
+        <div *ngIf="searchedAgenciesCount < agencies.length" class="flex justify-content-end w-full mb-3 mr-4">
+          <button pButton label="Load More" class="p-button-sm load-more-button" (click)="loadMoreSearchedAgencies()">
+          </button>
         </div>
       </div>
     </div>
@@ -150,7 +161,7 @@
       <p-divider class="text-200 suggested-divider"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem"
+      <div *ngFor="let model of suggestedModels | slice:0:suggestedModelsCount" class="item flex flex-column h-15rem"
         (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
@@ -161,6 +172,10 @@
           <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
             model.countryName }}</p>
         </div>
+      </div>
+      <div *ngIf="suggestedModelsCount < suggestedModels.length" class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreSuggestedModels()"></button>
       </div>
     </div>
   </div>
@@ -173,12 +188,16 @@
       <p-divider class="text-200 suggested-agency-divider"></p-divider>
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
-      <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
-        (click)="select(agency.userId, 'agency')">
+      <div *ngFor="let agency of suggestedAgencies | slice:0:suggestedAgenciesCount"
+        class="item flex flex-column h-15rem" (click)="select(agency.userId, 'agency')">
         <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
           agency.countryName }}</p>
+      </div>
+      <div *ngIf="suggestedAgenciesCount < suggestedAgencies.length" class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreSuggestedAgencies()"></button>
       </div>
     </div>
   </div>
@@ -203,7 +222,7 @@
       <p-divider class="text-200 w-11"></p-divider>
     </div>
     <div *ngIf="modelsByAgency.length != 0" class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of modelsByAgency" class="item flex flex-column h-15rem"
+      <div *ngFor="let model of modelsByAgency | slice:0:modelsByAgencyCount" class="item flex flex-column h-15rem"
         (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
@@ -214,6 +233,10 @@
           <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
             model.countryName }}</p>
         </div>
+      </div>
+      <div *ngIf="modelsByAgencyCount < modelsByAgency.length" class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreModelsByAgency()"></button>
       </div>
     </div>
     <div *ngIf="modelsByAgency.length == 0" style="font-size: medium; font-weight: 500; color: rgb(124, 128, 126);">No
@@ -228,8 +251,8 @@
       <p-divider class="text-200 w-11"></p-divider>
     </div>
     <div *ngIf="outsideFreelancerModels.length != 0" class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of outsideFreelancerModels" class="item flex flex-column h-15rem"
-        (click)="select(model.userId, 'model')">
+      <div *ngFor="let model of outsideFreelancerModels | slice:0:outsideFreelancerModelsCount"
+        class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -239,6 +262,11 @@
           <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
             model.countryName }}</p>
         </div>
+      </div>
+      <div *ngIf="outsideFreelancerModelsCount < outsideFreelancerModels.length"
+        class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreOutsideFreelancerModels()"></button>
       </div>
     </div>
     <div *ngIf="outsideFreelancerModels.length == 0"
@@ -255,8 +283,8 @@
       <p-divider class="text-200 signed-divider"></p-divider>
     </div>
     <div *ngIf="outsideSignedModels.length != 0" class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of outsideSignedModels" class="item flex flex-column h-15rem"
-        (click)="select(model.userId, 'model')">
+      <div *ngFor="let model of outsideSignedModels | slice:0:outsideSignedModelsCount"
+        class="item flex flex-column h-15rem" (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -266,6 +294,11 @@
           <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
             model.countryName }}</p>
         </div>
+      </div>
+      <div *ngIf="outsideSignedModelsCount < outsideSignedModels.length"
+        class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreOutsideSignedModels()"></button>
       </div>
     </div>
     <div *ngIf="outsideSignedModels.length == 0"
@@ -294,8 +327,8 @@
       <p-divider class="text-200 divider-81"></p-divider>
     </div>
     <div *ngIf="eventsByMotherAgency.length != 0" class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let event of eventsByMotherAgency" class="item flex flex-column h-15rem"
-        (click)="selectEvent(event.id)">
+      <div *ngFor="let event of eventsByMotherAgency | slice:0:eventsByMotherAgencyCount"
+        class="item flex flex-column h-15rem" (click)="selectEvent(event.id)">
         <img [src]="event.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
           <div class="info">
@@ -308,6 +341,11 @@
             </p>
           </div>
         </div>
+      </div>
+      <div *ngIf="eventsByMotherAgencyCount < eventsByMotherAgency.length"
+        class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreEventsByMotherAgency()"></button>
       </div>
     </div>
     <div *ngIf="eventsByMotherAgency.length == 0"
@@ -324,12 +362,16 @@
       <p-divider class="text-200 suggested-agency-divider"></p-divider>
     </div>
     <div class="agencies-list flex flex-wrap gap-4">
-      <div *ngFor="let agency of suggestedAgencies" class="item flex flex-column h-15rem"
-        (click)="select(agency.userId, 'agency')">
+      <div *ngFor="let agency of suggestedAgencies | slice:0:suggestedAgenciesCount"
+        class="item flex flex-column h-15rem" (click)="select(agency.userId, 'agency')">
         <img [src]="agency.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <h4 class="mb-0 pr-2 pl-2" style="margin-top: 0.8rem;">{{ agency.name }}</h4>
         <p *ngIf="agency.cityName != null" class="text-sm mb-0 mt-2 pr-2 pl-2">{{ agency.cityName }}, {{
           agency.countryName }}</p>
+      </div>
+      <div *ngIf="suggestedAgenciesCount < suggestedAgencies.length" class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreSuggestedAgencies()"></button>
       </div>
     </div>
   </div>
@@ -343,7 +385,7 @@
       <p-divider class="text-200 w-10"></p-divider>
     </div>
     <div class="models-list flex flex-wrap gap-4">
-      <div *ngFor="let model of suggestedModels" class="item flex flex-column h-15rem"
+      <div *ngFor="let model of suggestedModels | slice:0:suggestedModelsCount" class="item flex flex-column h-15rem"
         (click)="select(model.userId, 'model')">
         <img [src]="model.profilePicture" alt="Model Image" class="profile-picture" (error)="onImageError($event)" />
         <div class="flex justify-content-between">
@@ -354,6 +396,10 @@
           <p *ngIf="model.cityName != null" class="location text-sm mb-0 mt-3 pr-3">{{ model.cityName }}, {{
             model.countryName }}</p>
         </div>
+      </div>
+      <div *ngIf="suggestedModelsCount < suggestedModels.length" class="flex justify-content-end w-full mb-3 mr-8">
+        <button pButton label="Load More" class="p-button-sm load-more-button"
+          (click)="loadMoreSuggestedModels()"></button>
       </div>
     </div>
   </div>
