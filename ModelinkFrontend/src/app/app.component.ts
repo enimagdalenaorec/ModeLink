@@ -15,11 +15,13 @@ import { environment } from '../environments/environment';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, MenubarModule, NgIf, ButtonModule, InputTextModule, FormsModule, HttpClientModule, NgFor],
+  providers: [AuthService, SearchService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   backednUrl = environment.apiUrl;
+  userRole: string = '';
   title = 'Modelink';
   items: MenuItem[] | undefined;
   searchQuery: string = '';   // for search by name
@@ -47,6 +49,8 @@ export class AppComponent implements OnInit {
         command: () => this.navigateToProfile('/profile')
       }
     ];
+
+    this.userRole = this.authService.getUserRole() || '';
 
     // if user clicks on one of search results, the query should go "", so subscribe to changes
     this.searchService.searchQuery$.subscribe(query => {

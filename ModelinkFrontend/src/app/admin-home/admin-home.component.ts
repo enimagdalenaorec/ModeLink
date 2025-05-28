@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../_Services/auth.service';
 import { Router } from '@angular/router';
+import { StepperModule } from 'primeng/stepper';
 
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [],
+  imports: [StepperModule],
   providers: [AuthService],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'

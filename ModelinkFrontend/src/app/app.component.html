@@ -3,7 +3,8 @@
   <div class="title-logo-menubar flex align-items-center">
     <img src="assets/images/logo_final.png" alt="Logo" class="w-auto h-4rem" />
     <h1 class="ml-2 mr-2 modelink-title">ModeLink</h1>
-    <p-menubar [model]="items" />
+    <p-menubar *ngIf="userRole != 'admin'" [model]="items" />
+    <p class="text-white-alpha-80	ml-5 text-3xl mb-1 font-bold	" style="margin-top: 0.35rem;" *ngIf="userRole === 'admin'">Hello, Admin! <i class="fa-solid fa-hand-paper" style="transform: rotate(15deg);"></i></p>
   </div>
   <div *ngIf="isHomeRoute()" class="absolute searchbar-container flex">
     <input id="autocomplete" type="text" pInputText class="flex-auto searchbar-location" placeholder="Search by location"

@@ -1,0 +1,22 @@
+:host ::ng-deep .p-stepper .p-stepper-nav {
+  width: 50% !important;
+  justify-self: center !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header .p-stepper-action {
+  background: none !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header.p-highlight .p-stepper-number {
+  background: var(--accent-color) !important;
+  color: white !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-header:has(~ .p-highlight) .p-stepper-separator {
+  background: var(--accent-color) !important;
+}
+
+:host ::ng-deep .p-stepper .p-stepper-panels {
+  background: var(--background-color) !important;
+  padding: 0.5rem !important;
+}
