@@ -1,12 +1,27 @@
 <div class="mt-2">
   <p-stepper class="w-full">
-  <p-stepperPanel header="Models">
-    <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-    </ng-template>
-  </p-stepperPanel>
-  <p-stepperPanel header="Agencies">
-    <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-    </ng-template>
-  </p-stepperPanel>
-</p-stepper>
+    <p-stepperPanel header="Models">
+      <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+         <!-- editable table with models -->
+        <!-- <p-table [value]="products" editable="true">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product let-editing="editing">
+            <tr>
+              <td>
+                <input pInputText [(ngModel)]="product.name" />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table> -->
+      </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Agencies">
+      <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+      </ng-template>
+    </p-stepperPanel>
+  </p-stepper>
 </div>

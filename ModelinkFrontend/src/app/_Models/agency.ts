@@ -72,3 +72,33 @@ export interface UpdateAgencyInfoDTO {
 }
 
 
+// for admin
+
+export interface AgenciesForAdminCrudDTO {
+  agencyId: number;
+  agencyUserId: number; // UserId of the agency
+  name: string;
+  description?: string; // nullable if no description
+  email: string;
+  cityName?: string;
+  countryName: string;
+  agencyAddress: string;
+  profilePicture: string; // Base64 string of the profile picture
+  models: ModelsForAgenciesForAdminCrudDTO[];
+  events: EventsForAgenciesForAdminCrudDTO[];
+}
+
+export interface ModelsForAgenciesForAdminCrudDTO {
+  modelId: number;
+  modelUserId: number; // UserId of the model
+  firstName: string;
+  lastName: string;
+}
+
+export interface EventsForAgenciesForAdminCrudDTO {
+  id: number;
+  title: string;
+}
+
+
+

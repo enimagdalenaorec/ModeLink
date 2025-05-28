@@ -143,3 +143,44 @@ export interface FreelancerRequestsFromModel {
   status: string;
   requestedAt: Date;
 }
+
+
+
+// for admin
+
+export interface ModelsForAdminCrudDTO {
+  modelId: number;
+  modelUserId: number;
+  firstName: string;
+  lastName: string;
+  agencyName?: string; // nullable if freelancer
+  agencyId?: number;   // nullable
+  cityName?: string;   // nullable if no city
+  height: number;
+  weight: number;
+  eyeColor: string;
+  hairColor: string;
+  skinColor: string;
+  email: string;
+  gender: string;
+  profilePicture: string; // Base64 string of the profile picture
+  applications: ModelApplicationsForCrudDisplayDTO[];
+  freelancerRequests: FreelancerRequestsForCrudDisplayDTO[];
+  portfolioPosts: PortfolioPostsForCrudDisplayDTO[];
+}
+
+export interface ModelApplicationsForCrudDisplayDTO {
+  id: number;
+  eventName: string;
+  agencyName: string;
+}
+
+export interface FreelancerRequestsForCrudDisplayDTO {
+  id: number;
+  agencyName: string;
+}
+
+export interface PortfolioPostsForCrudDisplayDTO {
+  id: number;
+  title: string;
+}
