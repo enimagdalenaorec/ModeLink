@@ -8,6 +8,7 @@ import { EventDetailsComponent } from './event-details/event-details.component';
 import { ModelProfileComponent } from './profile/model-profile/model-profile.component';
 import { AgencyProfileComponent } from './profile/agency-profile/agency-profile.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
+import { adminGuard } from './_Services/admin.guard';
 
 export const routes: Routes = [
   {
@@ -44,7 +45,8 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    component: AdminHomeComponent
+    component: AdminHomeComponent,
+    canActivate: [adminGuard]
   },
   {
     path: '**',

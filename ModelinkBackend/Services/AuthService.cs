@@ -190,5 +190,17 @@ namespace ModelinkBackend.Services
             var hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(hashedBytes);
         }
+
+        public async Task<string> AdminLoginAsync(LoginDto adminLoginDto)
+        {
+            var user = await _authRepository.GetUserByEmailAsync(adminLoginDto.Email);
+            if (user == null || !VerifyPassword(adminLoginDto.Password, user.PasswordHash) || user.Role != "admin")
+            {
+                throw new Exception("Invalid email or password.");
+            }
+
+            // generate JWT token
+            return _jwtService.GenerateToken(user.Id, user.Role);
+        }
     }
 }

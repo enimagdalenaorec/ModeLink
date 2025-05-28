@@ -58,5 +58,19 @@ namespace ModelinkBackend.Controllers
             }
         }
 
+        [HttpPost("admin-login")]
+        public async Task<IActionResult> AdminLogin([FromBody] LoginDto adminLoginDto)
+        {
+            try
+            {
+                var token = await _authService.AdminLoginAsync(adminLoginDto);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

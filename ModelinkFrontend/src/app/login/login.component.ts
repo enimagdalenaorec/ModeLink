@@ -47,20 +47,20 @@ export class LoginComponent {
       this.formInvalidMessageVisible = true;
       return;
     } else if (this.email === 'admin@gmail.com') {
-      // const loginDto: LoginDto = {
-      //   email: this.email,
-      //   password: this.password
-      // };
-      // this.http.post(this.backendUrl + 'Auth/admin-login', loginDto).subscribe((response: any) => {
-      //   this.showToast('success', 'Success', 'Login successful!');
-      //   this.authService.saveToken(response.token); // store token in localstorage
-      //   setTimeout(() => {
-      //     this.resetForm();
-      //     this.router.navigate(['/admin']);
-      //   }, 500);
-      // }, (error) => {
-      //   this.showToast('error', 'Error', 'Login failed!');
-      // });
+      const loginDto: LoginDto = {
+        email: this.email,
+        password: this.password
+      };
+      this.http.post(this.backendUrl + 'Auth/admin-login', loginDto).subscribe((response: any) => {
+        this.showToast('success', 'Success', 'Login successful!');
+        this.authService.saveToken(response.token); // store token in localstorage
+        setTimeout(() => {
+          this.resetForm();
+          this.router.navigate(['/admin']);
+        }, 500);
+      }, (error) => {
+        this.showToast('error', 'Error', 'Login failed!');
+      });
     } else {
       //call be api
       const loginDto: LoginDto = {
