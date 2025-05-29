@@ -175,5 +175,15 @@ namespace ModelinkBackend.Repositories
             return true;
         }
 
+        public async Task<IEnumerable<Agency>> GetAgenciesForAdminCrudAsync()
+        {
+            return await _context.Agencies
+                .Include(a => a.User)
+                .Include(a => a.City).ThenInclude(c => c.Country)
+                .Include(a => a.Models).ThenInclude(m => m.User)
+                .Include(a => a.Events)
+                .ToListAsync();
+        }
+
     }
 }

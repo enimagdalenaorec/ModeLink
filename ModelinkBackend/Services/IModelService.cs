@@ -20,5 +20,6 @@ namespace ModelinkBackend.Services
         Task<IEnumerable<FreelancerRequestsFromModel>> GetFreelancerRequestsAsync(int modelId);
         Task<bool> RequestToJoinAgencyAsync(int agencyId, int modelUserId);
         Task<bool> CancelRequestToJoinAgencyAsync(int agencyId, int modelUserId);
+        Task<IEnumerable<ModelsForAdminCrudDTO>> GetModelsForAdminCrudAsync();
     }
 }

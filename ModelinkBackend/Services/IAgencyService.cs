@@ -18,5 +18,6 @@ namespace ModelinkBackend.Services
         Task<bool> DeclineFreelancerRequestAsync(int requestId);
         Task<bool> UnsignModelAsync(int userId);
         Task<bool> UpdateAgencyInfoAsync(UpdateAgencyInfoDTO updateAgencyInfoDto);
+        Task<IEnumerable<AgenciesForAdminCrudDTO>> GetAgenciesForAdminCrudAsync();
     }
 }

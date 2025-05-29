@@ -80,9 +80,9 @@ export interface AgenciesForAdminCrudDTO {
   name: string;
   description?: string; // nullable if no description
   email: string;
+  address: string;
   cityName?: string;
   countryName: string;
-  agencyAddress: string;
   profilePicture: string; // Base64 string of the profile picture
   models: ModelsForAgenciesForAdminCrudDTO[];
   events: EventsForAgenciesForAdminCrudDTO[];

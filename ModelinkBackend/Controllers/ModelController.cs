@@ -10,10 +10,12 @@ namespace ModelinkBackend.Controllers
     public class ModelController : ControllerBase
     {
         private readonly IModelService _modelService;
+        private readonly IAuthService _authService;
 
-        public ModelController(IModelService modelService)
+        public ModelController(IModelService modelService, IAuthService authService)
         {
             _modelService = modelService;
+            _authService = authService;
         }
 
         [HttpGet("search")]
@@ -161,6 +163,22 @@ namespace ModelinkBackend.Controllers
                 return Ok();
             }
             return BadRequest("Failed to cancel request to join agency.");
+        }
+
+        [HttpGet("getModelsForAdminCrud/{userId}")]
+        public async Task<IActionResult> GetModelsForAdminCrud(int userId)
+        {
+            var userRole = await _authService.GetUserRoleByUserIdAsync(userId);
+            if (userRole != "admin")
+            {
+                return Unauthorized("Only admins can access this endpoint.");
+            }
+            var modelsForAdminCrud = await _modelService.GetModelsForAdminCrudAsync();
+            if (modelsForAdminCrud == null)
+            {
+                return NotFound();
+            }
+            return Ok(modelsForAdminCrud);
         }
     }
 }

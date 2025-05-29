@@ -390,5 +390,48 @@ namespace ModelinkBackend.Services
             // delete the request in the repository
             return await _modelRepository.DeleteFreelancerRequestAsync(request);
         }
+
+        public async Task<IEnumerable<ModelsForAdminCrudDTO>> GetModelsForAdminCrudAsync()
+        {
+            // retrieve all model entities
+            var models = await _modelRepository.GetModelsForAdminCrudAsync();
+            // remap them
+            return models.Select(x => new ModelsForAdminCrudDTO {
+                ModelId = x.Id,
+                ModelUserId = x.User.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                AgencyName = x.Agency?.Name, // nullable if freelancer
+                AgencyId = x.Agency?.Id, // nullable
+                CityName = x.City?.Name, // nullable if no city
+                CountryName = x.City?.Country?.Name, // nullable if no country
+                Height = x.Height,
+                Weight = x.Weight,
+                EyeColor = x.EyeColor,
+                HairColor = x.HairColor,
+                SkinColor = x.SkinColor,
+                Gender = x.Sex,
+                Email = x.User.Email,
+                ProfilePicture = x.ProfilePictureBase64,
+                Applications = x.ModelApplications?.Select(a => new ModelApplicationsForCrudDisplayDTO
+                {
+                    Id = a.Id,
+                    EventName = a.Event?.Title ?? string.Empty, 
+                    AgencyName = a.Event?.Agency?.Name ?? string.Empty 
+                }).ToList() ?? new List<ModelApplicationsForCrudDisplayDTO>(), 
+                FreelancerRequests = x.FreelancerRequests?.Select(r => new FreelancerRequestsForCrudDisplayDTO
+                {
+                    Id = r.Id,
+                    AgencyName = r.Agency?.Name ?? string.Empty 
+                }).ToList() ?? new List<FreelancerRequestsForCrudDisplayDTO>(), 
+                PortfolioPosts = x.PortfolioPosts?.Select(p => new PortfolioPostsForCrudDisplayDTO
+                {
+                    Id = p.Id,
+                    Title = p.Title ?? string.Empty 
+                }).ToList() ?? new List<PortfolioPostsForCrudDisplayDTO>() 
+            });
+
+        }
+
     }
 }

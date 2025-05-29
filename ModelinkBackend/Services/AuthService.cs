@@ -202,5 +202,19 @@ namespace ModelinkBackend.Services
             // generate JWT token
             return _jwtService.GenerateToken(user.Id, user.Role);
         }
+
+        public async Task<string> GetUserRoleByUserIdAsync(int userId)
+        {
+            var user = await _authRepository.GetUserByIdAsync(userId);
+
+            // check if the user exists
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            // return the user's role
+            return user.Role;
+        }
     }
 }

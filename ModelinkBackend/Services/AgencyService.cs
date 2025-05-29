@@ -228,5 +228,36 @@ namespace ModelinkBackend.Services
             return await _agencyRepository.UpdateAgencyAsync(agency);
         }
 
+        public async Task<IEnumerable<AgenciesForAdminCrudDTO>> GetAgenciesForAdminCrudAsync()
+        {
+            // retrieve all agency entities
+            var agencies = await _agencyRepository.GetAgenciesForAdminCrudAsync();
+            // map to DTOs
+            return agencies.Select(a => new AgenciesForAdminCrudDTO
+            {
+                AgencyId = a.Id,
+                AgencyUserId = a.User.Id,
+                Name = a.Name,
+                Description = a.Description,
+                Email = a.User.Email,
+                Address = a.Address,
+                CityName = a.City?.Name, // if null, return null
+                CountryName = a.City?.Country?.Name, // if null, return null
+                ProfilePicture = a.ProfilePictureBase64,
+                Models = a.Models.Select(m => new ModelsForAgenciesForAdminCrudDTO
+                {
+                    ModelId = m.Id,
+                    ModelUserId = m.User.Id,
+                    FirstName = m.FirstName,
+                    LastName = m.LastName
+                }).ToList(),
+                Events = a.Events.Select(e => new EventsForAgenciesForAdminCrudDTO
+                {
+                    Id = e.Id,
+                    Title = e.Title
+                }).ToList()
+            });
+        }
+
     }
 }

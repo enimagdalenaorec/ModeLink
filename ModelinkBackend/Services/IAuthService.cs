@@ -9,5 +9,6 @@ namespace ModelinkBackend.Services
         Task<string> RegisterAgencyAsync(RegisterAgencyDto agencyDto);
         Task<string> LoginAsync(LoginDto loginDto);
         Task<string> AdminLoginAsync(LoginDto adminLoginDto);
+        Task<string> GetUserRoleByUserIdAsync(int userId);
     }
 }

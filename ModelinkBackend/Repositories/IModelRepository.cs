@@ -29,5 +29,6 @@ namespace ModelinkBackend.Repositories
         Task<FreelancerRequest> CreateFreelancerRequestAsync(FreelancerRequest request);
         Task<FreelancerRequest> GetFreelancerRequestAsync(int agencyId, int modelId);
         Task<bool> DeleteFreelancerRequestAsync(FreelancerRequest request);
+        Task<IEnumerable<Model>> GetModelsForAdminCrudAsync();
     }
 }

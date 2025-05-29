@@ -12,4 +12,5 @@ public interface IAuthRepository
     Task CreateModelStatusHistoryAsync(CreateModelStatusHistoryDTO createModelStatusHistoryDto);
     Task CreateCountryAsync(Country country);
     Task CreateCityAsync(City city);
+    Task<User> GetUserByIdAsync(int userId);
 }

@@ -231,5 +231,16 @@ namespace ModelinkBackend.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<Model>> GetModelsForAdminCrudAsync()
+        {
+            return _context.Models
+                .Include(m => m.User)
+                .Include(m => m.City).ThenInclude(c => c.Country)
+                .Include(m => m.Agency)
+                .Include(m => m.ModelApplications).ThenInclude(ma => ma.Event).ThenInclude(e => e.Agency)
+                .Include(m => m.FreelancerRequests).ThenInclude(fr => fr.Agency)
+                .Include(m => m.PortfolioPosts);
+        }
     }
 }

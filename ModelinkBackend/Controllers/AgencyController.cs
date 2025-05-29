@@ -13,10 +13,12 @@ namespace ModelinkBackend.Controllers
     public class AgencyController : ControllerBase
     {
         private readonly IAgencyService _agencyService;
+        private readonly IAuthService _authService;
 
-        public AgencyController(IAgencyService agencyService)
+        public AgencyController(IAgencyService agencyService, IAuthService authService)
         {
             _agencyService = agencyService;
+            _authService = authService;
         }
 
         [HttpGet("search")]
@@ -124,6 +126,22 @@ namespace ModelinkBackend.Controllers
                 return Ok();
             }
             return BadRequest("Failed to update agency information.");
+        }
+
+        [HttpGet("getAgencyForAdminCrud/{userId}")]
+        public async Task<IActionResult> GetAgencyForAdminCrud(int userId)
+        {
+            var userRole = await _authService.GetUserRoleByUserIdAsync(userId);
+            if (userRole != "admin")
+            {
+                return Unauthorized("Only admins can access this endpoint.");
+            }
+            var agencies = await _agencyService.GetAgenciesForAdminCrudAsync();
+            if (agencies == null)
+            {
+                return NotFound();
+            }
+            return Ok(agencies);
         }
     }
 }

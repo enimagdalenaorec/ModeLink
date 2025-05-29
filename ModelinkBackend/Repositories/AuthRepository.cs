@@ -73,5 +73,11 @@ namespace ModelinkBackend.Repositories
             _context.Cities.Add(city);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }

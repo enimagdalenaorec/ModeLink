@@ -9,6 +9,7 @@
         public string? AgencyName { get; set; } // nullable if freelancer
         public int? AgencyId { get; set; } // nullable
         public string? CityName { get; set; } // nullable if no city
+        public string? CountryName { get; set; } // nullable if no country
         public decimal Height { get; set; }
         public decimal Weight { get; set; }
         public string EyeColor { get; set; } = null!;
@@ -17,9 +18,9 @@
         public string Email { get; set; } = null!;
         public string Gender { get; set; } = null!;
         public string ProfilePicture { get; set; } = null!; // Base64 string of the profile picture
-        public List<ModelApplicationsForCrudDisplayDTO> Applications { get; set; } = new List<ModelApplicationsForCrudDisplayDTO>();        // display of active events thar model is attending
-        public List<FreelancerRequestsForCrudDisplayDTO> FreelancerRequests { get; set; } = new List<FreelancerRequestsForCrudDisplayDTO>(); // display of pending freelancer requests
-        public List<PortfolioPostsForCrudDisplayDTO> PortfolioPosts { get; set; } = new List<PortfolioPostsForCrudDisplayDTO>(); // display of portfolio posts
+        public List<ModelApplicationsForCrudDisplayDTO>? Applications { get; set; } = new List<ModelApplicationsForCrudDisplayDTO>();        // display of active events thar model is attending
+        public List<FreelancerRequestsForCrudDisplayDTO>? FreelancerRequests { get; set; } = new List<FreelancerRequestsForCrudDisplayDTO>(); // display of pending freelancer requests
+        public List<PortfolioPostsForCrudDisplayDTO>? PortfolioPosts { get; set; } = new List<PortfolioPostsForCrudDisplayDTO>(); // display of portfolio posts
 
     }
 
