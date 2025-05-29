@@ -7,7 +7,8 @@
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string? AgencyName { get; set; } // nullable if freelancer
-        public int? AgencyId { get; set; } // nullable
+        public int? AgencyId { get; set; } // nullable, THIS ISNT BEING ACCEPTED IN FRONTEND
+        public int? AgencyUserId { get; set; } // nullable if freelancer, UserId of the agency
         public string? CityName { get; set; } // nullable if no city
         public string? CountryName { get; set; } // nullable if no country
         public decimal Height { get; set; }
@@ -28,7 +29,6 @@
     {
         public int Id { get; set; }
         public string EventName { get; set; } = null!;
-        public string AgencyName { get; set; } = null!;
     }
 
     public class FreelancerRequestsForCrudDisplayDTO

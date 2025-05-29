@@ -23,4 +23,41 @@
 
 :host ::ng-deep .p-inputtext {
   border: none !important;
+  width: 150px !important;
+}
+
+:host ::ng-deep .p-dropdown {
+  border: none !important;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: var(--secondary-color) !important;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-trigger {
+  display: none !important;
+}
+
+.autocomplete-suggestions {
+  position: absolute;
+  background: white;
+  z-index: 999;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  top: 60px;  /* for positioning belov address input field*/
+  border-radius: 6px;
+}
+
+.autocomplete-suggestions li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-suggestions li:hover {
+  background-color: #f0f0f0;
 }

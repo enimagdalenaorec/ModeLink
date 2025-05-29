@@ -1,22 +1,71 @@
-<div class="mt-2">
+<div class="mt-2 p-3 pb-0">
   <p-stepper class="w-full">
     <p-stepperPanel header="Models">
       <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-         <!-- editable table with models -->
-        <!-- <p-table [value]="products" editable="true">
+        <!-- editable table with models -->
+        <p-table [value]="models" editable="true">
           <ng-template pTemplate="header">
             <tr>
-              <th>Name</th>
+              <th class="w-full">First Name</th>
+              <th class="w-full">Last Name</th>
+              <th class="w-full">Email</th>
+              <th class="w-full">Agency</th>
+              <th class="w-full">City</th>
+              <th class="w-full">Gender</th>
+              <th class="w-full">Height</th>
+              <th class="w-full">Weight</th>
+              <th class="w-full">Eye Color</th>
+              <th class="w-full">Hair Color</th>
+              <th class="w-full">Skin Color</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-product let-editing="editing">
+          <ng-template pTemplate="body" let-model let-editing="editing" let-rowIndex="rowIndex">
             <tr>
               <td>
-                <input pInputText [(ngModel)]="product.name" />
+                <input pInputText [(ngModel)]="model.firstName" />
+              </td>
+              <td>
+                <input pInputText [(ngModel)]="model.lastName" />
+              </td>
+              <td>
+                <input pInputText [(ngModel)]="model.email" />
+              </td>
+              <td>
+                <p-dropdown [options]="allAgencies" optionLabel="name" [filter]="true"
+                  [placeholder]="model.agencyName || 'null'" [(ngModel)]="newAgency"
+                  (ngModelChange)="changeAgencyIdAccordingToNameChange(model)"></p-dropdown>
+              </td>
+              <td style="position: relative;">
+                <input id="city-autocomplete" type="text" pInputText class="flex-auto" [placeholder]="model.cityName || 'Search for city'"
+                  (input)="onCitySearch($event, rowIndex)" [(ngModel)]="selectedCities[rowIndex]" autocomplete="off" />
+
+                <ul *ngIf="(citySuggestions[rowIndex] || []).length > 0" class="autocomplete-suggestions">
+                  <li *ngFor="let suggestion of citySuggestions[rowIndex]" (click)="selectCitySuggestion(suggestion, model, rowIndex)">
+                    {{ suggestion.display_name }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <p-dropdown [options]="genders" [(ngModel)]="model.gender"></p-dropdown>
+              </td>
+              <td>
+                <input pInputText type="number" [(ngModel)]="model.height" />
+              </td>
+              <td>
+                <input pInputText type="number" [(ngModel)]="model.weight" />
+              </td>
+              <td>
+                <p-dropdown [options]="eyeColors" [(ngModel)]="model.eyeColor"></p-dropdown>
+              </td>
+              <td>
+                <p-dropdown [options]="hairColors" [(ngModel)]="model.hairColor"></p-dropdown>
+              </td>
+              <td>
+                <p-dropdown [options]="skinColors" [(ngModel)]="model.skinColor"></p-dropdown>
               </td>
             </tr>
           </ng-template>
-        </p-table> -->
+        </p-table>
       </ng-template>
     </p-stepperPanel>
     <p-stepperPanel header="Agencies">

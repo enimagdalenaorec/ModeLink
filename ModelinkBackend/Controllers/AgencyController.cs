@@ -128,7 +128,7 @@ namespace ModelinkBackend.Controllers
             return BadRequest("Failed to update agency information.");
         }
 
-        [HttpGet("getAgencyForAdminCrud/{userId}")]
+        [HttpGet("getAgenciesForAdminCrud/{userId}")]
         public async Task<IActionResult> GetAgencyForAdminCrud(int userId)
         {
             var userRole = await _authService.GetUserRoleByUserIdAsync(userId);

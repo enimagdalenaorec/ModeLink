@@ -403,6 +403,7 @@ namespace ModelinkBackend.Services
                 LastName = x.LastName,
                 AgencyName = x.Agency?.Name, // nullable if freelancer
                 AgencyId = x.Agency?.Id, // nullable
+                AgencyUserId = x.Agency?.UserId, // nullable if freelancer
                 CityName = x.City?.Name, // nullable if no city
                 CountryName = x.City?.Country?.Name, // nullable if no country
                 Height = x.Height,
@@ -416,8 +417,7 @@ namespace ModelinkBackend.Services
                 Applications = x.ModelApplications?.Select(a => new ModelApplicationsForCrudDisplayDTO
                 {
                     Id = a.Id,
-                    EventName = a.Event?.Title ?? string.Empty, 
-                    AgencyName = a.Event?.Agency?.Name ?? string.Empty 
+                    EventName = a.Event?.Title ?? string.Empty
                 }).ToList() ?? new List<ModelApplicationsForCrudDisplayDTO>(), 
                 FreelancerRequests = x.FreelancerRequests?.Select(r => new FreelancerRequestsForCrudDisplayDTO
                 {

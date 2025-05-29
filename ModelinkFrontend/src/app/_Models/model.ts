@@ -154,7 +154,7 @@ export interface ModelsForAdminCrudDTO {
   firstName: string;
   lastName: string;
   agencyName?: string; // nullable if freelancer
-  agencyId?: number;   // nullable
+  agencyUserId: number;
   cityName?: string;   // nullable if no city
   countryName?: string; // nullable if no country
   height: number;
@@ -165,15 +165,14 @@ export interface ModelsForAdminCrudDTO {
   email: string;
   gender: string;
   profilePicture: string; // Base64 string of the profile picture
-  applications: ModelApplicationsForCrudDisplayDTO[];
-  freelancerRequests: FreelancerRequestsForCrudDisplayDTO[];
-  portfolioPosts: PortfolioPostsForCrudDisplayDTO[];
+  applications: ModelApplicationsForCrudDisplayDTO[];         // will not be included for the 1st fase
+  freelancerRequests: FreelancerRequestsForCrudDisplayDTO[];    // will not be included for the 1st fase
+  portfolioPosts: PortfolioPostsForCrudDisplayDTO[];    // will not be included for the 1st fase
 }
 
 export interface ModelApplicationsForCrudDisplayDTO {
   id: number;
   eventName: string;
-  agencyName: string;
 }
 
 export interface FreelancerRequestsForCrudDisplayDTO {
