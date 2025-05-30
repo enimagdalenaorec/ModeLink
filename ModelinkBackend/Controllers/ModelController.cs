@@ -180,5 +180,21 @@ namespace ModelinkBackend.Controllers
             }
             return Ok(modelsForAdminCrud);
         }
+
+        [HttpPut("adminUpdateModel/{modelUserId}")]
+        public async Task<IActionResult> AdminUpdateModel(int modelUserId, [FromBody] ModelsForAdminCrudDTO updatedModel)
+        {
+            if (modelUserId != updatedModel.ModelUserId)
+            {
+                return BadRequest("Model ID mismatch.");
+            }
+
+            var result = await _modelService.AdminUpdateModelAsync(updatedModel);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to update model info.");
+        }
     }
 }

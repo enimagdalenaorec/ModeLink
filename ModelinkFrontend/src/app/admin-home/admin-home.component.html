@@ -3,11 +3,13 @@
     <p-stepperPanel header="Models">
       <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
         <!-- editable table with models -->
-        <p-table [value]="models" editable="true">
+        <p-table [paginator]="true" [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]" [value]="models" editable="true" [globalFilterFields]="['firstName', 'lastName']">
           <ng-template pTemplate="header">
             <tr>
               <th class="w-full">First Name</th>
               <th class="w-full">Last Name</th>
+              <th class="w-full">Profile picture</th>
               <th class="w-full">Email</th>
               <th class="w-full">Agency</th>
               <th class="w-full">City</th>
@@ -17,7 +19,24 @@
               <th class="w-full">Eye Color</th>
               <th class="w-full">Hair Color</th>
               <th class="w-full">Skin Color</th>
+              <th class="w-full">Save changes</th>
             </tr>
+            <tr>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="firstName"
+                        placeholder="Search by first name"
+                        ariaLabel="Filter Name" />
+                </th>
+                <th>
+                    <p-columnFilter
+                        type="text"
+                        field="lastName"
+                        placeholder="Search by last name"
+                        ariaLabel="Filter Last Name" />
+                </th>
+              </tr>
           </ng-template>
           <ng-template pTemplate="body" let-model let-editing="editing" let-rowIndex="rowIndex">
             <tr>
@@ -28,19 +47,33 @@
                 <input pInputText [(ngModel)]="model.lastName" />
               </td>
               <td>
+                <div class="flex gap-2 align-items-end">
+                  <img [src]="model.profilePicture" alt="Uploaded Image" class="mt-2"
+                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;" />
+                  <p-fileUpload #fileUpload mode="basic" chooseIcon="pi pi-upload" accept="image/*"
+                    maxFileSize="1000000"
+                    (onSelect)="onImageSelect($event, fileUpload, model, rowIndex)"></p-fileUpload>
+                </div>
+              <td>
                 <input pInputText [(ngModel)]="model.email" />
               </td>
               <td>
-                <p-dropdown [options]="allAgencies" optionLabel="name" [filter]="true"
-                  [placeholder]="model.agencyName || 'null'" [(ngModel)]="newAgency"
-                  (ngModelChange)="changeAgencyIdAccordingToNameChange(model)"></p-dropdown>
+                <div class="flex gap-2 align-items-center">
+                  <p-dropdown [options]="allAgencies" optionLabel="name" [filter]="true"
+                    [placeholder]="model.agencyName || 'null'" [(ngModel)]="newAgency"
+                    (ngModelChange)="changeAgencyIdAccordingToNameChange(model)"></p-dropdown>
+                  <button pButton type="button" icon="pi pi-times" class=" remove-agency-button"
+                    (click)="removeAgencyFromModel(model, rowIndex)"></button>
+                </div>
               </td>
               <td style="position: relative;">
-                <input id="city-autocomplete" type="text" pInputText class="flex-auto" [placeholder]="model.cityName || 'Search for city'"
-                  (input)="onCitySearch($event, rowIndex)" [(ngModel)]="selectedCities[rowIndex]" autocomplete="off" />
+                <input id="city-autocomplete" type="text" pInputText class="flex-auto"
+                  [placeholder]="model.cityName || 'Search for city'" (input)="onCitySearch($event, rowIndex)"
+                  [(ngModel)]="selectedCities[rowIndex]" autocomplete="off" />
 
                 <ul *ngIf="(citySuggestions[rowIndex] || []).length > 0" class="autocomplete-suggestions">
-                  <li *ngFor="let suggestion of citySuggestions[rowIndex]" (click)="selectCitySuggestion(suggestion, model, rowIndex)">
+                  <li *ngFor="let suggestion of citySuggestions[rowIndex]"
+                    (click)="selectCitySuggestion(suggestion, model, rowIndex)">
                     {{ suggestion.display_name }}
                   </li>
                 </ul>
@@ -63,6 +96,10 @@
               <td>
                 <p-dropdown [options]="skinColors" [(ngModel)]="model.skinColor"></p-dropdown>
               </td>
+              <td>
+                <button pButton type="button" icon="pi pi-save" class="save-changes-button"
+                  (click)="saveModelChanges(model, rowIndex)"></button>
+              </td>
             </tr>
           </ng-template>
         </p-table>
@@ -74,3 +111,5 @@
     </p-stepperPanel>
   </p-stepper>
 </div>
+
+<p-toast></p-toast>

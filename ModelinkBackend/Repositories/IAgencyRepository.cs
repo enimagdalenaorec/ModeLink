@@ -19,5 +19,6 @@ namespace ModelinkBackend.Repositories
         Task<Agency> GetAgencyByAgencyIdAsync(int agencyId);
         Task<bool> UpdateAgencyAsync(Agency agency);
         Task<IEnumerable<Agency>> GetAgenciesForAdminCrudAsync();
+        Task<Agency> GetAgencyByUserIdAsync(int userId);
     }
 }

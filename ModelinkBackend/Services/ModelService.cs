@@ -56,7 +56,7 @@ namespace ModelinkBackend.Services
         }
 
         public async Task<ModelStatusAndAgencyIdDTO> GetModelStatusAndAgencyIdAsync(int userId)
-        {   
+        {
             // get model by user id (does not contain status property)
             var model = await _modelRepository.GetModelByIdAsync(userId);
             if (model == null)
@@ -356,7 +356,7 @@ namespace ModelinkBackend.Services
 
             // save the request in the repository
             FreelancerRequest freelancerRequest = await _modelRepository.CreateFreelancerRequestAsync(request);
-            
+
             if (freelancerRequest == null)
             {
                 return false;
@@ -396,7 +396,8 @@ namespace ModelinkBackend.Services
             // retrieve all model entities
             var models = await _modelRepository.GetModelsForAdminCrudAsync();
             // remap them
-            return models.Select(x => new ModelsForAdminCrudDTO {
+            return models.Select(x => new ModelsForAdminCrudDTO
+            {
                 ModelId = x.Id,
                 ModelUserId = x.User.Id,
                 FirstName = x.FirstName,
@@ -406,6 +407,7 @@ namespace ModelinkBackend.Services
                 AgencyUserId = x.Agency?.UserId, // nullable if freelancer
                 CityName = x.City?.Name, // nullable if no city
                 CountryName = x.City?.Country?.Name, // nullable if no country
+                CountryCode = x.City?.Country?.Code, // nullable if no country
                 Height = x.Height,
                 Weight = x.Weight,
                 EyeColor = x.EyeColor,
@@ -418,20 +420,107 @@ namespace ModelinkBackend.Services
                 {
                     Id = a.Id,
                     EventName = a.Event?.Title ?? string.Empty
-                }).ToList() ?? new List<ModelApplicationsForCrudDisplayDTO>(), 
+                }).ToList() ?? new List<ModelApplicationsForCrudDisplayDTO>(),
                 FreelancerRequests = x.FreelancerRequests?.Select(r => new FreelancerRequestsForCrudDisplayDTO
                 {
                     Id = r.Id,
-                    AgencyName = r.Agency?.Name ?? string.Empty 
-                }).ToList() ?? new List<FreelancerRequestsForCrudDisplayDTO>(), 
+                    AgencyName = r.Agency?.Name ?? string.Empty
+                }).ToList() ?? new List<FreelancerRequestsForCrudDisplayDTO>(),
                 PortfolioPosts = x.PortfolioPosts?.Select(p => new PortfolioPostsForCrudDisplayDTO
                 {
                     Id = p.Id,
-                    Title = p.Title ?? string.Empty 
-                }).ToList() ?? new List<PortfolioPostsForCrudDisplayDTO>() 
+                    Title = p.Title ?? string.Empty
+                }).ToList() ?? new List<PortfolioPostsForCrudDisplayDTO>()
             });
 
         }
 
+        public async Task<bool> AdminUpdateModelAsync(ModelsForAdminCrudDTO updatedModel)
+        {
+            if (updatedModel == null)
+            {
+                throw new ArgumentNullException(nameof(updatedModel));
+            }
+
+            // retrieve the model by user id
+            var existingModel = await _modelRepository.GetModelByIdAsync(updatedModel.ModelUserId);
+            if (existingModel == null)
+            {
+                return false; // model not found
+            }
+
+            // retrieve the agency (it possibly changed)
+            if (updatedModel.AgencyUserId != null && updatedModel.AgencyUserId > 0)
+            {
+                var existingAgency = await _agencyRepository.GetAgencyByUserIdAsync(updatedModel.AgencyUserId.Value);
+                if (existingAgency == null)
+                {
+                    return false; // agency not found
+                }
+                else
+                {
+                    existingModel.Agency = existingAgency; // update the agency reference
+                    existingModel.AgencyId = existingAgency.Id; // update the agency id
+                }
+            }
+            else
+            {
+                existingModel.Agency = null; // set to null if no agency is provided
+                existingModel.AgencyId = null; // set agency id to null if no agency is provided
+            }
+
+            // retrieve the city and country (it possibly changed)
+            var country = !string.IsNullOrEmpty(updatedModel.CountryName)
+                ? await _modelRepository.GetCountryByNameAsync(updatedModel.CountryName)
+                : null;
+
+            if (country == null && !string.IsNullOrEmpty(updatedModel.CountryName) && !string.IsNullOrEmpty(updatedModel.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = updatedModel.CountryName,
+                    Code = updatedModel.CountryCode
+                };
+                await _modelRepository.CreateCountryAsync(country);
+            }
+
+            // check or create city
+            var city = !string.IsNullOrEmpty(updatedModel.CityName)
+                ? await _modelRepository.GetCityByNameAsync(updatedModel.CityName)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(updatedModel.CityName) && country != null)
+            {
+                city = new City
+                {
+                    Name = updatedModel.CityName,
+                    CountryId = country.Id
+                };
+                await _modelRepository.CreateCityAsync(city);
+            }
+
+            // update the properties (agency updated above)
+            existingModel.FirstName = updatedModel.FirstName;
+            existingModel.LastName = updatedModel.LastName;
+            existingModel.User.Email = updatedModel.Email;
+            existingModel.Height = updatedModel.Height;
+            existingModel.Weight = updatedModel.Weight;
+            existingModel.EyeColor = updatedModel.EyeColor;
+            existingModel.HairColor = updatedModel.HairColor;
+            existingModel.SkinColor = updatedModel.SkinColor;
+            existingModel.Sex = updatedModel.Gender;
+            existingModel.ProfilePictureBase64 = updatedModel.ProfilePicture;
+            existingModel.CityId = city?.Id; // set to null if no city is provided
+            existingModel.City = city; // update the city reference
+
+            // update in the repository
+            var updateResult = await _modelRepository.UpdateModelInfoAsync(existingModel);
+            if (!updateResult)
+            {
+                return false; // update failed
+            }
+            return true; // update successful
+
+        }
     }
-}
+    }

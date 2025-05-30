@@ -185,5 +185,14 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Agency> GetAgencyByUserIdAsync(int userId)
+        {
+            return await _context.Agencies
+                .Where(a => a.UserId == userId)
+                .Include(a => a.User)
+                .Include(a => a.City).ThenInclude(c => c.Country)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }

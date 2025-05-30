@@ -11,6 +11,7 @@
         public int? AgencyUserId { get; set; } // nullable if freelancer, UserId of the agency
         public string? CityName { get; set; } // nullable if no city
         public string? CountryName { get; set; } // nullable if no country
+        public string? CountryCode { get; set; } // nullable if no country
         public decimal Height { get; set; }
         public decimal Weight { get; set; }
         public string EyeColor { get; set; } = null!;

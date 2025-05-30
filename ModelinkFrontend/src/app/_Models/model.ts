@@ -154,9 +154,10 @@ export interface ModelsForAdminCrudDTO {
   firstName: string;
   lastName: string;
   agencyName?: string; // nullable if freelancer
-  agencyUserId: number;
+  agencyUserId?: number | null; // nullable if freelancer
   cityName?: string;   // nullable if no city
   countryName?: string; // nullable if no country
+  countryCode?: string; // nullable if no country code
   height: number;
   weight: number;
   eyeColor: string;

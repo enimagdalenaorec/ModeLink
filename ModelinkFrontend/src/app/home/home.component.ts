@@ -45,6 +45,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   cityQuery = '';
   countryQuery = '';
   // for search filters
+  isAdditionalModelFilterEnabled = true; // toggle for additional model filters
   searchTypes = [
     { label: 'Models', value: 'models' },
     { label: 'Agencies', value: 'agencies' }
@@ -340,5 +341,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   loadMoreEventsByMotherAgency() {
     this.eventsByMotherAgencyCount += 8;
   }
+
+  changeFilterType(event: any) {
+    if (this.filters.types.includes('models')) {
+      this.isAdditionalModelFilterEnabled = true; // show additional model filters
+    } else {
+      this.isAdditionalModelFilterEnabled = false; // hide additional model filters
+    }
+  }
+
 
 }

@@ -13,11 +13,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { DropdownModule } from 'primeng/dropdown';
 import { MessageService } from 'primeng/api';
+import { FileUploadModule } from 'primeng/fileupload';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule],
+  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule],
   providers: [AuthService, MessageService],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'
@@ -93,6 +95,12 @@ export class AdminHomeComponent {
     if (agency) {
       model.agencyUserId = agency.userId; // set the agencyUserId to the found agency's userId
       model.agencyName = this.newAgency.name; // also set the agency name in the model
+      // update models
+      const index = this.models.findIndex(m => m.modelUserId === model.modelUserId);
+      if (index !== -1) {
+        this.models[index].agencyUserId = model.agencyUserId;
+        this.models[index].agencyName = model.agencyName;
+      }
     } else {
       model.agencyUserId = null; // if not found, set to null
     }
@@ -106,6 +114,7 @@ export class AdminHomeComponent {
 
     model.cityName = address.city_district || address.city || address.town || address.village || '';
     model.countryName = address.country || '';
+    model.countryCode = address.country_code || '';
     // translate new model into their place in the models array
     const index = this.models.findIndex(m => m.modelUserId === model.modelUserId);
     if (index !== -1) {
@@ -141,5 +150,56 @@ export class AdminHomeComponent {
 
   showToast(severity: string, summary: string, detail: string) {
     this.messageService.add({ severity: severity, summary: summary, detail: detail });
+  }
+
+  onImageSelect(event: any, fileUpload: any, model: ModelsForAdminCrudDTO, index: number) {
+    if (event.files.length === 0) {
+      return;
+    }
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      model.profilePicture = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    // Update the model's profile picture URL
+    const indexInModels = this.models.findIndex(m => m.modelUserId === model.modelUserId);
+    if (indexInModels !== -1) {
+      this.models[indexInModels].profilePicture = model.profilePicture;
+    }
+    fileUpload.clear();
+  }
+
+  saveModelChanges(model: ModelsForAdminCrudDTO, index: number) {
+    // validate model data
+    if (model.firstName == '' || model.lastName == '' || model.email == '' || model.profilePicture == '' || (Array.isArray(this.citySuggestions[index]) && this.citySuggestions[index].length === 0) || model.cityName == '' || model.countryName == '' || model.height == null || model.weight == null || model.eyeColor == '' || model.hairColor == '' || model.skinColor == '' || model.gender == '') {
+      this.showToast('error', 'Validation Error', 'Please fill in all required fields.');
+      return;
+    }
+
+    this.http.put(`${this.apiUrl}Model/adminUpdateModel/${model.modelUserId}`, model).subscribe(
+      (response) => {
+        this.showToast('success', 'Success', `Model ${model.firstName} ${model.lastName} updated successfully.`);
+        // update the local models array
+        this.models[index] = { ...this.models[index], ...model };
+        //this.getModelsAndAgencies(); // refresh the models list
+      },
+      (error) => {
+        console.error('Error updating model:', error);
+        this.showToast('error', 'Update Error', 'Failed to update model.');
+      }
+    );
+  }
+
+  removeAgencyFromModel(model: ModelsForAdminCrudDTO, index: number) {
+    model.agencyUserId = null; // remove agency by setting userId to null
+    model.agencyName = ''; // clear agency name
+    this.newAgency = null; // reset the new agency input
+    // update models
+    const modelIndex = this.models.findIndex(m => m.modelUserId === model.modelUserId);
+    if (modelIndex !== -1) {
+      this.models[modelIndex].agencyUserId = null;
+      this.models[modelIndex].agencyName = '';
+    }
   }
 }
