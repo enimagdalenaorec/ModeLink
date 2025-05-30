@@ -10,6 +10,7 @@
         public string Address { get; set; } = null!;
         public string? CityName { get; set; } 
         public string CountryName { get; set; } = null!; 
+        public string CountryCode { get; set; } = null!; // ISO 3166-1 alpha-2 code
         public string ProfilePicture { get; set; } = null!; // Base64 string of the profile picture
         public List<ModelsForAgenciesForAdminCrudDTO> Models { get; set; } = new();
         public List<EventsForAgenciesForAdminCrudDTO> Events { get; set; } = new(); 

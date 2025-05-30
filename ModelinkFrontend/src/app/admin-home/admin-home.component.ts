@@ -41,7 +41,13 @@ export class AdminHomeComponent {
   skinColors = SkinColors;
   // for model city autocomplete
   citySuggestions: any[][] = [];
-  selectedCities: any[] = [];   // should be an array
+  selectedCities: any[] = [];
+  // for agency address autocomplete
+  selectedAddresses: any[] = [];
+  addressSuggestions: any[][] = [];
+  // for agency models and events dropdown
+  selectedAgencyModels: any[] = [];
+  selectedAgencyEvents: any[] = [];
 
   constructor(private messageService: MessageService, private authService: AuthService, private router: Router, private http: HttpClient) { }
 
@@ -54,12 +60,13 @@ export class AdminHomeComponent {
       this.router.navigate(['/home']);
     }
     // get models and agencies
-    this.getModelsAndAgencies()
+    this.getModels();
+    this.getAgencies();
     // get all agencies for dropdown
     this.getAllAgencies();
   }
 
-  getModelsAndAgencies() {
+  getModels() {
     this.http.get<ModelsForAdminCrudDTO[]>(`${this.apiUrl}Model/getModelsForAdminCrud/${this.userId}`).subscribe(
       (data) => {
         this.models = data;
@@ -68,10 +75,17 @@ export class AdminHomeComponent {
         console.error('Error fetching models:', error);
       }
     );
+  }
 
+  getAgencies() {
     this.http.get<AgenciesForAdminCrudDTO[]>(`${this.apiUrl}Agency/getAgenciesForAdminCrud/${this.userId}`).subscribe(
       (data) => {
         this.agencies = data;
+        // initialize selectedModels and events for agency dropdowns to first ones
+        this.agencies.forEach((agency, index) => {
+          this.selectedAgencyModels[index] = agency.models[0] || null;
+          this.selectedAgencyEvents[index] = agency.events[0] || null;
+        });
       },
       (error) => {
         console.error('Error fetching agencies:', error);
@@ -148,6 +162,56 @@ export class AdminHomeComponent {
     });
   }
 
+  // for agency address autocomplete
+  onAddressSearch(event: any, rowIndex: number) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 3) {
+      this.addressSuggestions[rowIndex] = [];
+      return;
+    }
+    this.http.get(`https://nominatim.openstreetmap.org/search`, {
+      params: {
+        q: query,
+        format: 'json',
+        addressdetails: '1',
+        limit: '5'
+      }
+    }).subscribe((results: any) => {
+      // Filter to keep only address-level results
+      this.addressSuggestions[rowIndex] = results.filter((result: any) => {
+        const address = result.address;
+        return (
+          address.road ||
+          address.neighbourhood ||
+          address.suburb ||
+          address.city_district ||
+          address.square ||
+          address.pedestrian
+        );
+      });
+    });
+  }
+
+  selectAddressSuggestion(suggestion: any, agency: AgenciesForAdminCrudDTO, ind: number) {
+    this.selectedAddresses[ind] = suggestion.display_name;
+    const address = suggestion.address;
+
+    agency.address = `
+    ${address.road || address.square || address.pedestrian || address.neighbourhood || address.suburb || address.city_district || ''}
+    ${address.house_number || ''}
+    `.trim();
+    agency.countryName = address.country || '';
+    agency.countryCode = address.country_code || '';
+    agency.cityName = address.city_district || address.city || address.town || address.village || '';
+    // translate new agency into their place in the agencies array
+    const index = this.agencies.findIndex(a => a.agencyUserId === agency.agencyUserId);
+    if (index !== -1) {
+      this.agencies[index] = { ...this.agencies[index], ...agency };
+    }
+
+    this.addressSuggestions = [];
+  }
+
   showToast(severity: string, summary: string, detail: string) {
     this.messageService.add({ severity: severity, summary: summary, detail: detail });
   }
@@ -170,9 +234,27 @@ export class AdminHomeComponent {
     fileUpload.clear();
   }
 
+  onAgencyImageSelect(event: any, fileUpload: any, agency: AgenciesForAdminCrudDTO) {
+    if (event.files.length === 0) {
+      return;
+    }
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      agency.profilePicture = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    // Update the agency's profile picture URL
+    const indexInAgencies = this.agencies.findIndex(a => a.agencyUserId === agency.agencyUserId);
+    if (indexInAgencies !== -1) {
+      this.agencies[indexInAgencies].profilePicture = agency.profilePicture;
+    }
+    fileUpload.clear();
+  }
+
   saveModelChanges(model: ModelsForAdminCrudDTO, index: number) {
     // validate model data
-    if (model.firstName == '' || model.lastName == '' || model.email == '' || model.profilePicture == '' || (Array.isArray(this.citySuggestions[index]) && this.citySuggestions[index].length === 0) || model.cityName == '' || model.countryName == '' || model.height == null || model.weight == null || model.eyeColor == '' || model.hairColor == '' || model.skinColor == '' || model.gender == '') {
+    if (model.firstName == '' || model.lastName == '' || model.email == '' || model.profilePicture == '' || model.cityName == '' || model.countryName == '' || model.height == null || model.weight == null || model.eyeColor == '' || model.hairColor == '' || model.skinColor == '' || model.gender == '') {
       this.showToast('error', 'Validation Error', 'Please fill in all required fields.');
       return;
     }
@@ -183,10 +265,34 @@ export class AdminHomeComponent {
         // update the local models array
         this.models[index] = { ...this.models[index], ...model };
         //this.getModelsAndAgencies(); // refresh the models list
+        // reset agency info (not whole model in case admin didnt save some changes to other models)
+        this.getAgencies(); // refresh the agencies list
       },
       (error) => {
         console.error('Error updating model:', error);
         this.showToast('error', 'Update Error', 'Failed to update model.');
+      }
+    );
+  }
+
+  saveAgencyChanges(agency: AgenciesForAdminCrudDTO, index: number) {
+    // validate agency data
+    if (agency.name == '' || agency.email == '' || agency.description == '' || agency.profilePicture == '' || agency.address == '' || agency.cityName == '' || agency.countryName == '') {
+      this.showToast('error', 'Validation Error', 'Please fill in all required fields.');
+      return;
+    }
+    this.http.put(`${this.apiUrl}Agency/adminUpdateAgency/${agency.agencyUserId}`, agency).subscribe(
+      (response) => {
+        this.showToast('success', 'Success', `Agency ${agency.name} updated successfully.`);
+        // update the local agencies array
+        this.agencies[index] = { ...this.agencies[index], ...agency };
+        //this.getModelsAndAgencies(); // refresh the agencies list
+        // reset model info (not whole agency in case admin didnt save some changes to other agencies)
+        this.getModels(); // refresh the models list
+      },
+      (error) => {
+        console.error('Error updating agency:', error);
+        this.showToast('error', 'Update Error', 'Failed to update agency.');
       }
     );
   }
@@ -200,6 +306,44 @@ export class AdminHomeComponent {
     if (modelIndex !== -1) {
       this.models[modelIndex].agencyUserId = null;
       this.models[modelIndex].agencyName = '';
+    }
+  }
+
+  removeModelFromAgency(agency: AgenciesForAdminCrudDTO, index: number) {
+    // remove the selected model from the agency's models
+    const modelIndex = agency.models.findIndex(m => m.modelUserId === this.selectedAgencyModels[index].modelUserId);
+    if (modelIndex !== -1) {
+      agency.models.splice(modelIndex, 1);
+      this.selectedAgencyModels[index] = null; // reset the selected model
+      // update the agency in the local array
+      this.agencies[index] = { ...this.agencies[index], models: agency.models };
+      // to alter placeholder in dropdown
+      if (agency.models.length > 0) {
+        this.selectedAgencyModels[index] = agency.models[0]; // set to first model if available
+      } else {
+        this.selectedAgencyModels[index] = null; // no models left
+      }
+    } else {
+      this.showToast('error', 'Error', 'Model to be removed not found in agency.');
+    }
+  }
+
+  removeEventFromAgency(agency: AgenciesForAdminCrudDTO, index: number) {
+    // remove the selected event from the agency's events
+    const eventIndex = agency.events.findIndex(e => e.id === this.selectedAgencyEvents[index].id);
+    if (eventIndex !== -1) {
+      agency.events.splice(eventIndex, 1);
+      this.selectedAgencyEvents[index] = null; // reset the selected event
+      // update the agency in the local array
+      this.agencies[index] = { ...this.agencies[index], events: agency.events };
+      // to alter placeholder in dropdown
+      if (agency.events.length > 0) {
+        this.selectedAgencyEvents[index] = agency.events[0]; // set to first event if available
+      } else {
+        this.selectedAgencyEvents[index] = null; // no events left
+      }
+    } else {
+      this.showToast('error', 'Error', 'Event to be removed not found in agency.');
     }
   }
 }

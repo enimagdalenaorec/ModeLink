@@ -83,6 +83,7 @@ export interface AgenciesForAdminCrudDTO {
   address: string;
   cityName?: string;
   countryName: string;
+  countryCode?: string;
   profilePicture: string; // Base64 string of the profile picture
   models: ModelsForAgenciesForAdminCrudDTO[];
   events: EventsForAgenciesForAdminCrudDTO[];

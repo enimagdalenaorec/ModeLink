@@ -143,5 +143,21 @@ namespace ModelinkBackend.Controllers
             }
             return Ok(agencies);
         }
+
+        [HttpPut("adminUpdateAgency/{agencyUserId}")]
+        public async Task<IActionResult> AdminUpdateAgency(int agencyUserId, [FromBody] AgenciesForAdminCrudDTO agencyDto)
+        {
+            if (agencyDto.AgencyUserId != agencyUserId)
+            {
+                return BadRequest("Agency user ID mismatch.");
+            }
+
+            var result = await _agencyService.AdminUpdateAgencyAsync(agencyDto);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to update agency information.");
+        }
     }
 }

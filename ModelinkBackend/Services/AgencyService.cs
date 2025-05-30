@@ -9,10 +9,12 @@ namespace ModelinkBackend.Services
     public class AgencyService : IAgencyService
     {
         private readonly IAgencyRepository _agencyRepository;
+        private readonly IModelRepository _modelRepository;
 
-        public AgencyService(IAgencyRepository agencyRepository)
+        public AgencyService(IAgencyRepository agencyRepository, IModelRepository modelRepository)
         {
             _agencyRepository = agencyRepository;
+            _modelRepository = modelRepository;
         }
 
         public async Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string name, string city, string country)
@@ -219,11 +221,37 @@ namespace ModelinkBackend.Services
             agency.Name = updateAgencyInfoDTO.Name;
             agency.User.Email = updateAgencyInfoDTO.Email;
             agency.Description = updateAgencyInfoDTO.Description;
-            agency.City.Name = updateAgencyInfoDTO.CityName;
-            agency.City.Country.Name = updateAgencyInfoDTO.CountryName;
-            agency.City.Country.Code = updateAgencyInfoDTO.CountryCode;
             agency.Address = updateAgencyInfoDTO.Address;
             agency.ProfilePictureBase64 = updateAgencyInfoDTO.ProfilePicture;
+
+            // retrieve the city and country (it possibly changed)
+            var country = !string.IsNullOrEmpty(updateAgencyInfoDTO.CountryName)
+                ? await _modelRepository.GetCountryByNameAsync(updateAgencyInfoDTO.CountryName)
+                : null;
+            if (country == null && !string.IsNullOrEmpty(updateAgencyInfoDTO.CountryName) && !string.IsNullOrEmpty(updateAgencyInfoDTO.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = updateAgencyInfoDTO.CountryName,
+                    Code = updateAgencyInfoDTO.CountryCode
+                };
+                await _modelRepository.CreateCountryAsync(country);
+            }
+            // check or create city
+            var city = !string.IsNullOrEmpty(updateAgencyInfoDTO.CityName)
+                ? await _modelRepository.GetCityByNameAsync(updateAgencyInfoDTO.CityName)
+                : null;
+            if (city == null && !string.IsNullOrEmpty(updateAgencyInfoDTO.CityName) && country != null)
+            {
+                city = new City
+                {
+                    Name = updateAgencyInfoDTO.CityName,
+                    CountryId = country.Id
+                };
+                await _modelRepository.CreateCityAsync(city);
+            }
+            // assign city (country is already in the city) and address to the agency
+            agency.City = city;
 
             return await _agencyRepository.UpdateAgencyAsync(agency);
         }
@@ -243,6 +271,7 @@ namespace ModelinkBackend.Services
                 Address = a.Address,
                 CityName = a.City?.Name, // if null, return null
                 CountryName = a.City?.Country?.Name, // if null, return null
+                CountryCode = a.City?.Country?.Code, // if null, return null
                 ProfilePicture = a.ProfilePictureBase64,
                 Models = a.Models.Select(m => new ModelsForAgenciesForAdminCrudDTO
                 {
@@ -257,6 +286,69 @@ namespace ModelinkBackend.Services
                     Title = e.Title
                 }).ToList()
             });
+        }
+
+        public async Task<bool> AdminUpdateAgencyAsync(AgenciesForAdminCrudDTO agencyDto)
+        {
+            if (agencyDto == null || agencyDto.AgencyId <= 0 || agencyDto.AgencyUserId <= 0)
+            {
+                return false; // invalid input
+            }
+
+            Agency agency = await _agencyRepository.GetAgencyByAgencyIdAsync(agencyDto.AgencyId);
+            if (agency == null || agency.User.Id != agencyDto.AgencyUserId)
+            {
+                return false; // agency not found or user ID mismatch
+            }
+
+            // Update agency properties
+            agency.Name = agencyDto.Name;
+            agency.User.Email = agencyDto.Email;
+            agency.Description = agencyDto.Description;
+            agency.ProfilePictureBase64 = agencyDto.ProfilePicture;
+            // models and events need filtering since some may have been removed
+            agency.Models = agency.Models
+                .Where(m => agencyDto.Models.Any(mod => mod.ModelId == m.Id))
+                .ToList();
+            agency.Events = agency.Events
+                .Where(e => agencyDto.Events.Any(ev => ev.Id == e.Id))
+                .ToList();
+
+            // retrieve the city and country (it possibly changed)
+            var country = !string.IsNullOrEmpty(agencyDto.CountryName)
+                ? await _modelRepository.GetCountryByNameAsync(agencyDto.CountryName)
+                : null;
+
+            if (country == null && !string.IsNullOrEmpty(agencyDto.CountryName) && !string.IsNullOrEmpty(agencyDto.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = agencyDto.CountryName,
+                    Code = agencyDto.CountryCode
+                };
+                await _modelRepository.CreateCountryAsync(country);
+            }
+
+            // check or create city
+            var city = !string.IsNullOrEmpty(agencyDto.CityName)
+                ? await _modelRepository.GetCityByNameAsync(agencyDto.CityName)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(agencyDto.CityName) && country != null)
+            {
+                city = new City
+                {
+                    Name = agencyDto.CityName,
+                    CountryId = country.Id
+                };
+                await _modelRepository.CreateCityAsync(city);
+            }
+
+            // assign city (country is already in the city) and address to the agency
+            agency.City = city;
+            agency.Address = agencyDto.Address;
+
+            return await _agencyRepository.UpdateAgencyAsync(agency);
         }
 
     }

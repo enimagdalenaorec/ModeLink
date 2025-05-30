@@ -165,6 +165,8 @@ namespace ModelinkBackend.Repositories
                 .Where(a => a.Id == agencyId)
                 .Include(a => a.User)
                 .Include(a => a.City).ThenInclude(c => c.Country)
+                .Include(a => a.Models)
+                .Include(a => a.Events)
                 .FirstOrDefaultAsync();
         }
 

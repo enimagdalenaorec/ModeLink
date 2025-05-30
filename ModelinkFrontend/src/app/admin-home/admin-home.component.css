@@ -82,8 +82,20 @@
   box-shadow: none !important;
 }
 
-:host ::ng-deep .p-column-filter-menu-button.p-column-filter-menu-button-active {
-  background: none !important;
+:host ::ng-deep .p-button.remove-model-button {
+  background: none;
+  color: var(--secondary-color) !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-button.remove-agency-button {
+  background: none;
+  color: var(--secondary-color) !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-button.remove-event-button {
+  background: none;
   color: var(--secondary-color) !important;
   box-shadow: none !important;
 }

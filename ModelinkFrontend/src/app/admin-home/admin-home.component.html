@@ -3,8 +3,8 @@
     <p-stepperPanel header="Models">
       <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
         <!-- editable table with models -->
-        <p-table [paginator]="true" [rows]="10"
-        [rowsPerPageOptions]="[10, 25, 50]" [value]="models" editable="true" [globalFilterFields]="['firstName', 'lastName']">
+        <p-table [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [value]="models" editable="true"
+          [globalFilterFields]="['firstName', 'lastName']">
           <ng-template pTemplate="header">
             <tr>
               <th class="w-full">First Name</th>
@@ -22,21 +22,15 @@
               <th class="w-full">Save changes</th>
             </tr>
             <tr>
-                <th>
-                    <p-columnFilter
-                        type="text"
-                        field="firstName"
-                        placeholder="Search by first name"
-                        ariaLabel="Filter Name" />
-                </th>
-                <th>
-                    <p-columnFilter
-                        type="text"
-                        field="lastName"
-                        placeholder="Search by last name"
-                        ariaLabel="Filter Last Name" />
-                </th>
-              </tr>
+              <th>
+                <p-columnFilter type="text" field="firstName" placeholder="Search by first name"
+                  ariaLabel="Filter Name" />
+              </th>
+              <th>
+                <p-columnFilter type="text" field="lastName" placeholder="Search by last name"
+                  ariaLabel="Filter Last Name" />
+              </th>
+            </tr>
           </ng-template>
           <ng-template pTemplate="body" let-model let-editing="editing" let-rowIndex="rowIndex">
             <tr>
@@ -58,7 +52,7 @@
                 <input pInputText [(ngModel)]="model.email" />
               </td>
               <td>
-                <div class="flex gap-2 align-items-center">
+                <div class="flex align-items-center">
                   <p-dropdown [options]="allAgencies" optionLabel="name" [filter]="true"
                     [placeholder]="model.agencyName || 'null'" [(ngModel)]="newAgency"
                     (ngModelChange)="changeAgencyIdAccordingToNameChange(model)"></p-dropdown>
@@ -107,6 +101,88 @@
     </p-stepperPanel>
     <p-stepperPanel header="Agencies">
       <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+        <p-table [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [value]="agencies" editable="true"
+          [globalFilterFields]="['name']">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="w-full">Name</th>
+              <th class="w-full">Email</th>
+              <th class="w-full">Description</th>
+              <th class="w-full">Address</th>
+              <th class="w-full">Profile Picture</th>
+              <th class="w-full">Models</th>
+              <th class="w-full">Event</th>
+              <th class="w-full">Save changes</th>
+            </tr>
+            <tr>
+              <th>
+                <p-columnFilter type="text" field="name" placeholder="Search by name" ariaLabel="Filter Name" />
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-agency let-editing="editing" let-rowIndex="rowIndex">
+            <tr>
+              <td>
+                <input pInputText [(ngModel)]="agency.name" />
+              </td>
+              <td>
+                <input pInputText [(ngModel)]="agency.email" />
+              </td>
+              <td>
+                <input pInputText [(ngModel)]="agency.description" />
+              </td>
+              <td style="position: relative;">
+                <input id="city-autocomplete" type="text" pInputText class="flex-auto"
+                  [placeholder]="agency.address || 'Search address'" (input)="onAddressSearch($event, rowIndex)"
+                  [(ngModel)]="selectedAddresses[rowIndex]" autocomplete="off" />
+
+                <ul *ngIf="(addressSuggestions[rowIndex] || []).length > 0" class="autocomplete-suggestions">
+                  <li *ngFor="let suggestion of addressSuggestions[rowIndex]"
+                    (click)="selectAddressSuggestion(suggestion, agency, rowIndex)">
+                    {{ suggestion.display_name }}
+                  </li>
+                </ul>
+              </td>
+              <td>
+                <div class="flex gap-2 align-items-end">
+                  <img [src]="agency.profilePicture" alt="Uploaded Image" class="mt-2"
+                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;" />
+                  <p-fileUpload #fileUpload mode="basic" chooseIcon="pi pi-upload" accept="image/*"
+                    maxFileSize="1000000" (onSelect)="onAgencyImageSelect($event, fileUpload, agency)"></p-fileUpload>
+                </div>
+              </td>
+              <td>
+                <div class="flex align-items-center">
+                  <p-dropdown [options]="agency.models" optionLabel="firstName" [filter]="true"
+                    [placeholder]="selectedAgencyModels[rowIndex] || 'No models.'"
+                    [(ngModel)]="selectedAgencyModels[rowIndex]">
+                    <ng-template let-model pTemplate="selectedItem">
+                      {{ model.firstName }} {{ model.lastName }}
+                    </ng-template>
+                    <ng-template let-model pTemplate="item">
+                      {{model.firstName}} {{model.lastName}}
+                    </ng-template>
+                  </p-dropdown>
+                  <button [disabled]="selectedAgencyModels[rowIndex] == null" pButton type="button" icon="pi pi-times" class="remove-model-button"
+                    (click)="removeModelFromAgency(agency, rowIndex)"></button>
+                </div>
+              </td>
+              <td>
+                <div class="flex align-items-center">
+                  <p-dropdown [options]="agency.events" optionLabel="title" [filter]="true"
+                    [placeholder]="selectedAgencyEvents[rowIndex] || 'No events.'"
+                    [(ngModel)]="selectedAgencyEvents[rowIndex]"></p-dropdown>
+                  <button [disabled]="selectedAgencyEvents[rowIndex] == null" pButton type="button" icon="pi pi-times" class="remove-event-button"
+                    (click)="removeEventFromAgency(agency, rowIndex)"></button>
+                </div>
+              </td>
+              <td>
+                <button pButton type="button" icon="pi pi-save" class="save-changes-button"
+                  (click)="saveAgencyChanges(agency, rowIndex)"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </ng-template>
     </p-stepperPanel>
   </p-stepper>
