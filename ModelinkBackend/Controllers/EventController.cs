@@ -31,6 +31,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPut("updateEvent/{eventId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateEventAsync(int eventId, [FromBody] UpdateEventDTO updateEventDTO)
         {
             if (eventId != updateEventDTO.Id)
@@ -47,6 +48,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpDelete("deleteEvent/{eventId}")]
+        [Authorize]
         public async Task<IActionResult> DeleteEventAsync(int eventId)
         {
             var result = await _eventService.DeleteEventAsync(eventId);
@@ -58,6 +60,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("addEvent/{agencyId}")]
+        [Authorize]
         public async Task<IActionResult> AddEventAsync(int agencyId, [FromBody] AddNewEventDTO addNewEventDTO)
         {
             if (agencyId != addNewEventDTO.AgencyId)

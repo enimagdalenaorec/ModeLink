@@ -119,6 +119,12 @@ namespace ModelinkBackend.Repositories
 
             request.Status = "accepted";
             _context.FreelancerRequests.Update(request);
+
+            // Sign the model to the agency
+            var model = request.Model;
+            model.AgencyId = request.AgencyId;
+            _context.Models.Update(model);
+
             await _context.SaveChangesAsync();
 
             return request;
@@ -152,8 +158,35 @@ namespace ModelinkBackend.Repositories
                 return null; // Model not found
             }
 
+            // Remove the model from the agency's models list
+            var agency = await _context.Agencies
+                .Include(a => a.Models)
+                .FirstOrDefaultAsync(a => a.Id == model.AgencyId);
+            if (agency != null)
+            {
+                agency.Models.Remove(model);
+                _context.Agencies.Update(agency);
+            }
+
+            // Remove the model from the agency's events (remove their applications)
+            var events = await _context.Events
+                .Where(e => e.AgencyId == model.AgencyId)
+                .Include(e => e.ModelApplications)
+                .ToListAsync();
+            foreach (var ev in events)
+            {
+                var application = ev.ModelApplications.FirstOrDefault(ma => ma.ModelId == model.Id);
+                if (application != null)
+                {
+                    ev.ModelApplications.Remove(application);
+                    _context.Events.Update(ev);
+                }
+            }
+
             model.AgencyId = null; // unsign the model
+            model.Agency = null; // clear the agency reference
             _context.Models.Update(model);
+
             await _context.SaveChangesAsync();
 
             return model;

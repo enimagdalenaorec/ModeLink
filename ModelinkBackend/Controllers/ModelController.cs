@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ModelinkBackend.Models.DTOs;
 using ModelinkBackend.Services;
 using System.Threading.Tasks;
@@ -43,10 +44,11 @@ namespace ModelinkBackend.Controllers
             return Ok(modelStatusAndAgencyId);
         }
 
-        [HttpPost("toggleEventAttendance/{eventId}/{modelId}")]
-        public async Task<IActionResult> ToggleEventAttendance(int eventId, int modelId)
+        [HttpPost("toggleEventAttendance/{eventId}/{userModelId}")]
+        [Authorize] 
+        public async Task<IActionResult> ToggleEventAttendance(int eventId, int userModelId)
         {
-            var result = await _modelService.ToggleEventAttendanceAsync(eventId, modelId);
+            var result = await _modelService.ToggleEventAttendanceAsync(eventId, userModelId);
             if (result)
             {
                 return Ok();
@@ -80,6 +82,7 @@ namespace ModelinkBackend.Controllers
 
         // updates basic model info
         [HttpPut("updateModelInfo/{modelId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateModelInfo(int modelId, [FromBody] UpdateModelInfoDTO updateModelInfoDTO)
         {
             if (modelId != updateModelInfoDTO.ModelId)
@@ -97,6 +100,7 @@ namespace ModelinkBackend.Controllers
 
         // updates model portfolio (profile) posts
         [HttpPut("updatePortfolioPost/{modelId}")]
+        [Authorize]
         public async Task<IActionResult> UpdatePortfolioPost(int modelId, [FromBody] PortfolioPostDTO portfolioPost)
         {
             var result = await _modelService.UpdateModelPortfolioAsync(modelId, portfolioPost);
@@ -109,6 +113,7 @@ namespace ModelinkBackend.Controllers
 
         // deletes model portfolio (profile) posts
         [HttpDelete("deletePortfolioPost/{modelId}/{postId}")]
+        [Authorize]
         public async Task<IActionResult> DeletePortfolioPost(int modelId, int postId)
         {
             var result = await _modelService.DeleteModelPortfolioPostAsync(modelId, postId);
@@ -121,6 +126,7 @@ namespace ModelinkBackend.Controllers
 
         // creates a new model portfolio (profile) post
         [HttpPost("createPortfolioPost/{modelId}")]
+        [Authorize]
         public async Task<IActionResult> CreatePortfolioPost(int modelId, [FromBody] CreatePortfolioPostDTO portfolioPost)
         {
             var result = await _modelService.CreateModelPortfolioAsync(modelId, portfolioPost);
@@ -144,6 +150,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("requestToJoin/{agencyId}/{modelUserId}")]
+        [Authorize]
         public async Task<IActionResult> RequestToJoinAgency(int agencyId, int modelUserId)
         {
             var result = await _modelService.RequestToJoinAgencyAsync(agencyId, modelUserId);
@@ -155,6 +162,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("cancelRequestToJoin/{agencyId}/{modelUserId}")]
+        [Authorize]
         public async Task<IActionResult> CancelRequestToJoinAgency(int agencyId, int modelUserId)
         {
             var result = await _modelService.CancelRequestToJoinAgencyAsync(agencyId, modelUserId);
@@ -166,6 +174,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpGet("getModelsForAdminCrud/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetModelsForAdminCrud(int userId)
         {
             var userRole = await _authService.GetUserRoleByUserIdAsync(userId);
@@ -182,6 +191,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPut("adminUpdateModel/{modelUserId}")]
+        [Authorize]
         public async Task<IActionResult> AdminUpdateModel(int modelUserId, [FromBody] ModelsForAdminCrudDTO updatedModel)
         {
             if (modelUserId != updatedModel.ModelUserId)

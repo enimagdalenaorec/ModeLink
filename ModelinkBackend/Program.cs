@@ -45,6 +45,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" 
         };
 
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                var ex = context.Exception;
+                Console.WriteLine($"JWT failed: {ex.Message}");
+                Console.WriteLine($"JWT secret key in porgram.cs: {jwtSettings["SecretKey"]}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var token = context.SecurityToken;
+                Console.WriteLine("Token validated successfully");
+                return Task.CompletedTask;
+            }
+        };
+
     });
 
 builder.Services.AddAuthorization();
@@ -70,7 +87,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("http://localhost:4200")  // allow frontend
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // allow credentials for cookies
         });
 });
 

@@ -48,8 +48,8 @@ export class LoginComponent {
       return;
     } else if (this.email === 'admin@gmail.com') {
       const loginDto: LoginDto = {
-        email: this.email,
-        password: this.password
+        email: this.email.trim(),
+        password: this.password.trim()
       };
       this.http.post(this.backendUrl + 'Auth/admin-login', loginDto).subscribe((response: any) => {
         this.showToast('success', 'Success', 'Login successful!');
@@ -64,8 +64,8 @@ export class LoginComponent {
     } else {
       //call be api
       const loginDto: LoginDto = {
-        email: this.email,
-        password: this.password
+        email: this.email.trim(),
+        password: this.password.trim()
       };
       this.http.post(this.backendUrl + 'Auth/login', loginDto).subscribe((response: any) => {
         this.showToast('success', 'Success', 'Login successful!');

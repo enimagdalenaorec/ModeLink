@@ -350,7 +350,7 @@ export class EventDetailsComponent implements OnInit {
     this.updatedEventDetails.address = `${road} ${houseNumber}`.trim();
     this.updatedEventDetails.latitude = parseFloat(suggestion.lat);
     this.updatedEventDetails.longitude = parseFloat(suggestion.lon);
-    this.updatedEventDetails.cityName = suggestion.address?.city || suggestion.address?.town || '';
+    this.updatedEventDetails.cityName = suggestion.address?.city || suggestion.address?.town || suggestion.address?.village || '';
     this.updatedEventDetails.countryName = suggestion.address?.country || '';
     this.updatedEventDetails.countryCode = suggestion.address?.country_code || '';
     this.addressSuggestions = [];

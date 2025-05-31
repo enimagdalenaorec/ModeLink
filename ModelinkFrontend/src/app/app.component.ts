@@ -207,7 +207,7 @@ export class AppComponent implements OnInit {
 
   selectSuggestion(suggestion: any) {
     this.selectedLocation = suggestion.display_name;
-    this.cityForSearch = suggestion.address?.city || suggestion.address?.town || '';
+    this.cityForSearch = suggestion.address?.city || suggestion.address?.town || suggestion.address?.village || '';
     this.countryForSearch = suggestion.address?.country || '';
     this.countryCodeForSearch = suggestion.address?.country_code || '';
     this.locationSuggestions = [];

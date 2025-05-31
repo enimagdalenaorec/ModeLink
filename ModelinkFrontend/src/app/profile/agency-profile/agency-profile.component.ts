@@ -379,7 +379,7 @@ export class AgencyProfileComponent implements OnInit {
     this.newEvent.address = `${road} ${houseNumber}`.trim();
     this.newEvent.latitude = parseFloat(suggestion.lat);
     this.newEvent.longitude = parseFloat(suggestion.lon);
-    this.newEvent.cityName = suggestion.address?.city || suggestion.address?.town || '';
+    this.newEvent.cityName = suggestion.address?.city || suggestion.address?.town || suggestion.address?.village || '';
     this.newEvent.countryName = suggestion.address?.country || '';
     this.newEvent.countryCode = suggestion.address?.country_code || '';
     this.addEventAddressSuggestions = [];
@@ -516,7 +516,7 @@ export class AgencyProfileComponent implements OnInit {
       '';
     const houseNumber = suggestion.address?.house_number || '';
     this.editAgencyInfo.address = `${road} ${houseNumber}`.trim();
-    this.editAgencyInfo.cityName = suggestion.address?.city || suggestion.address?.town || '';
+    this.editAgencyInfo.cityName = suggestion.address?.city || suggestion.address?.town || suggestion.address?.village || '';
     this.editAgencyInfo.countryName = suggestion.address?.country || '';
     this.editAgencyInfo.countryCode = suggestion.address?.country_code || '';
     this.updateInfoAddressSuggestions = [];

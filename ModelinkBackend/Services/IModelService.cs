@@ -10,7 +10,7 @@ namespace ModelinkBackend.Services
         Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string name, string city, string country);
         Task<IEnumerable<ModelSuggestionDto>> GetModelSuggestionsAsync();
         Task<ModelStatusAndAgencyIdDTO> GetModelStatusAndAgencyIdAsync(int userId);
-        Task<bool> ToggleEventAttendanceAsync(int eventId, int modelId);
+        Task<bool> ToggleEventAttendanceAsync(int eventId, int userModelId);
         Task<ModelInfoDTO> GetModelDetailsAsync(int userId);
         Task<IEnumerable<PortfolioPostDTO>> GetPortfolioAsync(int modelId);
         Task<bool> UpdateModelInfoAsync(UpdateModelInfoDTO modelInfo);

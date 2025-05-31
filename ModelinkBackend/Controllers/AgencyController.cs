@@ -79,6 +79,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("acceptFreelancerRequest/{requestId}")]
+        [Authorize]
         public async Task<IActionResult> AcceptFreelancerRequest(int requestId)
         {
             var result = await _agencyService.AcceptFreelancerRequestAsync(requestId);
@@ -90,6 +91,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("declineFreelancerRequest/{requestId}")]
+        [Authorize]
         public async Task<IActionResult> DeclineFreelancerRequest(int requestId)
         {
             var result = await _agencyService.DeclineFreelancerRequestAsync(requestId);
@@ -101,6 +103,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("unsignModel/{userId}")]
+        [Authorize]
         public async Task<IActionResult> UnsignModel(int userId)
         {
             // userId is user id for the model to be unsigned
@@ -113,6 +116,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPost("updateInfo/{agencyId}")]
+        [Authorize]
         public async Task<IActionResult> UpdateAgencyInfo(int agencyId, [FromBody] UpdateAgencyInfoDTO updateAgencyInfoDTO)
         {
             if (updateAgencyInfoDTO.AgencyId != agencyId)
@@ -129,6 +133,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpGet("getAgenciesForAdminCrud/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetAgencyForAdminCrud(int userId)
         {
             var userRole = await _authService.GetUserRoleByUserIdAsync(userId);
@@ -145,6 +150,7 @@ namespace ModelinkBackend.Controllers
         }
 
         [HttpPut("adminUpdateAgency/{agencyUserId}")]
+        [Authorize]
         public async Task<IActionResult> AdminUpdateAgency(int agencyUserId, [FromBody] AgenciesForAdminCrudDTO agencyDto)
         {
             if (agencyDto.AgencyUserId != agencyUserId)

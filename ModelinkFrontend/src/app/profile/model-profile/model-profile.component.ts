@@ -213,7 +213,7 @@ export class ModelProfileComponent implements OnInit, OnDestroy {
     if (this.userId !== this.loggedInUserId) {
       return;
     }
-    const recievedDate = new Date(date.year, date.month - 1, date.day);
+    const recievedDate = new Date(date.year, date.month, date.day);
     // find id of the event whose date is finish date
     const clickedApplication = this.modelInfo.modelApplications.find((event) => {
     const eventFinishDate = new Date(event.eventFinish);

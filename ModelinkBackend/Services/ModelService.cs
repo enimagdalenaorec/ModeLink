@@ -74,20 +74,20 @@ namespace ModelinkBackend.Services
             };
         }
 
-        public async Task<bool> ToggleEventAttendanceAsync(int eventId, int modelId)
+        public async Task<bool> ToggleEventAttendanceAsync(int eventId, int userModelId)
         {
             // is model already attending the event
-            var isAttending = await _modelRepository.IsModelAttendingEventAsync(eventId, modelId);
+            var isAttending = await _modelRepository.IsModelAttendingEventAsync(eventId, userModelId);
 
             if (isAttending)
             {
                 // if attending, remove the attendance
-                return await _modelRepository.RemoveModelFromEventAsync(eventId, modelId);
+                return await _modelRepository.RemoveModelFromEventAsync(eventId, userModelId);
             }
             else
             {
                 // ff not, add the attendance
-                return await _modelRepository.AddModelToEventAsync(eventId, modelId);
+                return await _modelRepository.AddModelToEventAsync(eventId, userModelId);
             }
         }
 

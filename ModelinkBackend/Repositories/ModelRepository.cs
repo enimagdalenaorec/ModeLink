@@ -90,16 +90,16 @@ namespace ModelinkBackend.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IsModelAttendingEventAsync(int eventId, int modelId)
+        public async Task<bool> IsModelAttendingEventAsync(int eventId, int userModelId)
         {
             return await _context.ModelApplications
-                .AnyAsync(em => em.EventId == eventId && em.ModelId == modelId);
+                .AnyAsync(em => em.EventId == eventId && em.Model.UserId == userModelId);
         }
 
-        public async Task<bool> RemoveModelFromEventAsync(int eventId, int modelId)
+        public async Task<bool> RemoveModelFromEventAsync(int eventId, int userModelId)
         {
             var modelApplication = await _context.ModelApplications
-                .FirstOrDefaultAsync(em => em.EventId == eventId && em.ModelId == modelId);
+                .FirstOrDefaultAsync(em => em.EventId == eventId && em.Model.UserId == userModelId);
 
             if (modelApplication != null)
             {
@@ -110,12 +110,15 @@ namespace ModelinkBackend.Repositories
             return false;
         }
 
-        public async Task<bool> AddModelToEventAsync(int eventId, int modelId)
+        public async Task<bool> AddModelToEventAsync(int eventId, int userModelId)
         {
+            // get model bi userid of the model
+            var model = await _context.Models
+                .FirstOrDefaultAsync(m => m.UserId == userModelId);
             var modelApplication = new ModelApplication
             {
                 EventId = eventId,
-                ModelId = modelId,
+                ModelId = model.Id,
                 Status = "Attending"
             };
 

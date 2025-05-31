@@ -120,27 +120,27 @@ export class RegistrationComponent implements OnInit {
     let registrationRequest = null;
     if (this.role === 'agency') {
       registrationRequest = {
-        email: this.agencyEmail,
-        password: this.agencyPassword,
+        email: this.agencyEmail.trim(),
+        password: this.agencyPassword.trim(),
         role: this.role,
-        name: this.agencyName,
-        description: this.agencyDescription,
-        address: (this.agencyAddress == '') ? this.selectedAddress : this.agencyAddress,
-        city: this.agencyCity,
-        countryName: this.agencyCountry,
-        countryCode: this.agencyCountryCode,
-        profilePicture: this.agencyProfilePicture
+        name: this.agencyName.trim(),
+        description: this.agencyDescription.trim(),
+        address: (this.agencyAddress == '') ? this.selectedAddress : this.agencyAddress.trim(),
+        city: this.agencyCity.trim(),
+        countryName: this.agencyCountry.trim(),
+        countryCode: this.agencyCountryCode.trim(),
+        profilePicture: this.agencyProfilePicture.trim()
       } as RegisterAgencyDto;
     } else if (this.role === 'model') {
      registrationRequest = {
-      email: this.modelEmail,
-      password: this.modelPassword,
+      email: this.modelEmail.trim(),
+      password: this.modelPassword.trim(),
       role: this.role,
-      firstName: this.modelFirstName,
-      lastName: this.modelLastName,
-      city: this.modelCity,
-      countryName: this.modelCountryName,
-      countryCode: this.modelCountryCode,
+      firstName: this.modelFirstName.trim(),
+      lastName: this.modelLastName.trim(),
+      city: this.modelCity.trim(),
+      countryName: this.modelCountryName.trim(),
+      countryCode: this.modelCountryCode.trim(),
       height: this.modelHeight,
       weight: this.modelWeight,
       eyeColor: this.modelEyeColor,

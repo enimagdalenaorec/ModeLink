@@ -9,14 +9,20 @@ export class JwtInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Get token from localStorage (or sessionStorage, or however you store it)
+    // get token from localStorage
     const token = this.authService.getToken();
 
-    if (token) {
+    // check if this is a request to an external API (like Nominatim)
+    const isExternalApi = req.url.includes('nominatim.openstreetmap.org') ||
+                         req.url.includes('openstreetmap.org') ||
+                         req.url.startsWith('https://nominatim');
+
+    if (token && !isExternalApi) {
       const cloned = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        withCredentials: true
       });
       return next.handle(cloned);
     }
