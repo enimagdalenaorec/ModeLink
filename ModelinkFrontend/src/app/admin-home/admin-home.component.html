@@ -3,7 +3,7 @@
     <p-stepperPanel header="Models">
       <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
         <!-- editable table with models -->
-        <p-table [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [value]="models" editable="true"
+        <p-table [paginator]="true" [rows]="3" [rowsPerPageOptions]="[10, 25, 50]" [value]="models" editable="true"
           [globalFilterFields]="['firstName', 'lastName']">
           <ng-template pTemplate="header">
             <tr>
@@ -14,8 +14,8 @@
               <th class="w-full">Agency</th>
               <th class="w-full">City</th>
               <th class="w-full">Gender</th>
-              <th class="w-full">Height</th>
-              <th class="w-full">Weight</th>
+              <th class="w-full">Height (cm)</th>
+              <th class="w-full">Weight (kg)</th>
               <th class="w-full">Eye Color</th>
               <th class="w-full">Hair Color</th>
               <th class="w-full">Skin Color</th>
@@ -35,10 +35,10 @@
           <ng-template pTemplate="body" let-model let-editing="editing" let-rowIndex="rowIndex">
             <tr>
               <td>
-                <input pInputText [(ngModel)]="model.firstName" />
+                <input pInputText [(ngModel)]="model.firstName"/>
               </td>
               <td>
-                <input pInputText [(ngModel)]="model.lastName" />
+                <input pInputText [(ngModel)]="model.lastName"/>
               </td>
               <td>
                 <div class="flex gap-2 align-items-end">
@@ -49,7 +49,7 @@
                     (onSelect)="onImageSelect($event, fileUpload, model, rowIndex)"></p-fileUpload>
                 </div>
               <td>
-                <input pInputText [(ngModel)]="model.email" />
+                <input pInputText [(ngModel)]="model.email"/>
               </td>
               <td>
                 <div class="flex align-items-center">
@@ -61,7 +61,7 @@
                 </div>
               </td>
               <td style="position: relative;">
-                <input id="city-autocomplete" type="text" pInputText class="flex-auto"
+                <input id="city-autocomplete" type="text" pInputText class="flex-auto no-background"
                   [placeholder]="model.cityName || 'Search for city'" (input)="onCitySearch($event, rowIndex)"
                   [(ngModel)]="selectedCities[rowIndex]" autocomplete="off" />
 
@@ -76,10 +76,10 @@
                 <p-dropdown [options]="genders" [(ngModel)]="model.gender"></p-dropdown>
               </td>
               <td>
-                <input pInputText type="number" [(ngModel)]="model.height" />
+                <input pInputText type="number" [(ngModel)]="model.height"/>
               </td>
               <td>
-                <input pInputText type="number" [(ngModel)]="model.weight" />
+                <input pInputText type="number" [(ngModel)]="model.weight"/>
               </td>
               <td>
                 <p-dropdown [options]="eyeColors" [(ngModel)]="model.eyeColor"></p-dropdown>
@@ -90,18 +90,24 @@
               <td>
                 <p-dropdown [options]="skinColors" [(ngModel)]="model.skinColor"></p-dropdown>
               </td>
-              <td>
+              <td class="flex gap-1" style="position: sticky; right: 0; background: white; z-index: 1; box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);">
                 <button pButton type="button" icon="pi pi-save" class="save-changes-button"
                   (click)="saveModelChanges(model, rowIndex)"></button>
+                  <button pButton type="button" icon="pi pi-trash" class="delete-button"
+                  (click)="deleteModel(model)"></button>
               </td>
             </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+              <button pButton type="button" icon="pi pi-plus" label="Add Model" class="add-model-button mt-2 mb-1"
+                (click)="createModelDialogVisible = true"></button>
           </ng-template>
         </p-table>
       </ng-template>
     </p-stepperPanel>
     <p-stepperPanel header="Agencies">
       <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
-        <p-table [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [value]="agencies" editable="true"
+        <p-table [paginator]="true" [rows]="4" [rowsPerPageOptions]="[10, 25, 50]" [value]="agencies" editable="true"
           [globalFilterFields]="['name']">
           <ng-template pTemplate="header">
             <tr>
@@ -111,7 +117,7 @@
               <th class="w-full">Address</th>
               <th class="w-full">Profile Picture</th>
               <th class="w-full">Models</th>
-              <th class="w-full">Event</th>
+              <th class="w-full">Events</th>
               <th class="w-full">Save changes</th>
             </tr>
             <tr>
@@ -123,13 +129,13 @@
           <ng-template pTemplate="body" let-agency let-editing="editing" let-rowIndex="rowIndex">
             <tr>
               <td>
-                <input pInputText [(ngModel)]="agency.name" />
+                <input pInputText [(ngModel)]="agency.name"/>
               </td>
               <td>
-                <input pInputText [(ngModel)]="agency.email" />
+                <input pInputText [(ngModel)]="agency.email"/>
               </td>
               <td>
-                <input pInputText [(ngModel)]="agency.description" />
+                <input pInputText [(ngModel)]="agency.description"/>
               </td>
               <td style="position: relative;">
                 <input id="city-autocomplete" type="text" pInputText class="flex-auto"
@@ -176,7 +182,7 @@
                     (click)="removeEventFromAgency(agency, rowIndex)"></button>
                 </div>
               </td>
-              <td>
+              <td  style="position: sticky; right: 0; background: white; z-index: 1; box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);">
                 <button pButton type="button" icon="pi pi-save" class="save-changes-button"
                   (click)="saveAgencyChanges(agency, rowIndex)"></button>
               </td>
@@ -189,3 +195,104 @@
 </div>
 
 <p-toast></p-toast>
+
+<p-confirmDialog></p-confirmDialog>
+
+<p-dialog header="Create Model" [(visible)]="createModelDialogVisible" [modal]="true"
+  [style]="{ width: '60vw' }" [baseZIndex]="10000">
+   <div class="model mt-3">
+      <div class="basic-info grid p-1 gap-0">
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelFirstName">FIRST NAME</label>
+          <input type="text" pInputText [(ngModel)]="modelFirstName" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4  flex flex-column">
+          <label class="text-xs mb-1" for="modelLastName">LAST NAME</label>
+          <input type="text" pInputText [(ngModel)]="modelLastName" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelEmail">MAIL</label>
+          <input type="text" pInputText [(ngModel)]="modelEmail" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column relative">
+          <label class="text-xs mb-1" for="modelCity">CITY</label>
+          <input id="city-autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for city"
+            (input)="onCreateModelCitySearch($event)" [(ngModel)]="selectedCreateModelCity" autocomplete="off" />
+
+          <ul *ngIf="cityCreateModelSuggestions.length > 0" class="autocomplete-suggestions">
+            <li *ngFor="let suggestion of cityCreateModelSuggestions" (click)="selectCreateModelCitySuggestion(suggestion)">
+              {{ suggestion.display_name }}
+            </li>
+          </ul>
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelHeight">HEIGHT (cm)</label>
+          <input type="number" pInputText [(ngModel)]="modelHeight" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelWeight">WEIGHT (kg)</label>
+          <input type="number" pInputText [(ngModel)]="modelWeight" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelEyeColor">EYE COLOR</label>
+          <!-- <input type="text" pInputText [(ngModel)]="modelEyeColor" /> -->
+          <p-dropdown [options]="eyeColors" styleClass="w-full dropdown" [(ngModel)]="modelEyeColor"
+            placeholder="Select an eye color" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelHairColor">HAIR COLOR</label>
+          <!-- <input type="text" pInputText [(ngModel)]="modelHairColor" /> -->
+          <p-dropdown [options]="hairColors" styleClass="w-full dropdown" [(ngModel)]="modelHairColor"
+            placeholder="Select a hair color" />
+        </div>
+        <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+          <label class="text-xs mb-1" for="modelSkinColor">SKIN COLOR</label>
+          <!-- <input type="text" pInputText [(ngModel)]="modelSkinColor" /> -->
+          <p-dropdown [options]="skinColors" styleClass="w-full dropdown" [(ngModel)]="modelSkinColor"
+            placeholder="Select a skin color" />
+        </div>
+      </div>
+      <!-- gender -->
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-1">
+        <label class="text-xs mb-2" for="modelGender">GENDER</label>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex align-items-center">
+            <p-radioButton name="modelGender" value="Male" [(ngModel)]="modelGender" inputId="male" />
+            <label for="male" class="ml-2">
+              Male
+            </label>
+          </div>
+          <div class="flex align-items-center">
+            <p-radioButton name="modelGender" value="Female" [(ngModel)]="modelGender" inputId="female" />
+            <label for="female" class="ml-2">
+              Female
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- profile picture -->
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column mb-1">
+        <label class="text-xs mb-1" for="modelProfilePicture">PROFILE PICTURE</label>
+        <p-fileUpload #fileUpload mode="basic" [chooseLabel]="modelProfilePicture ? profilePictureName : 'Choose'"
+          chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000"
+          (onSelect)="onModelProfilePictureSelect($event, fileUpload)"></p-fileUpload>
+        <!-- <img *ngIf="agencyProfilePicture" [src]="agencyProfilePicture" alt="Uploaded Image" class="mt-2" style="width: 150px;" /> -->
+      </div>
+      <!-- password -->
+      <div class="col-12 md:col-6 lg:col-4 flex flex-column">
+        <label class="text-xs mb-1" for="modelPassword">PASSWORD</label>
+        <input type="password" pInputText [(ngModel)]="modelPassword" />
+      </div>
+      <!-- buttons -->
+      <div class="col-12 flex justify-content-end gap-2 mt-3">
+        <button pButton type="button" label="Cancel" class="p-button-primary" (click)="createModelDialogVisible = false"></button>
+        <button pButton type="button" label="Create Model" class="p-button-secondary" (click)="createModel()"></button>
+      </div>
+      <div class="form-invalid-message flex justify-content-end">
+      <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
+    </div>
+    <div class="form-invalid-message flex justify-content-end">
+      <p *ngIf="userWithEmailExists" class="justify-content-end mb-0 pb-0">User with this email already exists.</p>
+    </div>
+    </div>
+</p-dialog>

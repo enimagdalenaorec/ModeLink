@@ -254,5 +254,12 @@ namespace ModelinkBackend.Repositories
                 .Include(m => m.FreelancerRequests).ThenInclude(fr => fr.Agency)
                 .ToListAsync();
         }
+
+        public async Task<bool> DeleteModelAsync(Model model)
+        {
+            _context.Models.Remove(model);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

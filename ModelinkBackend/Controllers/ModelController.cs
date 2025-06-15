@@ -206,5 +206,36 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to update model info.");
         }
+
+        [HttpDelete("adminDeleteModel/{modelUserId}")]
+        [Authorize]
+        public async Task<IActionResult> AdminDeleteModel(int modelUserId)
+        {
+            var result = await _modelService.AdminDeleteModelAsync(modelUserId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to delete model.");
+        }
+
+        [HttpPost("adminCreateModel")]
+        [Authorize]
+        public async Task<IActionResult> AdminCreateModel([FromBody] RegisterModelDto modelDto)
+        {
+            try
+            {
+                var createdModel = await _modelService.AdminCreateModelAsync(modelDto); // tu se ne vraća token
+                if (!createdModel)
+                {
+                    return BadRequest("Failed to create model.");
+                }
+                return Ok(); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

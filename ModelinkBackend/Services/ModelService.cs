@@ -10,11 +10,13 @@ namespace ModelinkBackend.Services
     {
         private readonly IModelRepository _modelRepository;
         private readonly IAgencyRepository _agencyRepository;
+        private readonly IAuthRepository _authRepository;
 
-        public ModelService(IModelRepository modelRepository, IAgencyRepository agencyRepository)
+        public ModelService(IModelRepository modelRepository, IAgencyRepository agencyRepository, IAuthRepository authRepository)
         {
             _modelRepository = modelRepository;
             _agencyRepository = agencyRepository;
+            _authRepository = authRepository;
         }
 
         public async Task<IEnumerable<ModelSearchDto>> SearchModelsAsync(string name, string city, string country)
@@ -521,6 +523,108 @@ namespace ModelinkBackend.Services
             }
             return true; // update successful
 
+        }
+
+        public async Task<bool> AdminDeleteModelAsync(int modelUserId)
+        {
+            // retrieve the model by user id
+            var existingModel = await _modelRepository.GetModelByIdAsync(modelUserId);
+            if (existingModel == null)
+            {
+                return false; // model not found
+            }
+
+            // delete the model in the repository
+            await _modelRepository.DeleteModelAsync(existingModel);
+            // delete the users of that model
+            return await _authRepository.DeleteUserAsync(modelUserId);
+        }
+
+        public async Task<bool> AdminCreateModelAsync(RegisterModelDto modelDto)
+        {
+            // check if user already exists
+            var existingUser = await _authRepository.GetUserByEmailAsync(modelDto.Email);
+            if (existingUser != null)
+                throw new Exception("User with this email already exists.");
+
+            // hash password
+            var hashedPassword = HashPassword(modelDto.Password);
+
+            var newUser = new User
+            {
+                Email = modelDto.Email,
+                PasswordHash = hashedPassword,
+                Role = "model",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _authRepository.CreateUserAsync(newUser); //  save User to get UserId
+
+            var country = !string.IsNullOrEmpty(modelDto.CountryName)
+            ? await _authRepository.GetCountryByNameAsync(modelDto.CountryName)
+            : null;
+
+            if (country == null && !string.IsNullOrEmpty(modelDto.CountryName) && !string.IsNullOrEmpty(modelDto.CountryCode))
+            {
+                // create new country
+                country = new Country
+                {
+                    Name = modelDto.CountryName,
+                    Code = modelDto.CountryCode
+                };
+                await _authRepository.CreateCountryAsync(country);
+            }
+
+            var city = !string.IsNullOrEmpty(modelDto.City)
+                ? await _authRepository.GetCityByNameAsync(modelDto.City)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(modelDto.City) && country != null)
+            {
+                // create new city
+                city = new City
+                {
+                    Name = modelDto.City,
+                    CountryId = country.Id // associate city with country if available
+                };
+                await _authRepository.CreateCityAsync(city);
+            }
+
+            var newModel = new Model
+            {
+                UserId = newUser.Id,
+                User = newUser,
+                FirstName = modelDto.FirstName,
+                LastName = modelDto.LastName,
+                Height = modelDto.Height,
+                Weight = modelDto.Weight,
+                EyeColor = modelDto.EyeColor,
+                HairColor = modelDto.HairColor,
+                SkinColor = modelDto.SkinColor,
+                Sex = modelDto.Sex,
+                ProfilePictureBase64 = modelDto.ProfilePicture,
+                City = city
+            };
+
+            // save Model
+            await _authRepository.CreateModelAsync(newModel);
+            // add row in ModelStatusHistories table
+            CreateModelStatusHistoryDTO createModelStatusHistoryDTO = new CreateModelStatusHistoryDTO
+            {
+                ModelId = newModel.Id,
+                Status = "freelancer",
+                AgencyId = null, // nullable since model is after registration automatically freelancer
+                CreatedAt = DateTime.UtcNow
+            };
+            await _authRepository.CreateModelStatusHistoryAsync(createModelStatusHistoryDTO);
+            return true; // model created successfully
+        }
+
+        private string HashPassword(string password)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hashedBytes);
         }
     }
     }

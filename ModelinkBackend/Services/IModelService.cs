@@ -22,5 +22,7 @@ namespace ModelinkBackend.Services
         Task<bool> CancelRequestToJoinAgencyAsync(int agencyId, int modelUserId);
         Task<IEnumerable<ModelsForAdminCrudDTO>> GetModelsForAdminCrudAsync();
         Task<bool> AdminUpdateModelAsync(ModelsForAdminCrudDTO updatedModel);
+        Task<bool> AdminDeleteModelAsync(int modelUserId);
+        Task<bool> AdminCreateModelAsync(RegisterModelDto modelDto);
     }
 }

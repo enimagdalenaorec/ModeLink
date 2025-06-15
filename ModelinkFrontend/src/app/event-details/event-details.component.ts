@@ -171,7 +171,7 @@ export class EventDetailsComponent implements OnInit {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
-    // Create icon manually
+    // manual creation of the icon
     const icon = L.icon({
       iconUrl: 'assets/images/marker-icon.png',
       shadowUrl: 'assets/images/marker-shadow.png',
@@ -326,7 +326,7 @@ export class EventDetailsComponent implements OnInit {
         }
       })
       .subscribe((results: any) => {
-        // make sure the sugegstions always contain address
+        // making sure the suggestions always contain address
         this.addressSuggestions = results.filter((result: any) => {
           const address = result.address;
           return (

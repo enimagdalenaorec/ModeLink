@@ -114,3 +114,39 @@
     border-color: #EEF2FF;
     color: var(--text-color) !important;
 }
+
+:host ::ng-deep .p-button.delete-button {
+  background: none;
+  color: #e94c4c !important;
+  border: 1px solid #e94c4c !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-content {
+  padding:  1.5rem 2rem 1.5rem !important;
+}
+
+:host ::ng-deep .p-dialog .p-inputtext,
+:host ::ng-deep .p-dialog .p-dropdown,
+:host ::ng-deep .p-dialog .p-textarea
+{
+  border: 1px solid var(--secondary-color) !important;
+  width: 100% !important;
+}
+
+:host ::ng-deep .p-dialog .p-fileupload-choose {
+  background: var(--primary-color) !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: white !important;
+}
+
+.form-invalid-message {
+  color: rgb(136, 29, 29);
+}
+
+:host ::ng-deep .p-button.p-button-secondary:hover {
+  background: rgb(27, 133, 108) !important;
+  color: white !important;
+  box-shadow: none !important;
+}

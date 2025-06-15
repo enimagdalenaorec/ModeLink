@@ -13,4 +13,5 @@ public interface IAuthRepository
     Task CreateCountryAsync(Country country);
     Task CreateCityAsync(City city);
     Task<User> GetUserByIdAsync(int userId);
+    Task<bool> DeleteUserAsync(int userId);
 }

@@ -7,20 +7,22 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ModelsForAdminCrudDTO, EyeColors, HairColors, SkinColors } from '../_Models/model';
+import { ModelsForAdminCrudDTO, EyeColors, HairColors, SkinColors, RegisterModelDto } from '../_Models/model';
 import { AgenciesForAdminCrudDTO, SuggestedAgencyDto } from '../_Models/agency';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { DropdownModule } from 'primeng/dropdown';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
-
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { RadioButtonModule } from 'primeng/radiobutton';
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule],
-  providers: [AuthService, MessageService],
+  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule],
+  providers: [AuthService, MessageService, ConfirmationService],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'
 })
@@ -48,8 +50,32 @@ export class AdminHomeComponent {
   // for agency models and events dropdown
   selectedAgencyModels: any[] = [];
   selectedAgencyEvents: any[] = [];
+  // for dialogs
+  createModelDialogVisible: boolean = false;
+  // for creating new model
+  //model
+  modelFirstName: string = '';
+  modelLastName: string = '';
+  modelEmail: string = '';
+  modelPassword: string = '';
+  modelGender: string = '';
+  modelCity: string = '';
+  modelCountryName: string = '';
+  modelCountryCode: string = '';
+  modelProfilePicture: string = '';
+  modelHeight: number = 0;
+  modelWeight: number = 0;
+  modelHairColor: string = '';
+  modelEyeColor: string = '';
+  modelSkinColor: string = '';
+  selectedCreateModelCity: string = '';
+  cityCreateModelSuggestions: any[] = [];
+  //both
+  profilePictureName: string = '';
+  formInvalidMessageVisible: boolean = false;
+  userWithEmailExists: boolean = false;
 
-  constructor(private messageService: MessageService, private authService: AuthService, private router: Router, private http: HttpClient) { }
+  constructor(private messageService: MessageService, private authService: AuthService, private router: Router, private http: HttpClient, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this.userId = String(this.authService.getUserId() ?? '');
@@ -345,5 +371,139 @@ export class AdminHomeComponent {
     } else {
       this.showToast('error', 'Error', 'Event to be removed not found in agency.');
     }
+  }
+
+  deleteModel(model: ModelsForAdminCrudDTO) {
+    this.confirmationService.confirm({
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      message: `Are you sure you want to delete model ${model.firstName} ${model.lastName}?`,
+      accept: () => {
+        this.http.delete(`${this.apiUrl}Model/adminDeleteModel/${model.modelUserId}`).subscribe(
+          () => {
+            this.showToast('success', 'Success', `Model ${model.firstName} ${model.lastName} deleted successfully.`);
+            // remove the model from the local array
+            this.models = this.models.filter(m => m.modelUserId !== model.modelUserId);
+            this.getAgencies(); // refresh the agencies list to remove any references to this model
+          },
+          (error) => {
+            console.error('Error deleting model:', error);
+            this.showToast('error', 'Delete Error', 'Failed to delete model.');
+          }
+        );
+      },
+      reject: () => {
+        // do nothing
+      }
+    });
+  }
+
+  createModel() {
+    // validate model data
+    if (this.modelFirstName == '' || this.modelLastName == '' || this.modelEmail == '' || this.modelProfilePicture == '' || this.modelCity == '' || this.modelCountryName == '' || this.modelHeight <= 0 || this.modelWeight <= 0 || this.modelEyeColor == '' || this.modelHairColor == '' || this.modelSkinColor == '' || this.modelGender == '' || this.modelPassword == '') {
+      this.formInvalidMessageVisible = true;
+      return;
+    }
+    var registrationRequest = {
+      email: this.modelEmail.trim(),
+      password: this.modelPassword.trim(),
+      role: 'model',
+      firstName: this.modelFirstName.trim(),
+      lastName: this.modelLastName.trim(),
+      city: this.modelCity.trim(),
+      countryName: this.modelCountryName.trim(),
+      countryCode: this.modelCountryCode.trim(),
+      height: this.modelHeight,
+      weight: this.modelWeight,
+      eyeColor: this.modelEyeColor,
+      skinColor: this.modelSkinColor,
+      hairColor: this.modelHairColor,
+      sex: this.modelGender,
+      profilePicture: this.modelProfilePicture
+    } as RegisterModelDto;
+    this.userWithEmailExists = false; // reset the flag before making the request
+    this.formInvalidMessageVisible = false; // reset the form invalid message
+    //call be api
+    this.http.post(this.apiUrl + 'Model/adminCreateModel', registrationRequest).subscribe(
+      (response: any) => {
+        this.showToast('success', 'Success', 'Registration successful!');
+          this.resetCreateModelForm();
+          this.createModelDialogVisible = false; // close the dialog after successful registration
+          this.getModels(); // refresh the models list
+          this.getAgencies(); // refresh the agencies list
+      }, (error) => {
+        this.showToast('error', 'Error', 'Registration failed!');
+        if (error.status === 400 && error.error === 'User with this email already exists.') {
+          this.userWithEmailExists = true;
+        } else {
+          console.error('Registration error:', error);
+        }
+      });
+  }
+
+  resetCreateModelForm() {
+     this.modelFirstName = '';
+    this.modelLastName = '';
+    this.modelEmail = '';
+    this.modelPassword = '';
+    this.modelGender = '';
+    this.modelCity = '';
+    this.modelCountryName = '';
+    this.modelCountryCode = '';
+    this.modelProfilePicture = '';
+    this.modelHeight = 0;
+    this.modelWeight = 0;
+    this.modelHairColor = '';
+    this.modelEyeColor = '';
+    this.modelSkinColor = '';
+    this.selectedCreateModelCity = '';
+    this.cityCreateModelSuggestions = [];
+  }
+
+  onModelProfilePictureSelect(event: any, fileUpload: any) {
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.modelProfilePicture = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    this.profilePictureName = file.name;
+    fileUpload.clear();
+  }
+
+  onCreateModelCitySearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+
+    if (!query || query.length < 3) {
+      this.citySuggestions = [];
+      return;
+    }
+
+    this.http.get(`https://nominatim.openstreetmap.org/search`, {
+      params: {
+        q: query,
+        format: 'json',
+        addressdetails: '1',
+        limit: '5'
+      }
+    }).subscribe((results: any) => {
+      // Filter to keep only city-level results
+      this.cityCreateModelSuggestions = results.filter((result: any) => {
+        const address = result.address;
+        return address.city || address.town || address.village;
+      });
+    });
+  }
+
+  // for model autocomplete
+  selectCreateModelCitySuggestion(suggestion: any) {
+    this.selectedCreateModelCity = suggestion.display_name;
+    const address = suggestion.address;
+
+    this.modelCity = address.city_district || address.city || address.town || address.village || '';
+    this.modelCountryName = address.country || '';
+    this.modelCountryCode = (address.country_code).toUpperCase() || '';
+
+    this.cityCreateModelSuggestions = [];
   }
 }

@@ -26,7 +26,7 @@ export class AuthService {
     return null;
   }
 
-  // Remove JWT token from localStorage (logout)
+  // remove JWT token from localStorage (logout)
   clearToken(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.tokenKey);
@@ -44,7 +44,7 @@ export class AuthService {
     if (!token) return null;
 
     const decodedToken: any = jwtDecode(token);
-    return decodedToken.sub ? Number(decodedToken.sub) : null; // Extract user ID from "sub"
+    return decodedToken.sub ? Number(decodedToken.sub) : null; // extract user ID from "sub"
   }
 
   getUserRole(): string | null {
@@ -54,6 +54,6 @@ export class AuthService {
     if (!token) return null;
 
     const decodedToken: any = jwtDecode(token);
-    return decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null; // Extract the role
+    return decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null; // extract the role
   }
 }
