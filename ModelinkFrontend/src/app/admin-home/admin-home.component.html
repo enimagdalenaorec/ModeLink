@@ -56,7 +56,8 @@
                   <p-dropdown [options]="allAgencies" optionLabel="name" [filter]="true"
                     [placeholder]="model.agencyName || 'null'" [(ngModel)]="newAgency"
                     (ngModelChange)="changeAgencyIdAccordingToNameChange(model)"></p-dropdown>
-                  <button pButton type="button" icon="pi pi-times" class=" remove-agency-button" [disabled]="model.agencyId == null" pTooltip="Unsign model from agency" tooltipPosition="top"
+                  <button pButton type="button" icon="pi pi-times" class=" remove-agency-button"
+                    [disabled]="model.agencyId == null" pTooltip="Unsign model from agency" tooltipPosition="top"
                     (click)="removeAgencyFromModel(model, rowIndex)"></button>
                 </div>
               </td>
@@ -117,7 +118,7 @@
               <th class="w-full">Description</th>
               <th class="w-full">Address</th>
               <th class="w-full">Profile Picture</th>
-              <th class="w-full flex justify-content-center pr-5">Models</th>
+              <th class="w-full">Models</th>
               <th class="w-full">Events</th>
               <th class="w-full">Save changes</th>
             </tr>
@@ -159,7 +160,7 @@
                 </div>
               </td>
               <td>
-                <div class="flex align-items-center">
+                <div class="flex align-items-center simple-border">
                   <p-dropdown [options]="agency.models" optionLabel="firstName" [filter]="true"
                     [placeholder]="selectedAgencyModels[rowIndex] || 'No models.'"
                     [(ngModel)]="selectedAgencyModels[rowIndex]">
@@ -170,21 +171,28 @@
                       {{model.firstName}} {{model.lastName}}
                     </ng-template>
                   </p-dropdown>
-                  <button [disabled]="selectedAgencyModels[rowIndex] == null" pButton type="button" icon="pi pi-times" pTooltip="Unsign model from agency" tooltipPosition="top"
-                    class="remove-model-button" (click)="removeModelFromAgency(agency, rowIndex)"></button>
-                  <p-dropdown [options]="allUnsignedModels" optionLabel="firstName" [filter]="true" [placeholder]="'Sign model'"
-                    [(ngModel)]="newModel[rowIndex]"></p-dropdown>
-                  <button [disabled]="newModel[rowIndex] == null" pButton type="button" icon="pi pi-plus" class="remove-model-button" pTooltip="Sign model to agency" tooltipPosition="top"
+                  <button [disabled]="selectedAgencyModels[rowIndex] == null" pButton type="button" icon="pi pi-times"
+                    pTooltip="Unsign model from agency" tooltipPosition="top" class="remove-model-button"
+                    (click)="removeModelFromAgency(agency, rowIndex)"></button>
+                  <p-dropdown [options]="allUnsignedModels" optionLabel="firstName" [filter]="true"
+                    [placeholder]="'Sign model'" [(ngModel)]="newModel[rowIndex]"></p-dropdown>
+                  <button [disabled]="newModel[rowIndex] == null" pButton type="button" icon="pi pi-plus"
+                    class="remove-model-button" pTooltip="Sign model to agency" tooltipPosition="top"
                     (click)="addModelToAgency(agency, newModel[rowIndex])"></button>
                 </div>
               </td>
               <td>
-                <div class="flex align-items-center">
+                <div class="flex align-items-center simple-border">
                   <p-dropdown [options]="agency.events" optionLabel="title" [filter]="true"
                     [placeholder]="selectedAgencyEvents[rowIndex] || 'No events.'"
                     [(ngModel)]="selectedAgencyEvents[rowIndex]"></p-dropdown>
                   <button [disabled]="selectedAgencyEvents[rowIndex] == null" pButton type="button" icon="pi pi-times"
-                    class="remove-event-button" (click)="removeEventFromAgency(agency, rowIndex)"></button>
+                    pTooltip="Remove selected event from agency" tooltipPosition="top" class="remove-event-button"
+                    (click)="removeEventFromAgency(agency, rowIndex)"></button>
+                  <button pButton type="button" icon="pi pi-pencil" class="remove-event-button" pTooltip="Edit selected event" tooltipPosition="top"
+                    (click)="editEventStarter(agency, selectedAgencyEvents[rowIndex])"></button>
+                  <button pButton type="button" icon="pi pi-plus" pTooltip="Add new event to agency"
+                    tooltipPosition="top" class="remove-event-button" (click)="addEventToAgencyStarter(agency)"></button>
                 </div>
               </td>
               <td class="flex gap-1"
@@ -363,5 +371,112 @@
   </div>
   <div class="form-invalid-message flex justify-content-end">
     <p *ngIf="userWithEmailExists" class="justify-content-end mb-0 pb-0">User with this email already exists.</p>
+  </div>
+</p-dialog>
+
+<p-dialog *ngIf="eventToBeEdited != null" header="Edit Event" [(visible)]="editEventDialogVisible" [modal]="true"
+  [style]="{ width: '60vw', overflowY: 'auto', maxHeight: '90vh' }" [baseZIndex]="10000">
+  <div class="attributes-container mb-4 mt-3">
+    <div class="flex flex-column mb-2">
+      <label for="title" class="font-semibold w-24 mb-1">Title</label>
+      <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="eventToBeEdited.title" />
+    </div>
+    <div class="flex flex-column mb-2">
+      <label for="description" class="font-semibold w-24 mb-1">Description</label>
+      <textarea rows="3" cols="30" pInputTextarea [(ngModel)]="eventToBeEdited.description"></textarea>
+    </div>
+    <div class="flex flex-column mb-2 relative">
+      <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
+      <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+        (input)="onEditEventAddressSearch($event)" [(ngModel)]="selectedEditEventAddress" autocomplete="off" />
+      <ul *ngIf="editEventAddressSuggestions.length > 0" class="autocomplete-suggestions">
+        <li *ngFor="let suggestion of editEventAddressSuggestions" (click)="selectEditEventSuggestion(suggestion)">
+          {{ suggestion.display_name }}
+        </li>
+      </ul>
+    </div>
+    <div class="calendars flex mb-3">
+      <div class="flex flex-column mb-2 mr-4">
+        <label for="startDate" class="font-semibold w-24 mb-1">Start date</label>
+        <p-calendar inputId="calendar-24h" [(ngModel)]="eventToBeEdited.eventStart" [minDate]="minDate"
+          [showTime]="true" [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+      <div class="flex flex-column mb-2">
+        <label for="finishDate" class="font-semibold w-24 mb-1">Finish date</label>
+        <p-calendar [(ngModel)]="eventToBeEdited.eventFinish" [minDate]="minDate" [showTime]="true"
+          [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+    </div>
+    <div class="thumbnail flex gap-3 align-items-end mb-4">
+      <div class="flex flex-column">
+        <label for="profilePicture" class="font-semibold w-24 mb-1">Thumbnail picture</label>
+        <img *ngIf="eventToBeEdited.profilePicture" [src]="eventToBeEdited.profilePicture" alt="Event Image"
+          class="w-max h-10rem border-round-lg mb-2" />
+      </div>
+      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false" [customUpload]="true"
+        [maxFileSize]="1000000" (onSelect)="onNewEventImageSelected($event, fileupload)" chooseLabel="Change Image">
+      </p-fileUpload>
+    </div>
+  </div>
+  <div class="form-invalid-message flex justify-content-end">
+    <p *ngIf="errorMessage != ''" class="mb-0 pb-0 mt-0">{{errorMessage}}</p>
+  </div>
+  <div class="flex justify-content-end gap-2 mt-3">
+    <p-button label="Cancel" (onClick)="cancelEditEventChanges()" />
+    <p-button label="Save" severity="secondary" (onClick)="saveEditEventChanges()" />
+  </div>
+</p-dialog>
+
+<p-dialog header="Add new event" [(visible)]="addEventToAgencyVisible" [modal]="true"
+  [style]="{ width: '60vw', overflowY: 'auto', maxHeight: '90vh' }" [baseZIndex]="10000">
+  <div class="attributes-container mb-4 mt-3">
+    <div class="flex flex-column mb-3">
+      <label for="title" class="font-semibold w-24 mb-1">Title</label>
+      <input *ngIf="eventToBeAdded" pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="eventToBeAdded.title" />
+    </div>
+    <div class="flex flex-column mb-3">
+      <label for="description" class="font-semibold w-24 mb-1">Description</label>
+      <textarea *ngIf="eventToBeAdded" rows="3" cols="30" pInputTextarea [(ngModel)]="eventToBeAdded.description"></textarea>
+    </div>
+    <div class="flex flex-column mb-4 relative">
+      <label for="address" class="font-semibold w-24 mb-1">Address (choose autocomplete suggestion)</label>
+      <input id="autocomplete" type="text" pInputText class="flex-auto" placeholder="Search for address"
+        (input)="onAddEventAddressSearch($event)" [(ngModel)]="selectedAddEventAddress" autocomplete="off" />
+      <ul *ngIf="addEventAddressSuggestions.length > 0" class="autocomplete-suggestions">
+        <li *ngFor="let suggestion of addEventAddressSuggestions" (click)="selectAddEventAddressSuggestion(suggestion)">
+          {{ suggestion.display_name }}
+        </li>
+      </ul>
+    </div>
+    <div class="calendars flex mb-1">
+      <div class="flex flex-column mb-2 mr-4">
+        <label for="startDate" class="font-semibold w-24 mb-1">Start date</label>
+        <p-calendar *ngIf="eventToBeAdded" inputId="calendar-24h" [(ngModel)]="eventToBeAdded.eventStart" [minDate]="minDate" [showTime]="true"
+          [hourFormat]="'24'" dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+      <div class="flex flex-column mb-2">
+        <label for="finishDate" class="font-semibold w-24 mb-1">Finish date</label>
+        <p-calendar *ngIf="eventToBeAdded" [(ngModel)]="eventToBeAdded.eventFinish" [minDate]="minDate" [showTime]="true" [hourFormat]="'24'"
+          dateFormat="dd/mm/yy" appendTo="body" />
+      </div>
+    </div>
+    <div class="thumbnail flex gap-3 align-items-end mb-4">
+      <div *ngIf="eventToBeAdded && eventToBeAdded.profilePicture != ''" class="flex flex-column">
+        <label for="profilePicture" class="font-semibold w-24 mb-1">Thumbnail picture</label>
+        <img *ngIf="eventToBeAdded.profilePicture" [src]="eventToBeAdded.profilePicture" alt="Event Image"
+          class="w-max h-10rem border-round-lg mb-2" />
+      </div>
+      <p-fileUpload #fileupload class="mb-1" name="image" accept="image/*" mode="basic" [auto]="false"
+        [customUpload]="true" [maxFileSize]="1000000" (onSelect)="onAddEventImageSelected($event, fileupload)"
+        chooseLabel="Image">
+      </p-fileUpload>
+    </div>
+  </div>
+  <div class="form-invalid-message flex justify-content-end">
+    <p *ngIf="errorMessage != ''" class="mb-0 pb-0 mt-0">{{errorMessage}}</p>
+  </div>
+  <div class="flex justify-content-end gap-2 mt-3">
+    <p-button label="Cancel" (onClick)="cancelAddEventChanges()" />
+    <p-button label="Save" severity="secondary" (onClick)="saveAddEventChanges()" />
   </div>
 </p-dialog>

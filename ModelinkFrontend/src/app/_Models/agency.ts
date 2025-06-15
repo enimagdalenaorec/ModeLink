@@ -99,6 +99,17 @@ export interface ModelsForAgenciesForAdminCrudDTO {
 export interface EventsForAgenciesForAdminCrudDTO {
   id: number;
   title: string;
+  description: string;
+  address: string;
+  cityName?: string;
+  countryName?: string;
+  countryCode?: string;
+  latitude?: number;
+  longitude?: number;
+  eventStart: string; // ISO date string
+  eventFinish?: string; // ISO date string or null
+  profilePicture: string;
+  status: string;
 }
 
 

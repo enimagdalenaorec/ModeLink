@@ -20,11 +20,13 @@ import { DialogModule } from 'primeng/dialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TooltipModule } from 'primeng/tooltip';
+import { AddNewEventDTO, UpdateEventDto } from '../_Models/event';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule, InputTextareaModule, TooltipModule],
+  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule, InputTextareaModule, TooltipModule, CalendarModule],
   providers: [AuthService, MessageService, ConfirmationService],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'
@@ -59,6 +61,8 @@ export class AdminHomeComponent {
   // for dialogs
   createModelDialogVisible: boolean = false;
   createAgencyDialogVisible: boolean = false;
+  addEventToAgencyVisible: boolean = false;
+  editEventDialogVisible: boolean = false; // for editing event dialog
   // for creating new model
   //model
   modelFirstName: string = '';
@@ -93,6 +97,32 @@ export class AdminHomeComponent {
   profilePictureName: string = '';
   formInvalidMessageVisible: boolean = false;
   userWithEmailExists: boolean = false;
+  // for adding event to agency
+  selectedAgencyToWhomWillNewEventBeAdded: AgenciesForAdminCrudDTO | null = null; // agency to which new event will be added
+  eventToBeAdded: AddNewEventDTO | null = null; // event to be added
+  addEventAddressSuggestions: any[] = []; // suggestions for new event address
+  selectedAddEventAddress: string = ''; // selected address for new event
+  // for editing event
+  eventToBeEdited: UpdateEventDto = {
+    id: 0,
+    title: '',
+    description: '',
+    address: '',
+    cityName: '',
+    countryName: '',
+    countryCode: '',
+    latitude: 0,
+    longitude: 0,
+    eventStart: new Date(),
+    eventFinish: new Date(),
+    profilePicture: '',
+    status: 'active'
+  }
+  selectedAgencyToWhomWillEditedEventBeAdded: AgenciesForAdminCrudDTO | null = null; // agency to which edited event will be added
+  editEventAddressSuggestions: any[] = []; // suggestions for new event address
+  selectedEditEventAddress: string = ''; // selected address for new event
+  minDate: Date = new Date(new Date().setHours(0, 0, 0, 0)); // today's date, set to midnight
+  errorMessage: string = ''; // for displaying error messages
 
   constructor(private messageService: MessageService, private authService: AuthService, private router: Router, private http: HttpClient, private confirmationService: ConfirmationService) { }
 
@@ -486,10 +516,10 @@ export class AdminHomeComponent {
     this.http.post(this.apiUrl + 'Model/adminCreateModel', registrationRequest).subscribe(
       (response: any) => {
         this.showToast('success', 'Success', 'Registration successful!');
-          this.resetCreateModelForm();
-          this.createModelDialogVisible = false; // close the dialog after successful registration
-          this.getModels(); // refresh the models list
-          this.getAgencies(); // refresh the agencies list
+        this.resetCreateModelForm();
+        this.createModelDialogVisible = false; // close the dialog after successful registration
+        this.getModels(); // refresh the models list
+        this.getAgencies(); // refresh the agencies list
       }, (error) => {
         this.showToast('error', 'Error', 'Registration failed!');
         if (error.status === 400 && error.error === 'User with this email already exists.') {
@@ -501,7 +531,7 @@ export class AdminHomeComponent {
   }
 
   resetCreateModelForm() {
-     this.modelFirstName = '';
+    this.modelFirstName = '';
     this.modelLastName = '';
     this.modelEmail = '';
     this.modelPassword = '';
@@ -698,5 +728,298 @@ export class AdminHomeComponent {
     }
     // relese for placeholder
     this.newModel = [];
+  }
+
+  addEventToAgencyStarter(agency: AgenciesForAdminCrudDTO) {
+    this.eventToBeAdded = {
+      title: '',
+      agencyId: agency.agencyId,
+      description: '',
+      address: '',
+      cityName: '',
+      countryName: '',
+      countryCode: '',
+      latitude: 0,
+      longitude: 0,
+      eventStart: '',
+      eventFinish: '',
+      profilePicture: '',
+      status: 'active'
+    } as AddNewEventDTO; // reset the event to be added
+    this.addEventToAgencyVisible = true; // show the dialog for adding event to agency
+    this.selectedAgencyToWhomWillNewEventBeAdded = agency; // set the selected agency for the dialog
+  }
+
+  editEventStarter(agency: AgenciesForAdminCrudDTO, event: any) {
+    // prepare the event to be edited
+    this.eventToBeEdited = {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      address: event.address,
+      cityName: event.cityName || '',
+      countryName: event.countryName || '',
+      countryCode: event.countryCode || '',
+      latitude: event.latitude,
+      longitude: event.longitude,
+      eventStart: event.eventStart ? new Date(event.eventStart) : null,
+      eventFinish: event.eventFinish ? new Date(event.eventFinish) : null,
+      profilePicture: event.profilePicture || '',
+      status: event.status || 'active'
+    } as UpdateEventDto;
+    this.editEventDialogVisible = true; // show the dialog for editing event
+    this.selectedAgencyToWhomWillEditedEventBeAdded = agency; // set the selected agency for the dialog
+    this.selectedEditEventAddress = event.address + ', ' + (event.cityName || '') + ', ' + (event.countryName || '') || ''; // set the selected address for the event
+    this.editEventAddressSuggestions = []; // reset the address suggestions
+  }
+
+  onEditEventAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 3) {
+      this.editEventAddressSuggestions = [];
+      return;
+    }
+    this.http.get(`https://nominatim.openstreetmap.org/search`, {
+      params: {
+        q: query,
+        format: 'json',
+        addressdetails: '1',
+        limit: '5'
+      }
+    }).subscribe((results: any) => {
+      // Filter to keep only address-level results
+      this.editEventAddressSuggestions = results.filter((result: any) => {
+        const address = result.address;
+        return (
+          address.road ||
+          address.neighbourhood ||
+          address.suburb ||
+          address.city_district ||
+          address.square ||
+          address.pedestrian
+        );
+      });
+    });
+  }
+
+  selectEditEventSuggestion(suggestion: any) {
+    this.selectedEditEventAddress = suggestion.display_name;
+    const address = suggestion.address;
+
+    const road =
+      suggestion.address.road ||
+      suggestion.address.neighbourhood ||
+      suggestion.address.suburb ||
+      suggestion.address.city_district ||
+      '';
+    const houseNumber = suggestion.address?.house_number || '';
+
+    if (this.eventToBeEdited) {
+      this.eventToBeEdited.address = `${road} ${houseNumber}`.trim();
+      this.eventToBeEdited.cityName = address.city_district || address.city || address.town || address.village || '';
+      this.eventToBeEdited.countryName = address.country || '';
+      this.eventToBeEdited.countryCode = (address.country_code).toUpperCase() || '';
+    }
+
+    this.editEventAddressSuggestions = [];
+  }
+
+  async onNewEventImageSelected(event: any, fileUpload?: any) {
+    const file = event.files[0];
+    if (file) {
+      const base64 = await this.convertFileToBase64(file!);
+      this.eventToBeEdited!.profilePicture = base64;
+    }
+    if (fileUpload) {
+      fileUpload.clear(); // clear the file input after selection
+    }
+  }
+
+  convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  cancelEditEventChanges() {
+    this.editEventDialogVisible = false;
+    this.eventToBeEdited = {
+      id: 0,
+      title: '',
+      description: '',
+      address: '',
+      cityName: '',
+      countryName: '',
+      countryCode: '',
+      latitude: 0,
+      longitude: 0,
+      eventStart: new Date(),
+      eventFinish: new Date(),
+      profilePicture: '',
+      status: 'active'
+    }; // reset the event to be edited
+    this.selectedAgencyToWhomWillEditedEventBeAdded = null; // reset the selected agency for edited event
+    this.onNewEventImageSelected({ files: [] }); // reset the file input
+  }
+
+  async saveEditEventChanges() {
+    // check all required fields are filled and if finish date is later then start date
+    if (this.eventToBeEdited?.address === '' || this.eventToBeEdited?.title === '' || this.eventToBeEdited?.eventStart === null || this.eventToBeEdited?.eventFinish === null || this.eventToBeEdited?.eventStart === undefined || this.eventToBeEdited?.eventFinish === undefined) {
+      this.errorMessage = 'Please fill all required fields.';
+      return;
+    } else if ((this.eventToBeEdited.eventFinish ?? new Date()) < (this.eventToBeEdited.eventStart ?? new Date())) {
+      this.errorMessage = 'Finish date must be later than start date.';
+      return;
+    }
+    // in case address is not selected from autocomplete, set it to the selected address
+    if (this.eventToBeEdited.address === '') {
+      this.eventToBeEdited.address = this.selectedEditEventAddress;
+    }
+    this.errorMessage = '';
+    this.http
+      .put(`${this.apiUrl}Event/updateEvent/${this.eventToBeEdited.id}`, this.eventToBeEdited)
+      .subscribe(
+        () => {
+          this.showToast('success', 'Success', 'Event details updated successfully!');
+          this.getAgencies(); // refresh the agencies list to reflect changes
+          this.getModels(); // refresh the models list to reflect changes
+          this.errorMessage = ''; // reset error message
+          this.editEventDialogVisible = false;
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to update event details.');
+          console.error('Error updating event details:', error);
+        }
+      );
+  }
+
+  // for adding new event to agency
+  onAddEventAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 4) {         // minimum 4 characters
+      this.addEventAddressSuggestions = [];
+      return;
+    }
+
+    this.http
+      .get(`https://nominatim.openstreetmap.org/search`, {
+        params: {
+          q: query,
+          format: 'json',
+          addressdetails: '1',
+          limit: '6'
+        }
+      })
+      .subscribe((results: any) => {
+        // make sure the suggestions always contain address
+        this.addEventAddressSuggestions = results.filter((result: any) => {
+          const address = result.address;
+          return (
+            address.road ||
+            address.neighbourhood ||
+            address.suburb
+          );
+        });
+      });
+  }
+
+  selectAddEventAddressSuggestion(suggestion: any) {
+    this.selectedAddEventAddress = suggestion.display_name;
+    const road =
+      suggestion.address.road ||
+      suggestion.address.neighbourhood ||
+      suggestion.address.suburb ||
+      suggestion.address.city_district ||
+      '';
+    const houseNumber = suggestion.address?.house_number || '';
+    if (this.eventToBeAdded) {
+      this.eventToBeAdded.address = `${road} ${houseNumber}`.trim();
+      this.eventToBeAdded.latitude = parseFloat(suggestion.lat);
+      this.eventToBeAdded.longitude = parseFloat(suggestion.lon);
+      this.eventToBeAdded.cityName = suggestion.address?.city || suggestion.address?.town || suggestion.address?.village || '';
+      this.eventToBeAdded.countryName = suggestion.address?.country || '';
+      this.eventToBeAdded.countryCode = suggestion.address?.country_code || '';
+    }
+    this.addEventAddressSuggestions = [];
+  }
+
+  async onAddEventImageSelected(event: any, fileUpload?: any) {
+    const file = event.files[0];
+    if (file) {
+      const base64 = await this.convertFileToBase64(file);
+      this.eventToBeAdded!.profilePicture = base64;
+    }
+    if (fileUpload) {
+      fileUpload.clear(); // clear the file input after selection
+    }
+  }
+
+  cancelAddEventChanges() {
+    this.addEventToAgencyVisible = false;
+    this.selectedAddEventAddress = ''; // reset the selected address
+    this.onAddEventImageSelected({ files: [] }); // reset the file input
+    this.eventToBeAdded = {
+      agencyId: 0,
+      title: '',
+      description: '',
+      address: '',
+      cityName: '',
+      countryName: '',
+      countryCode: '',
+      latitude: 0,
+      longitude: 0,
+      profilePicture: '',
+      eventStart: '',
+      eventFinish: ''
+    };
+  }
+
+  async saveAddEventChanges() {
+    // check all required fields are filled and if finish date is later then start date
+    if (this.addEventFormNotValid()) {
+      if (this.eventToBeAdded!.address === '') {
+        this.errorMessage = 'Please select an address from the suggestions.';
+        return;
+      }
+      this.errorMessage = 'Please fill all required fields.';
+      return;
+    } else if ((this.eventToBeAdded!.eventFinish ?? new Date()) < (this.eventToBeAdded!.eventStart ?? new Date())) {
+      this.errorMessage = 'Finish date must be later than start date.';
+      return;
+    }
+    // in case address is not selected from autocomplete, set it to the selected address
+    if (this.eventToBeAdded!.address === '') {
+      this.eventToBeAdded!.address = this.selectedAddEventAddress;
+    }
+    this.errorMessage = '';
+    // add agencyId to the newEvent object
+    this.eventToBeAdded!.agencyId = this.selectedAgencyToWhomWillNewEventBeAdded!.agencyId || 0;
+    this.http
+      .post(`${this.apiUrl}Event/addEvent/${this.selectedAgencyToWhomWillNewEventBeAdded?.agencyId}`, this.eventToBeAdded)
+      .subscribe(
+        () => {
+          this.showToast('success', 'Success', 'Event details added successfully!');
+          this.getAgencies(); // refresh the agency info to include the new event
+          this.getModels(); // refresh the models list to reflect changes
+          this.errorMessage = ''; // reset error message
+          this.addEventToAgencyVisible = false; // close the dialog
+        },
+        (error) => {
+          this.showToast('error', 'Error', 'Failed to add event details.');
+          console.error('Error adding event details:', error);
+        }
+      );
+  }
+
+  addEventFormNotValid() {
+    return this.eventToBeAdded!.title === '' ||
+      this.eventToBeAdded!.description === '' ||
+      this.eventToBeAdded!.address === '' ||
+      this.eventToBeAdded!.eventStart === '' ||
+      this.eventToBeAdded!.eventFinish === '' ||
+      this.eventToBeAdded!.profilePicture === ''
   }
 }

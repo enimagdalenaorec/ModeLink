@@ -285,7 +285,18 @@ namespace ModelinkBackend.Services
                 Events = a.Events.Select(e => new EventsForAgenciesForAdminCrudDTO
                 {
                     Id = e.Id,
-                    Title = e.Title
+                    Title = e.Title,
+                    Description = e.Description,
+                    Address = e.Address,
+                    CityName = e.City?.Name, // if null, return null
+                    CountryName = e.City?.Country?.Name, // if null, return null
+                    CountryCode = e.City?.Country?.Code, // if null, return null
+                    Latitude = e.Latitude,
+                    Longitude = e.Longitude,
+                    EventStart = e.EventStart,
+                    EventFinish = e.EventFinish,
+                    ProfilePicture = e.ProfilePictureBase64,
+                    Status = e.Status.ToString()
                 }).ToList()
             });
         }

@@ -216,7 +216,7 @@ namespace ModelinkBackend.Repositories
                 .Include(a => a.User)
                 .Include(a => a.City).ThenInclude(c => c.Country)
                 .Include(a => a.Models).ThenInclude(m => m.User)
-                .Include(a => a.Events)
+                .Include(a => a.Events).ThenInclude(e => e.City).ThenInclude(c => c.Country)
                 .ToListAsync();
         }
 
