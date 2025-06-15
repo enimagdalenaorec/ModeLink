@@ -8,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ModelsForAdminCrudDTO, EyeColors, HairColors, SkinColors, RegisterModelDto } from '../_Models/model';
-import { AgenciesForAdminCrudDTO, SuggestedAgencyDto } from '../_Models/agency';
+import { AgenciesForAdminCrudDTO, RegisterAgencyDto, SuggestedAgencyDto } from '../_Models/agency';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { DropdownModule } from 'primeng/dropdown';
@@ -18,10 +18,12 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule],
+  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule, InputTextareaModule],
   providers: [AuthService, MessageService, ConfirmationService],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'
@@ -52,6 +54,7 @@ export class AdminHomeComponent {
   selectedAgencyEvents: any[] = [];
   // for dialogs
   createModelDialogVisible: boolean = false;
+  createAgencyDialogVisible: boolean = false;
   // for creating new model
   //model
   modelFirstName: string = '';
@@ -70,6 +73,18 @@ export class AdminHomeComponent {
   modelSkinColor: string = '';
   selectedCreateModelCity: string = '';
   cityCreateModelSuggestions: any[] = [];
+  //agency
+  addressCreateAgencySuggestions: any[] = [];
+  selectedCreateAgencyAddress: any = null;
+  agencyName: string = '';
+  agencyEmail: string = '';
+  agencyPassword: string = '';
+  agencyAddress: string = '';
+  agencyCity: string = '';
+  agencyCountry: string = '';
+  agencyCountryCode: string = '';
+  agencyDescription: string = '';
+  agencyProfilePicture: string = '';
   //both
   profilePictureName: string = '';
   formInvalidMessageVisible: boolean = false;
@@ -398,6 +413,31 @@ export class AdminHomeComponent {
     });
   }
 
+  deleteAgency(agency: AgenciesForAdminCrudDTO) {
+    this.confirmationService.confirm({
+      header: 'Confirm Delete',
+      icon: 'pi pi-exclamation-triangle',
+      message: `Are you sure you want to delete agency ${agency.name}?`,
+      accept: () => {
+        this.http.delete(`${this.apiUrl}Agency/adminDeleteAgency/${agency.agencyUserId}`).subscribe(
+          () => {
+            this.showToast('success', 'Success', `Agency ${agency.name} deleted successfully.`);
+            // remove the agency from the local array
+            this.agencies = this.agencies.filter(a => a.agencyUserId !== agency.agencyUserId);
+            this.getModels(); // refresh the models list to remove any references to this agency
+          },
+          (error) => {
+            console.error('Error deleting agency:', error);
+            this.showToast('error', 'Delete Error', 'Failed to delete agency.');
+          }
+        );
+      },
+      reject: () => {
+        // do nothing
+      }
+    });
+  }
+
   createModel() {
     // validate model data
     if (this.modelFirstName == '' || this.modelLastName == '' || this.modelEmail == '' || this.modelProfilePicture == '' || this.modelCity == '' || this.modelCountryName == '' || this.modelHeight <= 0 || this.modelWeight <= 0 || this.modelEyeColor == '' || this.modelHairColor == '' || this.modelSkinColor == '' || this.modelGender == '' || this.modelPassword == '') {
@@ -471,6 +511,17 @@ export class AdminHomeComponent {
     fileUpload.clear();
   }
 
+  onAgencyProfilePictureSelect(event: any, fileUpload: any) {
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.agencyProfilePicture = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    this.profilePictureName = file.name;
+    fileUpload.clear();
+  }
+
   onCreateModelCitySearch(event: any) {
     const query = (event.target as HTMLInputElement).value;
 
@@ -505,5 +556,106 @@ export class AdminHomeComponent {
     this.modelCountryCode = (address.country_code).toUpperCase() || '';
 
     this.cityCreateModelSuggestions = [];
+  }
+
+  onCreateAgencyAddressSearch(event: any) {
+    const query = (event.target as HTMLInputElement).value;
+    if (!query || query.length < 3) {
+      this.addressCreateAgencySuggestions = [];
+      return;
+    }
+    this.http.get(`https://nominatim.openstreetmap.org/search`, {
+      params: {
+        q: query,
+        format: 'json',
+        addressdetails: '1',
+        limit: '5'
+      }
+    }).subscribe((results: any) => {
+      // Filter to keep only address-level results
+      this.addressCreateAgencySuggestions = results.filter((result: any) => {
+        const address = result.address;
+        return (
+          address.road ||
+          address.neighbourhood ||
+          address.suburb ||
+          address.city_district ||
+          address.square ||
+          address.pedestrian
+        );
+      });
+    });
+  }
+
+  selectCreateAgencyAddressSuggestion(suggestion: any) {
+    this.selectedCreateAgencyAddress = suggestion.display_name;
+    const address = suggestion.address;
+
+    const road =
+      suggestion.address.road ||
+      suggestion.address.neighbourhood ||
+      suggestion.address.suburb ||
+      suggestion.address.city_district ||
+      '';
+    const houseNumber = suggestion.address?.house_number || '';
+
+    this.agencyAddress = `${road} ${houseNumber}`.trim();
+    this.agencyCity = address.city_district || address.city || address.town || address.village || '';
+    this.agencyCountry = address.country || '';
+    this.agencyCountryCode = (address.country_code).toUpperCase() || '';
+
+    this.addressCreateAgencySuggestions = [];
+  }
+
+  createAgency() {
+    // validate agency data
+    if (this.agencyName == '' || this.agencyEmail == '' || this.agencyDescription == '' || this.agencyProfilePicture == '' || this.agencyAddress == '' || this.agencyCity == '' || this.agencyCountry == '' || this.agencyPassword == '') {
+      this.formInvalidMessageVisible = true;
+      return;
+    }
+    var registrationRequest = {
+      email: this.agencyEmail.trim(),
+      password: this.agencyPassword.trim(),
+      role: 'agency',
+      name: this.agencyName.trim(),
+      address: this.agencyAddress.trim(),
+      city: this.agencyCity.trim(),
+      countryName: this.agencyCountry.trim(),
+      countryCode: this.agencyCountryCode.trim(),
+      description: this.agencyDescription.trim(),
+      profilePicture: this.agencyProfilePicture
+    } as RegisterAgencyDto;
+    this.userWithEmailExists = false; // reset the flag before making the request
+    this.formInvalidMessageVisible = false; // reset the form invalid message
+    //call be api
+    this.http.post(this.apiUrl + 'Agency/adminCreateAgency', registrationRequest).subscribe(
+      (response: any) => {
+        this.showToast('success', 'Success', 'Registration successful!');
+        this.resetCreateAgencyForm();
+        this.createAgencyDialogVisible = false; // close the dialog after successful registration
+        this.getAgencies(); // refresh the agencies list
+        this.getModels(); // refresh the models list
+      }, (error) => {
+        if (error.error.includes('User with this email already exists.')) {
+          this.userWithEmailExists = true;
+        } else {
+          console.error('Registration error:', error);
+          this.showToast('error', 'Error', 'Registration failed!');
+        }
+      });
+  }
+
+  resetCreateAgencyForm() {
+    this.agencyName = '';
+    this.agencyEmail = '';
+    this.agencyPassword = '';
+    this.agencyAddress = '';
+    this.agencyCity = '';
+    this.agencyCountry = '';
+    this.agencyCountryCode = '';
+    this.agencyDescription = '';
+    this.agencyProfilePicture = '';
+    this.selectedCreateAgencyAddress = null;
+    this.addressCreateAgencySuggestions = [];
   }
 }

@@ -229,5 +229,12 @@ namespace ModelinkBackend.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<bool> DeleteAgencyAsync(Agency agency)
+        {
+            _context.Agencies.Remove(agency);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

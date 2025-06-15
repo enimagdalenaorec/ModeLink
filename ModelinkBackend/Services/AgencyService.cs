@@ -10,11 +10,13 @@ namespace ModelinkBackend.Services
     {
         private readonly IAgencyRepository _agencyRepository;
         private readonly IModelRepository _modelRepository;
+        private readonly IAuthRepository _authRepository;
 
-        public AgencyService(IAgencyRepository agencyRepository, IModelRepository modelRepository)
+        public AgencyService(IAgencyRepository agencyRepository, IModelRepository modelRepository, IAuthRepository authRepository)
         {
             _agencyRepository = agencyRepository;
             _modelRepository = modelRepository;
+            _authRepository = authRepository;
         }
 
         public async Task<IEnumerable<AgencySearchDto>> SearchAgenciesAsync(string name, string city, string country)
@@ -350,6 +352,98 @@ namespace ModelinkBackend.Services
 
             return await _agencyRepository.UpdateAgencyAsync(agency);
         }
+
+        public async Task<bool> AdminDeleteAgencyAsync(int agencyUserId)
+        {
+            if (agencyUserId <= 0)
+            {
+                return false; // invalid input
+            }
+
+            Agency agency = await _agencyRepository.GetAgencyByUserIdAsync(agencyUserId);
+            if (agency == null)
+            {
+                return false; // agency not found
+            }
+
+            // delete the agency
+            await _agencyRepository.DeleteAgencyAsync(agency);
+            //delete the user
+            return await _authRepository.DeleteUserAsync(agencyUserId);
+        }
+
+        public async Task<bool> AdminCreateAgencyAsync(RegisterAgencyDto agencyDto)
+        {
+            // check if user already exists
+            var existingUser = await _authRepository.GetUserByEmailAsync(agencyDto.Email);
+            if (existingUser != null)
+                throw new Exception("User with this email already exists.");
+
+            // hash password
+            var hashedPassword = HashPassword(agencyDto.Password);
+
+            var newUser = new User
+            {
+                Email = agencyDto.Email,
+                PasswordHash = hashedPassword,
+                Role = "agency",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _authRepository.CreateUserAsync(newUser);
+
+            var country = !string.IsNullOrEmpty(agencyDto.CountryName)
+            ? await _authRepository.GetCountryByNameAsync(agencyDto.CountryName)
+            : null;
+
+            if (country == null && !string.IsNullOrEmpty(agencyDto.CountryName) && !string.IsNullOrEmpty(agencyDto.CountryCode))
+            {
+                country = new Country
+                {
+                    Name = agencyDto.CountryName,
+                    Code = agencyDto.CountryCode
+                };
+                await _authRepository.CreateCountryAsync(country);
+            }
+
+            var city = !string.IsNullOrEmpty(agencyDto.City)
+                ? await _authRepository.GetCityByNameAsync(agencyDto.City)
+                : null;
+
+            if (city == null && !string.IsNullOrEmpty(agencyDto.City) && country != null)
+            {
+                city = new City
+                {
+                    Name = agencyDto.City,
+                    CountryId = country.Id
+                };
+                await _authRepository.CreateCityAsync(city);
+            }
+
+            // create Agency entity
+            var newAgency = new Agency
+            {
+                UserId = newUser.Id,
+                User = newUser,
+                Name = agencyDto.Name,
+                Description = agencyDto.Description,
+                Address = agencyDto.Address,
+                ProfilePictureBase64 = agencyDto.ProfilePicture,
+                CityId = city == null ? null : city.Id
+            };
+
+            // save Agency
+            await _authRepository.CreateAgencyAsync(newAgency);
+            return true; // agency successfully created
+        }
+
+        private string HashPassword(string password)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hashedBytes);
+        }
+
 
     }
 }

@@ -165,5 +165,34 @@ namespace ModelinkBackend.Controllers
             }
             return BadRequest("Failed to update agency information.");
         }
+
+        [HttpDelete("adminDeleteAgency/{agencyUserId}")]
+        [Authorize]
+        public async Task<IActionResult> AdminDeleteAgency(int agencyUserId)
+        {
+            var result = await _agencyService.AdminDeleteAgencyAsync(agencyUserId);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to delete agency.");
+        }
+
+        [HttpPost("adminCreateAgency")]
+        [Authorize]
+        public async Task<IActionResult> AdminCreateAgency([FromBody] RegisterAgencyDto createAgencyDto)
+        {
+            if (createAgencyDto == null)
+            {
+                return BadRequest("Invalid agency data.");
+            }
+
+            var result = await _agencyService.AdminCreateAgencyAsync(createAgencyDto);
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to create agency.");
+        }
     }
 }
