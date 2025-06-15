@@ -8,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ModelsForAdminCrudDTO, EyeColors, HairColors, SkinColors, RegisterModelDto } from '../_Models/model';
-import { AgenciesForAdminCrudDTO, RegisterAgencyDto, SuggestedAgencyDto } from '../_Models/agency';
+import { AgenciesForAdminCrudDTO, ModelsForAgenciesForAdminCrudDTO, RegisterAgencyDto, SuggestedAgencyDto } from '../_Models/agency';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { DropdownModule } from 'primeng/dropdown';
@@ -19,11 +19,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule, InputTextareaModule],
+  imports: [StepperModule, TableModule, ButtonModule, InputTextModule, FormsModule, CommonModule, HttpClientModule, DropdownModule, FileUploadModule, ToastModule, ConfirmDialogModule, DialogModule, RadioButtonModule, InputTextareaModule, TooltipModule],
   providers: [AuthService, MessageService, ConfirmationService],
   templateUrl: './admin-home.component.html',
   styleUrl: './admin-home.component.css'
@@ -43,6 +44,9 @@ export class AdminHomeComponent {
   eyeColors = EyeColors;
   hairColors = HairColors;
   skinColors = SkinColors;
+  // for adding model to agency
+  allUnsignedModels: ModelsForAgenciesForAdminCrudDTO[] = []; // models that are not signed to any agency
+  newModel: ModelsForAgenciesForAdminCrudDTO[] = []; // model to be added to agency
   // for model city autocomplete
   citySuggestions: any[][] = [];
   selectedCities: any[] = [];
@@ -105,6 +109,8 @@ export class AdminHomeComponent {
     this.getAgencies();
     // get all agencies for dropdown
     this.getAllAgencies();
+    // get all unsigned models for dropdown
+    this.getAllUnsignedModels();
   }
 
   getModels() {
@@ -142,6 +148,17 @@ export class AdminHomeComponent {
         console.error('Error fetching all agencies:', error);
       }
       );
+  }
+
+  getAllUnsignedModels() {
+    this.http.get<ModelsForAgenciesForAdminCrudDTO[]>(`${this.apiUrl}Model/getUnsignedModels`).subscribe(
+      (data) => {
+        this.allUnsignedModels = data;
+      },
+      (error) => {
+        console.error('Error fetching unsigned models:', error);
+      }
+    );
   }
 
   changeAgencyIdAccordingToNameChange(model: any) {
@@ -308,6 +325,7 @@ export class AdminHomeComponent {
         //this.getModelsAndAgencies(); // refresh the models list
         // reset agency info (not whole model in case admin didnt save some changes to other models)
         this.getAgencies(); // refresh the agencies list
+        this.getAllUnsignedModels(); // refresh the unsigned models list
       },
       (error) => {
         console.error('Error updating model:', error);
@@ -330,6 +348,7 @@ export class AdminHomeComponent {
         //this.getModelsAndAgencies(); // refresh the agencies list
         // reset model info (not whole agency in case admin didnt save some changes to other agencies)
         this.getModels(); // refresh the models list
+        this.getAllUnsignedModels(); // refresh the unsigned models list
       },
       (error) => {
         console.error('Error updating agency:', error);
@@ -657,5 +676,27 @@ export class AdminHomeComponent {
     this.agencyProfilePicture = '';
     this.selectedCreateAgencyAddress = null;
     this.addressCreateAgencySuggestions = [];
+  }
+
+  addModelToAgency(agency: AgenciesForAdminCrudDTO, model: ModelsForAgenciesForAdminCrudDTO) {
+    // check if model is already in agency
+    if (agency.models.some(m => m.modelUserId === model.modelUserId)) {
+      this.showToast('error', 'Error', 'Model is already in this agency.');
+      return;
+    }
+    // add model to agency
+    agency.models.push(model);
+    // update the agency in the local array
+    const index = this.agencies.findIndex(a => a.agencyUserId === agency.agencyUserId);
+    if (index !== -1) {
+      this.agencies[index] = { ...this.agencies[index], models: agency.models };
+    }
+    // remove added model for all unsigned models
+    const modelIndex = this.allUnsignedModels.findIndex(m => m.modelUserId === model.modelUserId);
+    if (modelIndex !== -1) {
+      this.allUnsignedModels.splice(modelIndex, 1);
+    }
+    // relese for placeholder
+    this.newModel = [];
   }
 }

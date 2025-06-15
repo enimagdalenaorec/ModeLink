@@ -626,5 +626,20 @@ namespace ModelinkBackend.Services
             var hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(hashedBytes);
         }
+
+        public async Task<IEnumerable<ModelsForAgenciesForAdminCrudDTO>> GetUnsignedModelsAsync()
+        {
+            var models = await _modelRepository.GetModelsForAdminCrudAsync();
+            // filter models that are not signed with any agency
+            var unsignedModels = models.Where(m => m.AgencyId == null || m.AgencyId <= 0);
+            // remap them
+            return unsignedModels.Select(m => new ModelsForAgenciesForAdminCrudDTO
+            {
+                ModelId = m.Id,
+                ModelUserId = m.User.Id,
+                FirstName = m.FirstName,
+                LastName = m.LastName
+            }).ToList() ?? new List<ModelsForAgenciesForAdminCrudDTO>();
+        }
     }
     }

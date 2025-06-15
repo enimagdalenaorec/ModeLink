@@ -24,5 +24,6 @@ namespace ModelinkBackend.Services
         Task<bool> AdminUpdateModelAsync(ModelsForAdminCrudDTO updatedModel);
         Task<bool> AdminDeleteModelAsync(int modelUserId);
         Task<bool> AdminCreateModelAsync(RegisterModelDto modelDto);
+        Task<IEnumerable<ModelsForAgenciesForAdminCrudDTO>> GetUnsignedModelsAsync();
     }
 }

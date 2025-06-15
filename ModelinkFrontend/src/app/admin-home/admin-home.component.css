@@ -134,6 +134,15 @@
   width: 100% !important;
 }
 
+:host ::ng-deep .p-paginator-rpp-options {
+  width: 40px !important;
+  border: 1px solid var(--secondary-color) !important;
+  display: flex !important;
+  justify-content: center !important;
+  padding-left: 3px !important;
+  align-items: center !important;
+}
+
 :host ::ng-deep .p-dialog .p-fileupload-choose {
   background: var(--primary-color) !important;
   box-shadow: none !important;
@@ -149,4 +158,12 @@
   background: rgb(27, 133, 108) !important;
   color: white !important;
   box-shadow: none !important;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-header {
+  padding: 0px !important;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-header .p-inputtext {
+   width: 100% !important;
 }

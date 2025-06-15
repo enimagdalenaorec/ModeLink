@@ -237,5 +237,17 @@ namespace ModelinkBackend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("getUnsignedModels")]
+        [Authorize]
+        public async Task<IActionResult> GetUnsignedModels()
+        {
+            var unsignedModels = await _modelService.GetUnsignedModelsAsync();
+            if (unsignedModels == null)
+            {
+                return NotFound();
+            }
+            return Ok(unsignedModels);
+        }
     }
 }

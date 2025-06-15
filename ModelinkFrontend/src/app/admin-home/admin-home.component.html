@@ -56,7 +56,7 @@
                   <p-dropdown [options]="allAgencies" optionLabel="name" [filter]="true"
                     [placeholder]="model.agencyName || 'null'" [(ngModel)]="newAgency"
                     (ngModelChange)="changeAgencyIdAccordingToNameChange(model)"></p-dropdown>
-                  <button pButton type="button" icon="pi pi-times" class=" remove-agency-button"
+                  <button pButton type="button" icon="pi pi-times" class=" remove-agency-button" [disabled]="model.agencyId == null" pTooltip="Unsign model from agency" tooltipPosition="top"
                     (click)="removeAgencyFromModel(model, rowIndex)"></button>
                 </div>
               </td>
@@ -91,7 +91,7 @@
                 <p-dropdown [options]="skinColors" [(ngModel)]="model.skinColor"></p-dropdown>
               </td>
               <td class="flex gap-1"
-                style="position: sticky; right: 0; background: white; z-index: 1; box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);">
+                style="padding:1.4rem; position: sticky; right: 0; background: white; z-index: 1; box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);">
                 <button pButton type="button" icon="pi pi-save" class="save-changes-button"
                   (click)="saveModelChanges(model, rowIndex)"></button>
                 <button pButton type="button" icon="pi pi-trash" class="delete-button"
@@ -117,7 +117,7 @@
               <th class="w-full">Description</th>
               <th class="w-full">Address</th>
               <th class="w-full">Profile Picture</th>
-              <th class="w-full">Models</th>
+              <th class="w-full flex justify-content-center pr-5">Models</th>
               <th class="w-full">Events</th>
               <th class="w-full">Save changes</th>
             </tr>
@@ -170,8 +170,12 @@
                       {{model.firstName}} {{model.lastName}}
                     </ng-template>
                   </p-dropdown>
-                  <button [disabled]="selectedAgencyModels[rowIndex] == null" pButton type="button" icon="pi pi-times"
+                  <button [disabled]="selectedAgencyModels[rowIndex] == null" pButton type="button" icon="pi pi-times" pTooltip="Unsign model from agency" tooltipPosition="top"
                     class="remove-model-button" (click)="removeModelFromAgency(agency, rowIndex)"></button>
+                  <p-dropdown [options]="allUnsignedModels" optionLabel="firstName" [filter]="true" [placeholder]="'Sign model'"
+                    [(ngModel)]="newModel[rowIndex]"></p-dropdown>
+                  <button [disabled]="newModel[rowIndex] == null" pButton type="button" icon="pi pi-plus" class="remove-model-button" pTooltip="Sign model to agency" tooltipPosition="top"
+                    (click)="addModelToAgency(agency, newModel[rowIndex])"></button>
                 </div>
               </td>
               <td>
@@ -184,7 +188,7 @@
                 </div>
               </td>
               <td class="flex gap-1"
-                style="position: sticky; right: 0; background: white; z-index: 1; box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);">
+                style=" padding:1.4rem; position: sticky; right: 0; background: white; z-index: 1; box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);">
                 <button pButton type="button" icon="pi pi-save" class="save-changes-button"
                   (click)="saveAgencyChanges(agency, rowIndex)"></button>
                 <button pButton type="button" icon="pi pi-trash" class="delete-button"
@@ -206,8 +210,8 @@
 
 <p-confirmDialog></p-confirmDialog>
 
-<p-dialog header="Create Model" [(visible)]="createModelDialogVisible" [modal]="true" [style]="{ width: '60vw', overflowY: 'auto' }"
-  [baseZIndex]="10000">
+<p-dialog header="Create Model" [(visible)]="createModelDialogVisible" [modal]="true"
+  [style]="{ width: '60vw', overflowY: 'auto' }" [baseZIndex]="10000">
   <div class="model mt-3">
     <div class="basic-info grid p-1 gap-0">
       <div class="col-12 md:col-6 lg:col-4 flex flex-column">
@@ -307,8 +311,8 @@
   </div>
 </p-dialog>
 
-<p-dialog header="Create Agency" [(visible)]="createAgencyDialogVisible" [modal]="true" [style]="{ width: '60vw', overflowY: 'auto', maxHeight: '90vh' }"
-  [baseZIndex]="10000">
+<p-dialog header="Create Agency" [(visible)]="createAgencyDialogVisible" [modal]="true"
+  [style]="{ width: '60vw', overflowY: 'auto', maxHeight: '90vh' }" [baseZIndex]="10000">
   <div class="agency-basic-info pr-5 mt-3">
     <div class="flex flex-column mb-3">
       <label class="text-xs mb-1" for="agencyName">NAME</label>
@@ -350,10 +354,10 @@
   </div>
   <!-- buttons -->
   <div class="col-12 flex justify-content-end gap-2 mt-1">
-      <button pButton type="button" label="Cancel" class="p-button-primary"
-        (click)="createAgencyDialogVisible = false"></button>
-      <button pButton type="button" label="Create Agency" class="p-button-secondary" (click)="createAgency()"></button>
-    </div>
+    <button pButton type="button" label="Cancel" class="p-button-primary"
+      (click)="createAgencyDialogVisible = false"></button>
+    <button pButton type="button" label="Create Agency" class="p-button-secondary" (click)="createAgency()"></button>
+  </div>
   <div class="form-invalid-message flex justify-content-end">
     <p *ngIf="formInvalidMessageVisible" class="justify-content-end mb-0 pb-0">All fields are required!</p>
   </div>

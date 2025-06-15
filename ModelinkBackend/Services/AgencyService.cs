@@ -312,6 +312,18 @@ namespace ModelinkBackend.Services
             agency.Models = agency.Models
                 .Where(m => agencyDto.Models.Any(mod => mod.ModelId == m.Id))
                 .ToList();
+            // some models may have been added
+            foreach (var modelDto in agencyDto.Models)
+            {
+                if (!agency.Models.Any(m => m.Id == modelDto.ModelId))
+                {
+                    var model = await _modelRepository.GetModelByIdAsync(modelDto.ModelUserId);
+                    if (model != null)
+                    {
+                        agency.Models.Add(model);
+                    }
+                }
+            }
             agency.Events = agency.Events
                 .Where(e => agencyDto.Events.Any(ev => ev.Id == e.Id))
                 .ToList();
