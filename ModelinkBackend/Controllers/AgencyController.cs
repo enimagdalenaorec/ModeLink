@@ -36,8 +36,8 @@ namespace ModelinkBackend.Controllers
         }
 
         //[Authorize]
-        [HttpGet("models/{agencyId}")]
-        public async Task<IActionResult> GetModelsByAgencyId(int agencyId)
+        [HttpGet("models/{agencyUserId}")]
+        public async Task<IActionResult> GetModelsByAgencyId(int agencyUserId)
         {
             // check if the user is authorized to access this endpoint (if the logged in agency asks for its models)
             //var loggedInAgencyId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
@@ -46,21 +46,21 @@ namespace ModelinkBackend.Controllers
             //{
             //    return Forbid();
             //}
-            var models = await _agencyService.GetModelsByAgencyIdAsync(agencyId);
+            var models = await _agencyService.GetModelsByAgencyIdAsync(agencyUserId);
             return Ok(models);
         }
 
-        [HttpGet("outsideSignedModels/{agencyId}")]
-        public async Task<IActionResult> GetOutsideSignedModelsByAgencyId(int agencyId)
+        [HttpGet("outsideSignedModels/{agencyUserId}")]
+        public async Task<IActionResult> GetOutsideSignedModelsByAgencyId(int agencyUserId)
         {
-            var models = await _agencyService.GetOutsideSignedModelsByAgencyIdAsync(agencyId);
+            var models = await _agencyService.GetOutsideSignedModelsByAgencyIdAsync(agencyUserId);
             return Ok(models);
         }
 
-        [HttpGet("outsideFreelanceModels/{agencyId}")]
-        public async Task<IActionResult> GetOutsideFreelanceModelsByAgencyId(int agencyId)
+        [HttpGet("outsideFreelanceModels/{agencyUserId}")]
+        public async Task<IActionResult> GetOutsideFreelanceModelsByAgencyId(int agencyUserId)
         {
-            var models = await _agencyService.GetOutsideFreelanceModelsByAgencyIdAsync(agencyId);
+            var models = await _agencyService.GetOutsideFreelanceModelsByAgencyIdAsync(agencyUserId);
             return Ok(models);
         }
 

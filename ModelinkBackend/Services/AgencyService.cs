@@ -47,9 +47,9 @@ namespace ModelinkBackend.Services
             });
         }
 
-        public async Task<IEnumerable<ModelSuggestionDto>> GetModelsByAgencyIdAsync(int agencyId)
+        public async Task<IEnumerable<ModelSuggestionDto>> GetModelsByAgencyIdAsync(int agencyUserId)
         {
-            var models = await _agencyRepository.GetModelsByAgencyIdAsync(agencyId);
+            var models = await _agencyRepository.GetModelsByAgencyIdAsync(agencyUserId);
 
             return models.Select(m => new ModelSuggestionDto
             {
@@ -63,9 +63,9 @@ namespace ModelinkBackend.Services
             });
         }
 
-        public async Task<IEnumerable<ModelSuggestionDto>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId)
+        public async Task<IEnumerable<ModelSuggestionDto>> GetOutsideSignedModelsByAgencyIdAsync(int agencyUserId)
         {
-            var models = await _agencyRepository.GetOutsideSignedModelsByAgencyIdAsync(agencyId);
+            var models = await _agencyRepository.GetOutsideSignedModelsByAgencyIdAsync(agencyUserId);
 
             return models.Select(m => new ModelSuggestionDto
             {
@@ -79,9 +79,9 @@ namespace ModelinkBackend.Services
             });
         }
 
-        public async Task<IEnumerable<ModelSuggestionDto>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyId)
+        public async Task<IEnumerable<ModelSuggestionDto>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyUserId)
         {
-            var models = await _agencyRepository.GetOutsideFreelanceModelsByAgencyIdAsync(agencyId);
+            var models = await _agencyRepository.GetOutsideFreelanceModelsByAgencyIdAsync(agencyUserId);
 
             return models.Select(m => new ModelSuggestionDto
             {

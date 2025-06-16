@@ -8,9 +8,9 @@ namespace ModelinkBackend.Repositories
     {
         Task<IEnumerable<Agency>> SearchAgenciesAsync(string name, string city, string country);
         Task<IEnumerable<Agency>> GetAgencySuggestionsAsync();
-        Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyId);
-        Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId);
-        Task<IEnumerable<Model>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyId);
+        Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyUserId);
+        Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyUserId);
+        Task<IEnumerable<Model>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyUserId);
         Task<IEnumerable<Event>> GetActiveEventsByAgencyIdAsync(int agencyId);
         Task<Agency> GetAgencyInfoAsync(int userId);
         Task<FreelancerRequest> AcceptFreelancerRequestAsync(int requestId);

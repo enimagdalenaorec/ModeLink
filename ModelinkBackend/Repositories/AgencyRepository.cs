@@ -58,28 +58,28 @@ namespace ModelinkBackend.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyId)
+        public async Task<IEnumerable<Model>> GetModelsByAgencyIdAsync(int agencyUserId)
         {
             return await _context.Models
-                .Where(m => m.AgencyId == agencyId)
+                .Where(m => m.Agency.UserId == agencyUserId)
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyId)
+        public async Task<IEnumerable<Model>> GetOutsideSignedModelsByAgencyIdAsync(int agencyUserId)
         {
             return await _context.Models
-                .Where(m => ( m.AgencyId != agencyId && m.AgencyId != null) )
+                .Where(m => ( m.Agency.UserId != agencyUserId && m.Agency.UserId != null) )
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Model>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyId)
+        public async Task<IEnumerable<Model>> GetOutsideFreelanceModelsByAgencyIdAsync(int agencyUserId)
         {
             return await _context.Models
-                .Where(m => (m.AgencyId != agencyId && m.AgencyId == null))
+                .Where(m => (m.Agency.UserId != agencyUserId && m.Agency.UserId == null))
                 .Include(m => m.City).ThenInclude(c => c.Country)
                 .Include(m => m.Agency)
                 .ToListAsync();
