@@ -71,7 +71,7 @@ namespace ModelinkBackend.Services
 
             return new ModelStatusAndAgencyIdDTO
             {
-                Status = modelStatus.Status,
+                Status = model.AgencyId == null ? "freelancer" : "signed",
                 AgencyId = model.Agency?.Id // nullable if the model is freelance
             };
         }
