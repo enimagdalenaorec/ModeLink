@@ -111,8 +111,13 @@
       </p-divider>
     </div>
     <div *ngIf="portfolioPostCount < portfolioPosts.length" class="flex justify-content-end w-full mb-3">
-        <button pButton label="Load More" class="p-button-sm load-more-button mr-7"
-          (click)="loadMorePortfolioPosts()"></button>
+      <button pButton label="Load More" class="p-button-sm load-more-button mr-7"
+        (click)="loadMorePortfolioPosts()"></button>
+    </div>
+    <div *ngIf="portfolioPosts?.length === 0"
+      class="flex flex-column justify-content-center align-items-center text-gray-400 text-sm font-medium pl-4">
+      <img src="assets/images/not-found.png" alt="No posts" class="w-15rem h-15rem" />
+      <p class="mt-0 pt-0 text-lg">No posts yet</p>
     </div>
   </div>
 </div>
@@ -146,11 +151,11 @@
         </ul>
       </div>
       <div class="col-12 md:col-6 lg:col-4 flex flex-column">
-        <label class="text-xs mb-1" for="modelHeight">HEIGHT</label>
+        <label class="text-xs mb-1" for="modelHeight">HEIGHT (cm)</label>
         <input type="number" pInputText [(ngModel)]="updateModelInfo.height" />
       </div>
       <div class="col-12 md:col-6 lg:col-4 flex flex-column">
-        <label class="text-xs mb-1" for="modelWeight">WEIGHT</label>
+        <label class="text-xs mb-1" for="modelWeight">WEIGHT (kg)</label>
         <input type="number" pInputText [(ngModel)]="updateModelInfo.weight" />
       </div>
       <div class="col-12 md:col-6 lg:col-4 flex flex-column">

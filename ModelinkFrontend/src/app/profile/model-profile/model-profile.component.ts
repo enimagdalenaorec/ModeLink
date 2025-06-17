@@ -187,7 +187,7 @@ export class ModelProfileComponent implements OnInit, OnDestroy {
         if (this.modelInfo.agencyId === null) {
           this.http.get<FreelancerRequestsFromModel[]>(this.apiUrl + 'Model/getFreelancerRequests/' + this.modelInfo.modelId).subscribe(
             (requests) => {
-              this.freelancerRequests = requests;
+              this.freelancerRequests = requests.filter((request) => request.status === 'pending' || request.status === 'declined');
             },
             (error) => {
               console.error('Error fetching freelancer requests:', error);
